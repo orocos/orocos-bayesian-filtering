@@ -1,0 +1,293 @@
+\documentclass[a4paper,10pt]{article}
+
+\advance\textwidth by 6cm
+\advance\oddsidemargin by -3cm
+\advance\evensidemargin by -3cm
+
+\advance \topmargin -2cm
+\advance \textheight 4cm
+
+
+%opening
+\title{Installation Guide \\  Bayesian Filtering Library}
+\author{Tinne De Laet, Wim Meeussen, Klaas Gadeyne}
+
+\usepackage{amsmath}
+\usepackage{subfigure}
+\usepackage{graphicx,color,psfrag}
+\usepackage{epsfig} 
+\usepackage{fancyvrb} 
+\usepackage{fancybox} 
+\usepackage{verbatim}
+\usepackage{keyval}
+\usepackage{url}
+%\usepackage[]{tex4ht}
+
+%\graphicspath{{figures_src/}}
+
+\begin{document}
+
+\maketitle
+
+
+
+%----------------------------------
+\section{Precompiled Ubuntu/Debian packages}
+%----------------------------------
+\label{sec:ubuntu}
+For Ubuntu and Debian users, the easiest way to install BFL is by
+using our precompiled packages.  The BFL package is compiled for the
+LTI matrix library and the LTI random number generator library.  The
+repository also includes a precompiled version of the LTI library
+itself.  Using these precompiled packages is very simple:
+\begin{enumerate}
+\item First add the following line to your /etc/apt/sources.list:
+\begin{verbatim}
+  deb http://people.mech.kuleuven.be/~wmeeusse/bfl _mydistro_ main
+\end{verbatim}
+  where \emph{\_mydistro\_} is breezy, dapper, edgy or feisty.
+\item Then apt-get the packages:
+\begin{verbatim}
+  sudo apt-get update
+  sudo apt-get install bfl
+\end{verbatim}
+\end{enumerate}
+Now all components are installed and you are ready to start using BFL.
+
+
+
+
+%----------------------------------
+\section{Installation from source}
+%----------------------------------
+An alternative way to get BFL is to install it from source, e.g.~if
+you are not using Ubuntu or Debian. This section gives step-by-step
+instructions to compile BFL from source. You'll not only need to
+compile BFL, but also a matrix computation library and a random number
+generator library. A few things you need to know before getting
+started:
+\begin{enumerate}
+\item BFL is developed and regularly tested for GNU Linux on
+  Debian and Ubuntu. However we've received success reports from other
+  distributions and architectures, such as Gentoo, MAC OS X and MS
+  Windows.
+\item BFL compiles without warnings with g++ 2.95.0 up to g++ 4.0.
+  However, it is preferred to use the latest g++ version.
+\item We use cmake in the build system of BFL. You'll need cmake 2.2
+  or 2.4.
+\item To download the latest version from our subversion server, you
+  will need a subversion client.
+\end{enumerate}
+The instructions explain how to install libraries in the /usr/local
+directory. You will need write permissions in this directory. When you
+don't have these permissions, you can also install everything in your
+home directory. To do this, just replace /usr/local/ by
+/home/yourname in the installation instructions.
+
+
+
+\subsection{Install an external matrix library}
+%----------------------------------
+BFL requires an external library for matrix computations. You can
+choose to use the LTI library, or the Newmat library.
+
+
+\subsubsection{LTI matrix library}
+Follow the same instructions as described in section~\ref{subsec:lti}
+You can install the LTI library as a precompiled Ubuntu/Debian
+package, or compile it from source. 
+\begin{itemize}
+\item To install the precompiled LTI package, add the line in your
+  sources.list as described in section~\ref{sec:ubuntu}, and then run:
+\begin{verbatim}
+  sudo apt-get update
+  sudo apt-get install liblti-dev
+\end{verbatim}
+\item To install the LTI library from source:
+
+\begin{enumerate}
+\item First you'll need to install the libxt-dev package:
+\begin{verbatim}
+  sudo apt-get install libxt-dev
+\end{verbatim}
+\item Then download the latest version of the LTI library from the LTI
+  web page
+  \url{http://ltilib.sourceforge.net/doc/homepage/index.shtml}
+\item Move the downloaded file to your installation folder:
+\begin{verbatim}
+  mv ltilib.tar.gz /usr/local/
+\end{verbatim}
+\item Go to the directory /usr/local/
+\begin{verbatim}
+  cd /usr/local/
+\end{verbatim}
+\item UN-tar and unzip the file:
+\begin{verbatim}
+  tar -xzvf ltilib.tar.gz
+\end{verbatim}
+\item Build the library:
+\begin{verbatim}
+  cd ltilib/linux
+  make -f Makefile.cvs
+  ./configure --disable-debug --without-gtk --disable-gtk
+  make
+\end{verbatim}
+\item Finally, install the library
+/usr/local/
+\begin{verbatim}
+  sudo make install
+\end{verbatim}
+\end{enumerate}
+For more details, see the LTI web page
+\url{http://ltilib.sourceforge.net/doc/homepage/index.shtml}.
+\end{itemize}
+
+
+
+
+
+
+\subsubsection{Newmat matrix library}
+You can install the Newmat library as a precompiled Ubuntu/Debian
+package, or compile it from source.
+\begin{itemize}
+\item To install the precompiled Newmat package run:
+\begin{verbatim}
+  sudo apt-get install libnewmat10-dev
+\end{verbatim}
+
+
+\item To install the Newmat library from source:
+\begin{enumerate}
+\item Then download the latest version of the Newmat library from the
+  Newmat web page
+  \url{http://www.robertnz.net/index.html}
+\item Move the downloaded file to your installation folder:
+\begin{verbatim}
+  mv newmat1x.tar.gz /usr/local/
+\end{verbatim}
+\item Go to the directory /usr/local/
+\begin{verbatim}
+  cd /usr/local/
+\end{verbatim}
+\item UN-tar and unzip the file:
+\begin{verbatim}
+  tar -xzvf newmat1x.tar.gz
+\end{verbatim}
+\item Then copy the Makefile.newmat and the include.h.newmat from
+  bfl/aids (see further instructions to get BFL sources):
+\begin{verbatim}
+  cp /usr/local/bfl/aids/Makefile.newmat /usr/local/newmat1x/Makefile
+  cp /usr/local/bfl/aids/include.h.newmat1x /usr/local/newmat1x/include.h
+\end{verbatim}
+\item Build the library:
+\begin{verbatim}
+  cd newmat1x
+  make 
+\end{verbatim}
+\item Finally, install the library in /usr/local/
+\begin{verbatim}
+  sudo make install
+\end{verbatim}
+\end{enumerate}
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+\subsection{Install an external random number generator library}
+%----------------------------------
+BFL requires an external library for matrix computations. You can
+choose to use the LTI library, or the Boost library.
+
+\subsubsection{LTI rng library}
+\label{subsec:lti}
+You can install the LTI library as a precompiled Ubuntu/Debian
+package, or compile it from source. If you already installed LTI as
+the matrix library, you already have everything for the rng library.
+
+\subsubsection{Boost rng library}
+You can install the Boost library as a precompiled Ubuntu/Debian
+package, or install it from source.
+\begin{itemize}
+\item To install the precompiled Boost package run:
+\begin{verbatim}
+  sudo apt-get install libboost-dev
+\end{verbatim}
+\item To install the Newmat library from source, follow the
+  instructions on the boost webpage \url{http://www.boost.org}
+\end{itemize}
+
+
+
+
+
+
+
+\subsection{Install BFL itself}
+%----------------------------------
+Now we arrived to the installation of the BFL library itself. BFL is
+available from our subversion server.
+\begin{enumerate}
+\item First go to the /usr/local folder:
+\begin{verbatim}
+  cd /usr/local/
+\end{verbatim}
+\item Then, to get a copy of BFL, use:
+\begin{verbatim}
+  svn co http://svn.mech.kuleuven.be/repos/orocos/trunk/bfl
+\end{verbatim}
+\item Now create and go to a build directory in /usr/local/bfl
+\begin{verbatim}
+  mkdir /usr/local/bfl/build
+  cd /usr/local/bfl/build
+\end{verbatim}
+\item and run ccmake
+\begin{verbatim}
+  ccmake ..
+\end{verbatim}
+\item and type 'c' to configure, and 'e' to exit the page that shows
+  the configure output. Now you see the cmake configuration menu. In
+  this menu you can change the following options:
+\begin{itemize}
+\item matrix\_install: the path where you external matrix library is
+  installed
+\item matrix\_lib: the matrix library you choose: lti or newmat
+\item rng\_install: the path where you external rng library is
+  installed
+\item rng\_lib: the rng library you choose: lti or boost
+\end{itemize}
+Now repeat the 'c' configure and 'e' exit cycle, unitl you get no more
+errors. When this is the case, you'll have the 'g' generate option
+available. Press 'g' to generate the makefiles, and then quit cmake
+with 'q' quit.
+\item Now all configuration is done, and you can build BFL:
+\begin{verbatim}
+  make 
+\end{verbatim}	
+\item To check the functionality of BFL, use
+\begin{verbatim}
+  make check
+\end{verbatim}	
+\item and to install BFL use
+\begin{verbatim}
+  sudo make install
+\end{verbatim}
+\end{enumerate}
+In the /usr/local/bfl/examples directory, you find some example BFL
+filters. A good next step is to check out the BFL tutorial on
+\url{www.orocos.org/bfl}, for a step-by-step introduction in building
+your own filters in BFL.
+\\\\\\
+Good luck!
+
+
+\end{document}
+
+% LocalWords:  doxygen svn
