@@ -78,6 +78,10 @@ IF(NOT GINAC_INSTALL)
   SET( GINAC_INSTALL /usr CACHE PATH "The Ginac lib installation directory.")
 ENDIF(NOT GINAC_INSTALL)
 
+IF(NOT CPPUNIT_INSTALL)
+  SET( CPPUNIT_INSTALL /usr CACHE PATH "The CppUnit lib installation directory.")
+ENDIF(NOT CPPUNIT_INSTALL)
+
 
 # Set the build type (affects debugging symbols and optimization)
 # ------------------
@@ -123,6 +127,9 @@ INCLUDE (${PROJ_SOURCE_DIR}/config/FindRNG.cmake)
 
 ## Find GINAC
 INCLUDE (${PROJ_SOURCE_DIR}/config/FindGINAC.cmake)
+
+## Find MATRIX LIB
+INCLUDE (${PROJ_SOURCE_DIR}/config/FindCppUnit.cmake)
 
 ## Uninstall target
 CONFIGURE_FILE(
