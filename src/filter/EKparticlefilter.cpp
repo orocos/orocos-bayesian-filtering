@@ -92,7 +92,7 @@ namespace BFL
       {
 	while ( unif_samples[i] > *CumPDFit )
 	  {
-	    assert(index <= numsamples);
+	    assert(index <= (unsigned int)numsamples);
 	    index++; it++; CumPDFit++; _cov_it++;
 	  }
 	it--; _cov_it--;

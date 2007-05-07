@@ -48,7 +48,7 @@ PdfTest::setUp()
   _mu(1) = MU_0; _mu(2) = MU_1;
   _sigma.resize(DIMENSION);
   _sigma = 0.0;
-  for (int rows=1; rows < DIMENSION + 1; rows++){ _sigma(rows,rows)=SIGMA; }
+  for (unsigned int rows=1; rows < DIMENSION + 1; rows++){ _sigma(rows,rows)=SIGMA; }
 }
 
 void 
@@ -146,7 +146,7 @@ PdfTest::testLinearAnalyticConditionalGaussian()
   CPPUNIT_ASSERT_EQUAL( NUM_COND_ARGS, a_condgaussian.NumConditionalArgumentsGet());
 
   /* Matrix Check */
-  for (int i=0; i < NUM_COND_ARGS; i++)
+  for (unsigned int i=0; i < NUM_COND_ARGS; i++)
   {
     CPPUNIT_ASSERT_EQUAL( v[i], a_condgaussian.MatrixGet(i));
   }
@@ -178,7 +178,7 @@ PdfTest::testLinearAnalyticConditionalGaussian()
   a_condgaussian.ConditionalArgumentsSet(cond_args);
 
   CPPUNIT_ASSERT_EQUAL( DIMENSION, a_condgaussian.DimensionGet());
-  for (int i=0; i < NUM_COND_ARGS; i++)
+  for (unsigned int i=0; i < NUM_COND_ARGS; i++)
   {
     CPPUNIT_ASSERT_EQUAL( cond_args[i], a_condgaussian.ConditionalArgumentsGet()[i]);
   }
@@ -196,7 +196,7 @@ PdfTest::testLinearAnalyticConditionalGaussian()
   CPPUNIT_ASSERT_EQUAL( true, a_condgaussian.SampleFrom(a_sample,CHOLESKY,NULL));
 
   /* Test dfGet */
-  for (int i=0; i < NUM_COND_ARGS; i++)
+  for (unsigned int i=0; i < NUM_COND_ARGS; i++)
   {
     CPPUNIT_ASSERT_EQUAL( v[i], a_condgaussian.dfGet(i));
   }
@@ -204,7 +204,7 @@ PdfTest::testLinearAnalyticConditionalGaussian()
   /* Setting and Getting mean/covariance */
   // calculate expected value
   ColumnVector exp(DIMENSION); exp = 0.0;
-  for (int i=0; i < NUM_COND_ARGS; i++)
+  for (unsigned int i=0; i < NUM_COND_ARGS; i++)
   {
      exp = exp + v[i]*cond_args[i];
   }
@@ -235,7 +235,7 @@ PdfTest::testLinearAnalyticConditionalGaussian()
   sigma2.resize(DIMENSION);
   sigma2 = 0.0;
   double sig2 = 0.05; 
-  for (int rows=1; rows < DIMENSION + 1; rows++){ sigma2(rows,rows)=sig2; }
+  for (unsigned int rows=1; rows < DIMENSION + 1; rows++){ sigma2(rows,rows)=sig2; }
 
   a_condgaussian.AdditiveNoiseMuSet(mu2);
   a_condgaussian.AdditiveNoiseSigmaSet(sigma2);
@@ -324,7 +324,7 @@ PdfTest::testMcpdf()
   /* Getting and setting the list of samples (non-weighted)*/
   a_mcpdf.ListOfSamplesSet(exact_samples);
   const vector<WeightedSample<ColumnVector> > mcpdf_samples = a_mcpdf.ListOfSamplesGet();
-  for (int i = 0; i < NUM_SAMPLES ; i++)
+  for (unsigned int i = 0; i < NUM_SAMPLES ; i++)
   {
      CPPUNIT_ASSERT_EQUAL( exact_samples[i].ValueGet(), mcpdf_samples[i].ValueGet());
      CPPUNIT_ASSERT_EQUAL( exact_samples[i].ValueGet(), a_mcpdf.SampleGet(i).ValueGet());
@@ -333,14 +333,14 @@ PdfTest::testMcpdf()
 
   /* List of samples update + getting and setting the list of samples (weighted)*/
   vector<WeightedSample<ColumnVector> > samples_weighted = mcpdf_samples;
-  for (int i = 0 ; i < NUM_SAMPLES ; i++)  
+  for (unsigned int i = 0 ; i < NUM_SAMPLES ; i++)  
   {
      //set a weight
      samples_weighted[i].WeightSet(i+1);
   }
   double tot_weight = (double)(NUM_SAMPLES+1)*((double)NUM_SAMPLES)/2.0;
   CPPUNIT_ASSERT_EQUAL( true , a_mcpdf.ListOfSamplesUpdate(samples_weighted) );
-  for (int i = 0; i < NUM_SAMPLES ; i++)
+  for (unsigned int i = 0; i < NUM_SAMPLES ; i++)
   {
      CPPUNIT_ASSERT_EQUAL( samples_weighted[i].ValueGet(), a_mcpdf.SampleGet(i).ValueGet());
      CPPUNIT_ASSERT_EQUAL( (double)(samples_weighted[i].WeightGet())/tot_weight, a_mcpdf.SampleGet(i).WeightGet());
@@ -348,7 +348,7 @@ PdfTest::testMcpdf()
 
   /* Copy Constructor etc */
   MCPdf<ColumnVector> b_mcpdf(a_mcpdf);
-  for (int i = 0; i < NUM_SAMPLES ; i++)
+  for (unsigned int i = 0; i < NUM_SAMPLES ; i++)
   {
      CPPUNIT_ASSERT_EQUAL( a_mcpdf.SampleGet(i).ValueGet(), b_mcpdf.SampleGet(i).ValueGet());
      CPPUNIT_ASSERT_EQUAL( a_mcpdf.SampleGet(i).WeightGet(), b_mcpdf.SampleGet(i).WeightGet());

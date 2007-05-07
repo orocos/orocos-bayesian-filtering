@@ -64,7 +64,7 @@ namespace BFL
   FilterPropDens::SystemModelSet(AnalyticSystemModelGaussianUncertainty * SysModel)
   {
     assert ( SysModel != NULL );
-    assert ( (this->DimensionGet() == 0) || (this->DimensionGet() == SysModel->StateSizeGet()) );
+    assert ( (this->DimensionGet() == 0) || (this->DimensionGet() == (unsigned int)SysModel->StateSizeGet()) );
     if ((this->DimensionGet() == 0))
       {
 	_TmpPrior->DimensionSet(SysModel->StateSizeGet());

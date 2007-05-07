@@ -52,6 +52,8 @@ namespace BFL
     
     // store results in one_sample
     one_sample.ValueSet(state + noise.ValueGet());
+
+    return true;
   }
   
 }//namespace BFL                          
