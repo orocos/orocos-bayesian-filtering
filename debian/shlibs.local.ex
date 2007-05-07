@@ -1,1 +1,1 @@
-liblibbfl 0.4.9 libbfl (>> 0.4.9-0), libbfl (<< 0.4.9-99)
+liblibbfl 0.5.0 libbfl (>> 0.5.0-0), libbfl (<< 0.5.0-99)
