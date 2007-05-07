@@ -1,6 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.2)
 #MARK_AS_ADVANCED( FORCE CMAKE_BACKWARDS_COMPATIBILITY )
 
+
+
 ###################################################
 #                                                 #
 #       Start project customization section       #
@@ -8,7 +10,10 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.2)
 ###################################################
 
 PROJECT(orocos-bfl)
-SET( VERSION 0.4.9 CACHE STRING "Version of Orocos BFL" )
+SET(VERSION_MAJOR "0")
+SET(VERSION_MINOR "4")
+SET(VERSION_PATCH "9")
+SET(VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
 MARK_AS_ADVANCED(VERSION)
 MESSAGE( "Orocos BFL version ${VERSION}" )
 MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH)
@@ -27,9 +32,7 @@ IF(NOT CMAKE_INSTALL_PREFIX)
 ENDIF(NOT CMAKE_INSTALL_PREFIX)
 
 SET( PROJ_SOURCE_DIR ${orocos-bfl_SOURCE_DIR} )
-
 SET( PROJ_BINARY_DIR ${orocos-bfl_BINARY_DIR} )
-
 
 
 
@@ -60,17 +63,16 @@ INCLUDE( ${PROJ_SOURCE_DIR}/config/DependentOption.cmake )
 #                                                 #
 ###################################################
 
-#
-# This is the first in the include path.
-INCLUDE_DIRECTORIES( ${PROJ_SOURCE_DIR} )
-
 # Put your 'flags' inhere if you want them to apear in the
 # orocos-BFL.pc file. Various .cmake scripts below do this.
 SET( ENV{OROCOS_BFL_CFLAGS} "")
 SET( ENV{OROCOS_BFL_LINKFLAGS} "")
 
 ## Shared or static library
-OPTION( LIBRARY_SHARED "Build Orocos BFL as a shared library." ON)
+IF (NOT LIBRARY_TYPE)
+  SET( LIBRARY_TYPE shared CACHE STRING "What type of library to build: (shared, static or both)")
+ENDIF (NOT LIBRARY_TYPE)
+
 
 ## Find MATRIX LIB
 # ----------------
@@ -78,7 +80,6 @@ IF (NOT __MATRIXWRAPPER_NEWMAT__)
   SET(__MATRIXWRAPPER_NEWMAT__ OFF CACHE BOOL "define for newmat")
   MARK_AS_ADVANCED(__MATRIXWRAPPER_NEWMAT__)
 ENDIF (NOT __MATRIXWRAPPER_NEWMAT__)
-
 IF (NOT __MATRIXWRAPPER_LTI__)
   SET(__MATRIXWRAPPER_LTI__ OFF CACHE BOOL "define for lti")
   MARK_AS_ADVANCED(__MATRIXWRAPPER_LTI__)
