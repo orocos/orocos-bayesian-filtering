@@ -1,0 +1,85 @@
+#!/bin/bash
+
+echo "Orocos BFL configure script."
+
+function usage
+{
+   echo "This script allows you to set the compiler and CFLAGS/LDFLAGS."
+   echo "Usage : ../configure [--prefix=/usr/local] [--with-target=/target/path] [CC=compiler] [CXX=compiler]"
+   echo
+   echo "Supported --with-target's: --with-xenomai --with-lxrt --with-gnulinux"
+   echo
+   echo "Example: CXXFLAGS='-g' $0 --prefix=/usr/local/orocos CC=gcc-3.3.6 CXX=g++-3.3.6"
+   echo
+   echo "For more advanced configuration, use the 'ccmake' utility directly."
+}
+
+function getoptions
+{
+    arg=$1
+    if [ $(expr match "$arg" "CC=") != 0 ]; then
+	CMAKE_CC="$arg"
+    fi
+
+    if [ $(expr match "$arg" "CXX=") != 0 ]; then
+	CMAKE_CXX="$arg"
+    fi
+
+    if [ $(expr match "$arg" "--prefix=") != 0 ]; then
+	CMAKE_PREFIX="${arg:9}"
+	CMAKE_ARGS="-DCMAKE_INSTALL_PREFIX=$CMAKE_PREFIX"
+    fi
+}
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -h | --help )           usage
+                                exit
+                                ;;
+        * )                     getoptions $1
+    esac
+    shift
+done
+
+src_dir=$(dirname $0)
+
+if [ -f ./CMakeCache.txt ]; then
+   echo "Error: One can not change the compiler once configured !"
+   echo "Error: In order to change the compiler, use a fresh build directory."
+   exit 1
+fi
+
+if [ x$(which cmake) == x ]; then
+   echo "Error: 'cmake' executable not found. Download it from http://www.cmake.org"
+   echo "Error: or install the cmake package of your distribution version 2.2 or higher."
+   exit 1
+fi
+
+# If CXXFLAGS set, build type must be set to None to have them picked up.
+if [ "x$CXXFLAGS" != "x" ]; then
+    CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_BUILD_TYPE=None"
+    export CXXFLAGS
+fi
+if [ "x$LDFLAGS" != "x" ]; then
+    #CMAKE_ARGS="$CMAKE_ARGS -DCMAKE_BUILD_TYPE=None"
+    export LDFLAGS
+fi
+
+CMAKE_EXE=$(which cmake)
+
+if [ x$CMAKE_EXE = x ]; then
+  echo "Error: cmake program not found. See http://www.cmake.org"
+  exit 1;
+fi
+
+echo "Invoking: '$CMAKE_CC $CMAKE_CXX $CMAKE_EXE .. $CMAKE_ARGS'"
+if [ x$CMAKE_CC != x ]; then
+export $CMAKE_CC 
+fi
+if [ x$CMAKE_CXX != x ]; then
+export $CMAKE_CXX 
+fi
+$CMAKE_EXE $src_dir $CMAKE_ARGS || { echo -e "\ncmake produced an error - removing cache."; rm CMakeCache.txt; exit 1; }
+
+echo
+echo "OK: configure done. Now issue 'make'."
