@@ -69,6 +69,8 @@ INCLUDE_DIRECTORIES( ${PROJ_SOURCE_DIR} )
 SET( ENV{OROCOS_BFL_CFLAGS} "")
 SET( ENV{OROCOS_BFL_LINKFLAGS} "")
 
+## Shared or static library
+OPTION( LIBRARY_SHARED "Build Orocos BFL as a shared library." ON)
 
 ## Find MATRIX LIB
 # ----------------
@@ -121,8 +123,8 @@ IF(NOT CPPUNIT_INSTALL)
   SET( CPPUNIT_INSTALL /usr CACHE PATH "The CppUnit lib installation directory.")
 ENDIF(NOT CPPUNIT_INSTALL)
 INCLUDE (${PROJ_SOURCE_DIR}/config/FindCppUnit.cmake)
-DEPENDENT_OPTION( BUILD_TESTS "Turn me off to disable compilation of all tests" ON "CPPUNIT_FOUND" OFF)
-OPTION( BUILD_EXAMPLES "Turn me off to disable compilation of all examples" ON )
+DEPENDENT_OPTION( BUILD_TESTS "Turn me off to disable the BFL functionality testing" ON "CPPUNIT_FOUND" OFF)
+OPTION( BUILD_EXAMPLES "Turn me off to disable the compilation of the BFL examples" ON )
 
 
 ## Uninstall target
