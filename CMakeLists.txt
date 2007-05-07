@@ -31,56 +31,6 @@ SET( PROJ_SOURCE_DIR ${orocos-bfl_SOURCE_DIR} )
 SET( PROJ_BINARY_DIR ${orocos-bfl_BINARY_DIR} )
 
 
-# create defines for matrix and rng
-# ---------------------------------
-IF (NOT __MATRIXWRAPPER_NEWMAT__)
-  SET(__MATRIXWRAPPER_NEWMAT__ OFF CACHE BOOL "define for newmat")
-  MARK_AS_ADVANCED(__MATRIXWRAPPER_NEWMAT__)
-ENDIF (NOT __MATRIXWRAPPER_NEWMAT__)
-
-IF (NOT __MATRIXWRAPPER_LTI__)
-  SET(__MATRIXWRAPPER_LTI__ OFF CACHE BOOL "define for lti")
-  MARK_AS_ADVANCED(__MATRIXWRAPPER_LTI__)
-ENDIF (NOT __MATRIXWRAPPER_LTI__)
-
-IF (NOT __RNGWRAPPER_BOOST__)
-  SET(__RNGWRAPPER_BOOST__ OFF CACHE BOOL "define for boost")
-  MARK_AS_ADVANCED(__RNGWRAPPER_BOOST__)
-ENDIF (NOT __RNGWRAPPER_BOOST__)
-
-IF (NOT __RNGWRAPPER_LTI__)
-  SET(__RNGWRAPPER_LTI__ OFF CACHE BOOL "define for lti")
-  MARK_AS_ADVANCED(__RNGWRAPPER_LTI__)
-ENDIF (NOT __RNGWRAPPER_LTI__)
-
-
-# install dir of matrix, rng and ginac
-# ------------------------------------
-IF(NOT MATRIX_LIB)
-  SET( MATRIX_LIB lti CACHE STRING "Which matrix library to use: lti or newmat")
-ENDIF(NOT MATRIX_LIB)
-IF(NOT MATRIX_INSTALL)
-  SET( MATRIX_INSTALL /usr CACHE PATH "The Matrix lib installation directory.")
-ENDIF(NOT MATRIX_INSTALL)
-
-IF(NOT RNG_LIB)
-  SET( RNG_LIB lti CACHE STRING "Which rng library to use: lti or boost")
-ENDIF(NOT RNG_LIB)
-IF(NOT RNG_INSTALL)
-  SET( RNG_INSTALL /usr CACHE PATH "The rng lib installation directory.")
-ENDIF(NOT RNG_INSTALL)
-
-IF (NOT GINAC_SUPPORT)
-  SET(GINAC_SUPPORT OFF CACHE BOOL "try to compile ginac dependant classes ")
-ENDIF (NOT GINAC_SUPPORT)
-
-IF(NOT GINAC_INSTALL)
-  SET( GINAC_INSTALL /usr CACHE PATH "The Ginac lib installation directory.")
-ENDIF(NOT GINAC_INSTALL)
-
-IF(NOT CPPUNIT_INSTALL)
-  SET( CPPUNIT_INSTALL /usr CACHE PATH "The CppUnit lib installation directory.")
-ENDIF(NOT CPPUNIT_INSTALL)
 
 
 # Set the build type (affects debugging symbols and optimization)
@@ -99,7 +49,9 @@ ENDIF ( NOT CMAKE_BUILD_TYPE )
 
 # MESSAGE("Looking for compiler:")
 INCLUDE (${CMAKE_ROOT}/Modules/CMakeDetermineCXXCompiler.cmake)
-
+INCLUDE( ${CMAKE_ROOT}/Modules/CheckIncludeFileCXX.cmake )
+INCLUDE( ${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake )
+INCLUDE( ${PROJ_SOURCE_DIR}/config/DependentOption.cmake )
 
 
 ###################################################
@@ -117,19 +69,61 @@ INCLUDE_DIRECTORIES( ${PROJ_SOURCE_DIR} )
 SET( ENV{OROCOS_BFL_CFLAGS} "")
 SET( ENV{OROCOS_BFL_LINKFLAGS} "")
 
-INCLUDE(${PROJ_SOURCE_DIR}/config/global_setup.cmake)
 
 ## Find MATRIX LIB
+# ----------------
+IF (NOT __MATRIXWRAPPER_NEWMAT__)
+  SET(__MATRIXWRAPPER_NEWMAT__ OFF CACHE BOOL "define for newmat")
+  MARK_AS_ADVANCED(__MATRIXWRAPPER_NEWMAT__)
+ENDIF (NOT __MATRIXWRAPPER_NEWMAT__)
+
+IF (NOT __MATRIXWRAPPER_LTI__)
+  SET(__MATRIXWRAPPER_LTI__ OFF CACHE BOOL "define for lti")
+  MARK_AS_ADVANCED(__MATRIXWRAPPER_LTI__)
+ENDIF (NOT __MATRIXWRAPPER_LTI__)
+IF(NOT MATRIX_LIB)
+  SET( MATRIX_LIB lti CACHE STRING "Which matrix library to use: lti or newmat")
+ENDIF(NOT MATRIX_LIB)
+IF(NOT MATRIX_INSTALL)
+  SET( MATRIX_INSTALL /usr CACHE PATH "The Matrix lib installation directory.")
+ENDIF(NOT MATRIX_INSTALL)
 INCLUDE (${PROJ_SOURCE_DIR}/config/FindMATRIX.cmake)
 
 ## Find RNG LIB
+# ----------------
+IF (NOT __RNGWRAPPER_BOOST__)
+  SET(__RNGWRAPPER_BOOST__ OFF CACHE BOOL "define for boost")
+  MARK_AS_ADVANCED(__RNGWRAPPER_BOOST__)
+ENDIF (NOT __RNGWRAPPER_BOOST__)
+IF (NOT __RNGWRAPPER_LTI__)
+  SET(__RNGWRAPPER_LTI__ OFF CACHE BOOL "define for lti")
+  MARK_AS_ADVANCED(__RNGWRAPPER_LTI__)
+ENDIF (NOT __RNGWRAPPER_LTI__)
+IF(NOT RNG_LIB)
+  SET( RNG_LIB lti CACHE STRING "Which rng library to use: lti or boost")
+ENDIF(NOT RNG_LIB)
+IF(NOT RNG_INSTALL)
+  SET( RNG_INSTALL /usr CACHE PATH "The rng lib installation directory.")
+ENDIF(NOT RNG_INSTALL)
 INCLUDE (${PROJ_SOURCE_DIR}/config/FindRNG.cmake)
 
 ## Find GINAC
+# ----------------
+OPTION( GINAC_SUPPORT "Turn me off to disable Ginac support" OFF )
+IF(NOT GINAC_INSTALL)
+  SET( GINAC_INSTALL /usr CACHE PATH "The Ginac lib installation directory.")
+ENDIF(NOT GINAC_INSTALL)
 INCLUDE (${PROJ_SOURCE_DIR}/config/FindGINAC.cmake)
 
-## Find MATRIX LIB
+## Find CPP Unit
+# ----------------
+IF(NOT CPPUNIT_INSTALL)
+  SET( CPPUNIT_INSTALL /usr CACHE PATH "The CppUnit lib installation directory.")
+ENDIF(NOT CPPUNIT_INSTALL)
 INCLUDE (${PROJ_SOURCE_DIR}/config/FindCppUnit.cmake)
+DEPENDENT_OPTION( BUILD_TESTS "Turn me off to disable compilation of all tests" ON "CPPUNIT_FOUND" OFF)
+OPTION( BUILD_EXAMPLES "Turn me off to disable compilation of all examples" ON )
+
 
 ## Uninstall target
 CONFIGURE_FILE(
@@ -167,57 +161,6 @@ SET(OROCOS_BFL_CFLAGS "$ENV{OROCOS_BFL_CFLAGS}")
 CONFIGURE_FILE( orocos-bfl.pc.in orocos-bfl.pc @ONLY)
 INSTALL_FILES( /lib/pkgconfig FILES orocos-bfl.pc)
 CONFIGURE_FILE(Doxyfile.in Doxyfile @ONLY)
-
-
-
-############################################################
-##                                                         #
-## Setup PACKAGING   THIS IS EXPERIMENTAL/BETA/NOT USED    #
-##                                                         #
-############################################################
-
-IF ( "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" STREQUAL "2.4" )
-OPTION( CPACK_PACKAGES "Set to ON to build the packages. Requires cmake >2.4" OFF )
-MARK_AS_ADVANCED( CPACK_PACKAGES )
-IF (CPACK_PACKAGES)
-
-INCLUDE(InstallRequiredSystemLibraries)
-
-# ATTENTION: There is sometimes a _SOURCE_ version of an
-# option as well, set both if necessary !
-
-# Create .tar.gz and .tar.tbz2 files:
-SET(CPACK_GENERATOR "TBZ2")
-SET(CPACK_SOURCE_GENERATOR "TBZ2")
-
-# The plain 'package' target works correctly.
-SET(CPACK_IGNORE_FILES        "/CVS/;/.svn/;.swp$;.#;/#;/build/")
-# Since the 'package_source' target does a bold copy, define a list of
-# files which should be excluded. Note that 'subpattern' matching is used,
-# thus to exclude a directory use /mydir/
-SET(CPACK_SOURCE_IGNORE_FILES "/CVS/;/.svn/;.swp$;.#;/#;/build/;~")
-
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Orocos BFL")
-SET(CPACK_PACKAGE_VENDOR "The Orocos Community")
-SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
-SET(CPACK_PACKAGE_MAJOR_VERSION "0")
-SET(CPACK_PACKAGE_MINOR_VERSION "1")
-SET(CPACK_PACKAGE_VERSION_PATCH "1")
-
-SET(CPACK_PACKAGE_EXECUTABLES "OrocosExec" "Orocos Executable")
-
-SET(CPACK_PACKAGE_INSTALL_DIRECTORY "${CMAKE_INSTALL_PREFIX}")
-SET(CPACK_SOURCE_TOPLEVEL_TAG "src")
-SET(CPACK_PACKAGE_FILE_NAME "orocos-bfl")
-
-INCLUDE(CPack)
-ENDIF (CPACK_PACKAGES)
-ELSE ( "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" STREQUAL "2.4" )
-
-   MESSAGE ( "Disabling packaging for version ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}")
-
-ENDIF ( "${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" STREQUAL "2.4" )
 
 
 
