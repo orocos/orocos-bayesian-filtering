@@ -1,7 +1,0 @@
-orocos-rtt for Debian
----------------------
-
-The initial package was created from orocos BFL. All other CMAKE
-options are left to the default.
-
- -- Wim Meeussen <wim.meeussen@mech.kuleuven.be>
