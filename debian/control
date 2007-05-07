@@ -8,7 +8,7 @@ Section: libs
 Package: libbfl-dev
 Section: libdevel
 Architecture: any
-Depends: libbfl
+Depends: libbfl (= ${Source-Version})
 Description: Orocos Bayesian Filtering Library development files
       Orocos (http://www.orocos.org) is the acronym of the
       Open Robot Control Software project. The project's aim is to develop

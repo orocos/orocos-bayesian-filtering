@@ -1,6 +1,8 @@
-rm libbfl* -r
+rm libbfl* -rf
 
 svn export . libbfl-0.5.0
+
+cp debian/* libbfl-0.5.0/debian/
 
 tar czvf libbfl-0.5.0.tgz libbfl-0.5.0/ 
 
