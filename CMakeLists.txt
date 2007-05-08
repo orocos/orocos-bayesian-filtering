@@ -30,19 +30,24 @@ IF(NOT CMAKE_INSTALL_PREFIX)
   SET( CMAKE_INSTALL_PREFIX /usr/local/ CACHE PATH "Installation directory" FORCE)
   MESSAGE( "Setting installation directory to ${CMAKE_INSTALL_PREFIX}" )
 ENDIF(NOT CMAKE_INSTALL_PREFIX)
-
 SET( PROJ_SOURCE_DIR ${orocos-bfl_SOURCE_DIR} )
 SET( PROJ_BINARY_DIR ${orocos-bfl_BINARY_DIR} )
 
+
+# get svn revision number
+# ------------
+CONFIGURE_FILE(revision.in revision @ONLY)
+EXECUTE_PROCESS(COMMAND ./revision OUTPUT_VARIABLE SVN_REVISION)
+MESSAGE("SVN REVISION ${SVN_REVISION}")
 
 
 # Set the build type (affects debugging symbols and optimization)
 # ------------------
 IF ( NOT CMAKE_BUILD_TYPE )
   SET( CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type: None (Use CMAKE_C_FLAGS and CMAKE_CXX_FLAGS), Release, Debug, RelWithDebInfo, MinSizeRel." FORCE )
-  MESSAGE( "Setting build type to '${CMAKE_BUILD_TYPE}'" )
+  MESSAGE( "Build type set to '${CMAKE_BUILD_TYPE}'" )
 ELSE ( NOT CMAKE_BUILD_TYPE )
-  MESSAGE( "Build type set to '${CMAKE_BUILD_TYPE}' by user." )
+  MESSAGE( "Build type set to '${CMAKE_BUILD_TYPE}'" )
   IF ( NOT CMAKE_BUILD_TYPE STREQUAL "BFL" )
     MARK_AS_ADVANCED(FORCE CMAKE_C_FLAGS_BFL CMAKE_CXX_FLAGS_BFL)
   ELSE ( NOT CMAKE_BUILD_TYPE STREQUAL "BFL" )
@@ -163,7 +168,7 @@ SET(OROCOS_BFL_LINKFLAGS "$ENV{OROCOS_BFL_LINKFLAGS}")
 SET(OROCOS_BFL_CFLAGS "$ENV{OROCOS_BFL_CFLAGS}")
 CONFIGURE_FILE( orocos-bfl.pc.in orocos-bfl.pc @ONLY)
 INSTALL_FILES( /lib/pkgconfig FILES orocos-bfl.pc)
-CONFIGURE_FILE(Doxyfile.in Doxyfile @ONLY)
+
 
 
 
@@ -172,12 +177,5 @@ CONFIGURE_FILE(Doxyfile.in Doxyfile @ONLY)
 # Building Doxygen documents#
 #                           #
 #############################
-
+CONFIGURE_FILE(Doxyfile.in Doxyfile @ONLY)
 ADD_CUSTOM_TARGET(docs "doxygen" "Doxyfile")
-
-## Debugging
-OPTION( DISPLAY_FLAGS "Display cmake variables at end of configure step." OFF)
-MARK_AS_ADVANCED(DISPLAY_FLAGS)
-IF( DISPLAY_FLAGS )
-INCLUDE(config/cmake_logging.cmake)
-ENDIF( DISPLAY_FLAGS )
