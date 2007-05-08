@@ -1,6 +1,6 @@
-orocos-bfl (0.5.0-1) unstable; urgency=low
+orocos-bfl (0.4.9-1) unstable; urgency=low
 
   * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
 
- -- Wim Meeussen <wim.meeussen@mech.kuleuven.be>  Tue,  8 May 2007 07:50:41 +0200
+ -- Tinne De Laet <tinne.delaet@mech.kuleuven.be>  Tue,  8 May 2007 07:50:41 +0200
 
