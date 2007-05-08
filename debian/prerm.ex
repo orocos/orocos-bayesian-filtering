@@ -1,5 +1,5 @@
 #!/bin/sh
-# prerm script for libbfl
+# prerm script for orocos-bfl
 #
 # see: dh_installdeb(1)
 

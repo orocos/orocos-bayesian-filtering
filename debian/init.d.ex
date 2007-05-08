@@ -11,15 +11,15 @@
 #
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-DAEMON=/usr/sbin/libbfl
-NAME=libbfl
-DESC=libbfl
+DAEMON=/usr/sbin/orocos-bfl
+NAME=orocos-bfl
+DESC=orocos-bfl
 
 test -x $DAEMON || exit 0
 
-# Include libbfl defaults if available
-if [ -f /etc/default/libbfl ] ; then
-	. /etc/default/libbfl
+# Include orocos-bfl defaults if available
+if [ -f /etc/default/orocos-bfl ] ; then
+	. /etc/default/orocos-bfl
 fi
 
 set -e

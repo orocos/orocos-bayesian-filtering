@@ -20,14 +20,14 @@ manpage.1: manpage.sgml
   <!ENTITY dhfirstname "<firstname>FIRSTNAME</firstname>">
   <!ENTITY dhsurname   "<surname>SURNAME</surname>">
   <!-- Please adjust the date whenever revising the manpage. -->
-  <!ENTITY dhdate      "<date>May  7, 2007</date>">
+  <!ENTITY dhdate      "<date>May  8, 2007</date>">
   <!-- SECTION should be 1-8, maybe w/ subsection other parameters are
        allowed: see man(7), man(1). -->
   <!ENTITY dhsection   "<manvolnum>SECTION</manvolnum>">
   <!ENTITY dhemail     "<email>wim.meeussen@mech.kuleuven.be</email>">
   <!ENTITY dhusername  "Wim Meeussen">
-  <!ENTITY dhucpackage "<refentrytitle>LIBBFL</refentrytitle>">
-  <!ENTITY dhpackage   "libbfl">
+  <!ENTITY dhucpackage "<refentrytitle>OROCOS-BFL</refentrytitle>">
+  <!ENTITY dhpackage   "orocos-bfl">
 
   <!ENTITY debian      "<productname>Debian</productname>">
   <!ENTITY gnu         "<acronym>GNU</acronym>">

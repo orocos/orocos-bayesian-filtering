@@ -1,5 +1,5 @@
 #!/bin/sh
-# postrm script for libbfl
+# postrm script for orocos-bfl
 #
 # see: dh_installdeb(1)
 

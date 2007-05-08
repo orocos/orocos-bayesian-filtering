@@ -37,7 +37,7 @@ build-stamp:  build/Makefile
 	dh_testdir
 
 	# Add here commands to compile the package.
-	cd build; $(MAKE)
+	cd build; $(MAKE) -j 6
 
 	touch $@
 
@@ -72,7 +72,7 @@ binary-arch: build install
 	dh_installchangelogs ChangeLog
 	dh_installdocs
 	dh_installexamples
-#	dh_install --sourcedir=debian/tmp
+	dh_install --sourcedir=debian/tmp
 #	dh_installmenu
 #	dh_installdebconf	
 #	dh_installlogrotate

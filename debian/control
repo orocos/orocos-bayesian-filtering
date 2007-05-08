@@ -1,14 +1,14 @@
-Source: libbfl
+Source: orocos-bfl
 Priority: optional
 Maintainer: Wim Meeussen <wim.meeussen@mech.kuleuven.be>
-Build-Depends: debhelper (>= 5), cmake, libboost-dev, liblti-dev
+Build-Depends: debhelper (>= 5), cmake, liblti-dev
 Standards-Version: 3.7.2
 Section: libs
 
-Package: libbfl-dev
+Package: orocos-bfl-dev
 Section: libdevel
 Architecture: any
-Depends: libbfl (= ${Source-Version})
+Depends: liblti-dev, orocos-bfl (= ${Source-Version})
 Description: Orocos Bayesian Filtering Library development files
       Orocos (http://www.orocos.org) is the acronym of the
       Open Robot Control Software project. The project's aim is to develop
@@ -20,10 +20,10 @@ Description: Orocos Bayesian Filtering Library development files
       .
       This package provides the headers for developing Orocos applications.
 
-Package: libbfl
+Package: orocos-bfl
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: liblti, ${shlibs:Depends}, ${misc:Depends}
 Description: Orocos Bayesian Filtering Library
       Orocos (http://www.orocos.org) is the acronym of the
       Open Robot Control Software project. The project's aim is to develop

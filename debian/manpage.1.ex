@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH LIBBFL SECTION "May  7, 2007"
+.TH OROCOS-BFL SECTION "May  8, 2007"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -16,16 +16,16 @@
 .\" .sp <n>    insert n+1 empty lines
 .\" for manpage-specific macros, see man(7)
 .SH NAME
-libbfl \- program to do something
+orocos-bfl \- program to do something
 .SH SYNOPSIS
-.B libbfl
+.B orocos-bfl
 .RI [ options ] " files" ...
 .br
 .B bar
 .RI [ options ] " files" ...
 .SH DESCRIPTION
 This manual page documents briefly the
-.B libbfl
+.B orocos-bfl
 and
 .B bar
 commands.
@@ -33,7 +33,7 @@ commands.
 .\" TeX users may be more comfortable with the \fB<whatever>\fP and
 .\" \fI<whatever>\fP escape sequences to invode bold face and italics, 
 .\" respectively.
-\fBlibbfl\fP is a program that...
+\fBorocos-bfl\fP is a program that...
 .SH OPTIONS
 These programs follow the usual GNU command line syntax, with long
 options starting with two dashes (`-').
@@ -53,7 +53,7 @@ The programs are documented fully by
 .IR "The Rise and Fall of a Fooish Bar" ,
 available via the Info system.
 .SH AUTHOR
-libbfl was written by <upstream author>.
+orocos-bfl was written by <upstream author>.
 .PP
 This manual page was written by Wim Meeussen <wim.meeussen@mech.kuleuven.be>,
 for the Debian project (but may be used by others).

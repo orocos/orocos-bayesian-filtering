@@ -1,12 +1,12 @@
 #! /bin/sh -e
-# /usr/lib/emacsen-common/packages/install/libbfl
+# /usr/lib/emacsen-common/packages/install/orocos-bfl
 
 # Written by Jim Van Zandt <jrv@debian.org>, borrowing heavily
 # from the install scripts for gettext by Santiago Vila
 # <sanvila@ctv.es> and octave by Dirk Eddelbuettel <edd@debian.org>.
 
 FLAVOR=$1
-PACKAGE=libbfl
+PACKAGE=orocos-bfl
 
 if [ ${FLAVOR} = emacs ]; then exit 0; fi
 
