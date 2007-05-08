@@ -1,6 +1,6 @@
 Source: orocos-bfl
 Priority: optional
-Maintainer: Wim Meeussen <wim.meeussen@mech.kuleuven.be>
+Maintainer: Tinne De Laet <tinne.delaet@mech.kuleuven.be>
 Build-Depends: debhelper (>= 5), cmake, liblti-dev
 Standards-Version: 3.7.2
 Section: libs
