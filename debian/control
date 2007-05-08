@@ -9,6 +9,7 @@ Package: orocos-bfl-dev
 Section: libdevel
 Architecture: any
 Depends: liblti-dev, orocos-bfl (= ${Source-Version})
+Conflicts: libbfl-dev
 Description: Orocos Bayesian Filtering Library development files
       Orocos (http://www.orocos.org) is the acronym of the
       Open Robot Control Software project. The project's aim is to develop
@@ -39,6 +40,22 @@ Package: orocos-bfl
 Section: libs
 Architecture: any
 Depends: liblti, ${shlibs:Depends}, ${misc:Depends}
+Conflicts: libbfl
+Description: Orocos Bayesian Filtering Library
+      Orocos (http://www.orocos.org) is the acronym of the
+      Open Robot Control Software project. The project's aim is to develop
+      a general-purpose, free software, and modular framework
+      for robotand machine control.
+      The Orocos project supports 4 C++ libraries: the Real-Time Toolkit, the
+      Kinematics and Dynamics Library, the Bayesian Filtering Library and
+      the Orocos Component Library.
+      .
+      This package provides the RTT library.
+
+Package: bfl
+Section: libs
+Architecture: any
+Depends: orocos-bfl, orocos-bfl-dev, orocos-bfl-examples
 Description: Orocos Bayesian Filtering Library
       Orocos (http://www.orocos.org) is the acronym of the
       Open Robot Control Software project. The project's aim is to develop
