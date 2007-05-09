@@ -81,19 +81,15 @@ started:
 The instructions explain how to install libraries in the /usr/local
 directory. You will need write permissions in this directory. When you
 don't have these permissions, you can also install everything in your
-home directory. To do this, just replace /usr/local/ by
-/home/yourname in the installation instructions.
-
-
+home directory.
 
 \subsection{Install an external matrix library}
 %----------------------------------
 BFL requires an external library for matrix computations. You can
 choose to use the LTI library, or the Newmat library.
 
-
 \subsubsection{LTI matrix library}
-Follow the same instructions as described in section~\ref{subsec:lti}
+\label{subsec:lti}
 You can install the LTI library as a precompiled Ubuntu/Debian
 package, or compile it from source. 
 \begin{itemize}
@@ -113,13 +109,13 @@ package, or compile it from source.
 \item Then download the latest version of the LTI library from the LTI
   web page
   \url{http://ltilib.sourceforge.net/doc/homepage/index.shtml}
-\item Move the downloaded file to your installation folder:
+\item Move the downloaded file to a sources folder:
 \begin{verbatim}
-  mv ltilib.tar.gz /usr/local/
+  mv ltilib.tar.gz ~/sources/
 \end{verbatim}
-\item Go to the directory /usr/local/
+\item Go to the directory ~/sources/
 \begin{verbatim}
-  cd /usr/local/
+  cd ~/sources/
 \end{verbatim}
 \item UN-tar and unzip the file:
 \begin{verbatim}
@@ -132,10 +128,12 @@ package, or compile it from source.
   ./configure --disable-debug --without-gtk --disable-gtk
   make
 \end{verbatim}
+  If you don't want to install ltilib in \texttt{/usr/local}
+  (e.g.~because you don't have admin rights), pass the
+  \texttt{\-\-prefix} option to the configure script.
 \item Finally, install the library
-/usr/local/
 \begin{verbatim}
-  sudo make install
+  [sudo] make install
 \end{verbatim}
 \end{enumerate}
 For more details, see the LTI web page
@@ -164,11 +162,11 @@ package, or compile it from source.
   \url{http://www.robertnz.net/index.html}
 \item Move the downloaded file to your installation folder:
 \begin{verbatim}
-  mv newmat1x.tar.gz /usr/local/
+  mv newmat1x.tar.gz ~/sources
 \end{verbatim}
-\item Go to the directory /usr/local/
+\item Go to the directory ~/sources
 \begin{verbatim}
-  cd /usr/local/
+  cd ~/sources
 \end{verbatim}
 \item UN-tar and unzip the file:
 \begin{verbatim}
@@ -177,17 +175,20 @@ package, or compile it from source.
 \item Then copy the Makefile.newmat and the include.h.newmat from
   bfl/aids (see further instructions to get BFL sources):
 \begin{verbatim}
-  cp /usr/local/bfl/aids/Makefile.newmat /usr/local/newmat1x/Makefile
-  cp /usr/local/bfl/aids/include.h.newmat1x /usr/local/newmat1x/include.h
+  cp ~/sources/bfl/aids/Makefile.newmat ~/sources/newmat1x/Makefile
+  cp ~/sources/bfl/aids/include.h.newmat1x ~/sources/newmat1x/include.h
 \end{verbatim}
 \item Build the library:
 \begin{verbatim}
   cd newmat1x
   make 
 \end{verbatim}
-\item Finally, install the library in /usr/local/
+\item Finally, install the library.  By default newmat gets installed
+  in \texttt{/usr/local}.  If you want to install it somewhere else,
+  edit the \emph{PREFIX} variable in \texttt{Makefile.newmat} before
+  running make install.
 \begin{verbatim}
-  sudo make install
+  [sudo] make install
 \end{verbatim}
 \end{enumerate}
 \end{itemize}
@@ -207,10 +208,10 @@ BFL requires an external library for matrix computations. You can
 choose to use the LTI library, or the Boost library.
 
 \subsubsection{LTI rng library}
-\label{subsec:lti}
 You can install the LTI library as a precompiled Ubuntu/Debian
-package, or compile it from source. If you already installed LTI as
-the matrix library, you already have everything for the rng library.
+package, or compile it from source (follow the same instructions as
+described in section~\ref{subsec:lti}). If you already installed LTI
+as the matrix library, you already have everything for the rng library.
 
 \subsubsection{Boost rng library}
 You can install the Boost library as a precompiled Ubuntu/Debian
@@ -234,19 +235,20 @@ package, or install it from source.
 %----------------------------------
 Now we arrived to the installation of the BFL library itself. BFL is
 available from our subversion server.
+% FIXME: Provide installation instructions for releases too!
 \begin{enumerate}
-\item First go to the /usr/local folder:
+\item First go to the ~/sources folder:
 \begin{verbatim}
-  cd /usr/local/
+  cd ~/sources/
 \end{verbatim}
 \item Then, to get a copy of BFL, use:
 \begin{verbatim}
   svn co http://svn.mech.kuleuven.be/repos/orocos/trunk/bfl
 \end{verbatim}
-\item Now create and go to a build directory in /usr/local/bfl
+\item Now create and go to a build directory in ~/sources/bfl
 \begin{verbatim}
-  mkdir /usr/local/bfl/build
-  cd /usr/local/bfl/build
+  mkdir ~/sources/bfl/build
+  cd ~/sources/bfl/build
 \end{verbatim}
 \item and run ccmake
 \begin{verbatim}
@@ -280,7 +282,7 @@ with 'q' quit.
   sudo make install
 \end{verbatim}
 \end{enumerate}
-In the /usr/local/bfl/examples directory, you find some example BFL
+In the ~/sources/bfl/examples directory, you find some example BFL
 filters. A good next step is to check out the BFL tutorial on
 \url{www.orocos.org/bfl}, for a step-by-step introduction in building
 your own filters in BFL.
