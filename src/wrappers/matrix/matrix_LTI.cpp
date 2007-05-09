@@ -135,25 +135,19 @@ MyMatrix& MyMatrix::operator/= (double a)
 MyMatrix MyMatrix::operator- (const MyMatrix& a) const
 {
   ltiMatrix op1 = (*this);
-  ltiMatrix op2 = a;
-  ltiMatrix result = (ltiMatrix) (op1.subtract(op2));
-  return (MyMatrix) result;
+  return (MyMatrix) (op1.subtract(a));
 }
 
 MyMatrix MyMatrix::operator+ (const MyMatrix& a) const
 {
   ltiMatrix op1 = (*this);
-  ltiMatrix op2 = a;
-  ltiMatrix result = (ltiMatrix) (op1.add(op2));
-  return (MyMatrix) result;
+  return (MyMatrix) (op1.add(a));
 }
 
 MyMatrix MyMatrix::operator* (const MyMatrix& a) const
 {
   ltiMatrix op1 = (*this);
-  ltiMatrix op2 = a;
-  ltiMatrix result = (ltiMatrix) (op1.multiply(op2));
-  return (MyMatrix) result;
+  return (MyMatrix) (op1.multiply(a));
 }
 
 MyMatrix MyMatrix::operator/ (double b) const
@@ -164,29 +158,17 @@ MyMatrix MyMatrix::operator/ (double b) const
 }
 
 
-// THIS SHOULD BE THE IDEAL SOLUTION (IMPOSSIBLE DUE TO BASE CLASS??)
-// const MyMatrix & MyMatrix::operator* (const MyMatrix& a)
-// {
-//   ltiMatrix & op1 = (*this);
-//   ltiMatrix & op2 = a;
-//   ltiMatrix result = (ltiMatrix) (op1 * op2);
-//   return (MyMatrix &) result;
-// }
-
-
 MyMatrix & MyMatrix::operator+= (const MyMatrix& a)
 {
   ltiMatrix & op1 = (*this);
-  const ltiMatrix & op2 = a;
-  op1 += op2;
+  op1 += a;
   return (MyMatrix &) op1;
 }
 
 MyMatrix & MyMatrix::operator-= (const MyMatrix& a)
 {
   ltiMatrix & op1 = (*this);
-  const ltiMatrix & op2 = a;
-  op1 -= op2;
+  op1 -= a;
   return (MyMatrix &) op1;
 }
 
@@ -194,10 +176,9 @@ MyMatrix & MyMatrix::operator-= (const MyMatrix& a)
 // MATRIX - VECTOR Operators
 MyColumnVector MyMatrix::operator* (const MyColumnVector &b) const
 {
-  ltiMatrix op1(*this);
+  const ltiMatrix& op1 = *this;
   ltiColumnVector op2(b);
-  ltiColumnVector result = op1.multiply(op2);
-  return (MyColumnVector) result;
+  return (MyColumnVector) op1.multiply(op2);
 }
 
 // Set all elements equal to a
@@ -227,8 +208,7 @@ double MyMatrix::determinant() const
       tmp.at(i,j)=(double)(base.at(i,j));
     }
   lti::luDecomposition<double> lu;
-  double result = lu.det(tmp);
-  return result;
+  return lu.det(tmp);
 }
 
 
@@ -243,7 +223,6 @@ MyMatrix MyMatrix::inverse() const
 // See <http://dsp.ee.sun.ac.za/~schwardt/dsp813/lecture10/node7.html>
 MyMatrix MyMatrix::pseudoinverse(double epsilon) const
 {
-  MyMatrix result;
   int rows;
   rows = this->rows();
   int cols = this->columns();
@@ -267,8 +246,7 @@ MyMatrix MyMatrix::pseudoinverse(double epsilon) const
     std::cout << "MATRIX::pseudoinverse() Dinv =\n" << Dinv << std::endl;
   #endif //__DEBUG__
 
-  result = V * Dinv * U.transpose();
-  return result;
+  return V * Dinv * U.transpose();
 }
 
 int 
@@ -381,8 +359,7 @@ double MySymmetricMatrix::determinant() const
       tmp.at(i,j)=(double)(base.at(i,j));
     }
   lti::luDecomposition<double> lu;
-  double result = lu.det(tmp);
-  return result;
+  return lu.det(tmp);
 }
 
 
@@ -498,9 +475,7 @@ MyMatrix
 MySymmetricMatrix::operator+ (const MyMatrix &a) const
 {
   ltiMatrix op1(*this);
-  ltiMatrix op2 = a;
-  ltiMatrix result = (ltiMatrix) (op1.add(op2));
-  return (MyMatrix) result;
+  return (MyMatrix) (op1.add(a));
 }
 
 MyMatrix 
@@ -508,18 +483,14 @@ MySymmetricMatrix::operator- (const MyMatrix &a) const
 {
 
   ltiMatrix op1(*this);
-  ltiMatrix op2 = a;
-  ltiMatrix result = (ltiMatrix) (op1.subtract(op2));
-  return (MyMatrix) result;
+  return (MyMatrix) (op1.subtract(a));
 }
 
 MyMatrix 
 MySymmetricMatrix::operator* (const MyMatrix &a) const
 {
   ltiMatrix op1(*this);
-  ltiMatrix op2 = a;
-  ltiMatrix result = (ltiMatrix) (op1.multiply(op2));
-  return (MyMatrix) result;
+  return (MyMatrix) (op1.multiply(a));
 }
 
 MyMatrix& 
@@ -553,8 +524,7 @@ MySymmetricMatrix
 MySymmetricMatrix::operator+ (const MySymmetricMatrix &a) const
 {
   ltiSymmetricMatrix op1 = (*this);
-  const ltiSymmetricMatrix & op2 = a;
-  op1 += op2;
+  op1 += a;
   return (MySymmetricMatrix &) op1;
 }
 
@@ -562,8 +532,7 @@ MySymmetricMatrix
 MySymmetricMatrix::operator- (const MySymmetricMatrix &a) const
 {
   ltiSymmetricMatrix op1 = (*this);
-  const ltiSymmetricMatrix & op2 = a;
-  op1 -= op2;
+  op1 -= a;
   return (MySymmetricMatrix &) op1;
 }
 
@@ -571,9 +540,7 @@ MySymmetricMatrix
 MySymmetricMatrix::operator* (const MySymmetricMatrix &a) const
 {
   ltiSymmetricMatrix op1 = (*this);
-  ltiSymmetricMatrix op2 = a;
-  ltiSymmetricMatrix result = (ltiSymmetricMatrix) (op1.multiply(op2));
-  return (MySymmetricMatrix) result;
+  return (MySymmetricMatrix) (op1.multiply(a));
 }
 
 
@@ -583,10 +550,9 @@ MySymmetricMatrix::operator* (const MySymmetricMatrix &a) const
 
 MyColumnVector MySymmetricMatrix::operator* (const MyColumnVector &b) const
 {
-  ltiSymmetricMatrix op1 = (ltiSymmetricMatrix) *this;
-  ltiColumnVector op2(b);
-  ltiColumnVector result = op1.multiply(op2);
-  return (MyColumnVector) result;
+  const ltiSymmetricMatrix& op1 = (const ltiSymmetricMatrix&) *this;
+  ltiColumnVector op2 = b;
+  return (MyColumnVector) op1.multiply(op2);
 }
 
 MyMatrix MySymmetricMatrix::sub(int i_start, int i_end, 
