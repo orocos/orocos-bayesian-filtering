@@ -65,6 +65,9 @@ public:
   /// element indexing
   virtual double& operator()(unsigned int) = 0;
 
+  /// Operator ==
+  virtual const bool operator==(const MyColumnVector& a) const = 0;
+
   /// operator =
   virtual MyColumnVector& operator =(const MyColumnVector& a) = 0;
 
@@ -153,6 +156,9 @@ public:
 
   /// element indexing
   virtual double& operator()(unsigned int) = 0;
+
+  /// Operator ==
+  virtual const bool operator==(const MyRowVector& a) const = 0;
 
   /// operator =
   virtual MyRowVector& operator =(const MyRowVector& a) = 0;

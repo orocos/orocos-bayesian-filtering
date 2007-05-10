@@ -96,6 +96,12 @@ MyColumnVector::vectorAdd(const MyColumnVector& v2) const
   return res;
 }
 
+const bool MyColumnVector::operator==(const MyColumnVector& a) const
+{
+  const ltiColumnVector& op1 = *this;
+  const ltiColumnVector& op2 = a;
+  return (op1 == op2);
+}
 
 
 // Operators
@@ -273,6 +279,12 @@ MyRowVector::RowVector(const ltiRowVector & a) : ltiRowVector(a){}
 unsigned int MyRowVector::rows() const { return 1;}
 unsigned int MyRowVector::columns() const { return this->size();}
 
+const bool MyRowVector::operator==(const MyRowVector& a) const
+{
+  const ltiRowVector& op1 = *this;
+  const ltiRowVector& op2 = a;
+  return (op1 == op2);
+}
 
 
 // Operators

@@ -176,7 +176,12 @@ MyColumnVector MyColumnVector::operator/ (double a) const
   return (MyColumnVector) (op1 / a);
 }
 
-
+const bool MyColumnVector::operator==(const MyColumnVector& a) const
+{
+  const NewMatColumnVector& op1 = *this;
+  const NewMatColumnVector& op2 = a;
+  return (op1 == op2);
+}
 
 MyRowVector MyColumnVector::transpose() const
 {
@@ -415,6 +420,14 @@ const double MyRowVector::operator()(unsigned int i) const
   NewMatRowVector op1 = (*this);
   return  op1(i);
 }
+
+const bool MyRowVector::operator==(const MyRowVector& a) const
+{
+  const NewMatRowVector& op1 = *this;
+  const NewMatRowVector& op2 = a;
+  return (op1 == op2);
+}
+
 
 MyRowVector 
 MyRowVector::vectorAdd(const MyRowVector& v2) const

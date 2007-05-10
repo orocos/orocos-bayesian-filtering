@@ -74,6 +74,7 @@ MyMatrix& MyMatrix::operator/= (double a)
 
 MyMatrix MyMatrix::operator+ (double a) const
 {
+  // make copy
   NewMatMatrix op1 = (*this);
   op1 += a;
   return (MyMatrix&) op1;
@@ -81,6 +82,7 @@ MyMatrix MyMatrix::operator+ (double a) const
 
 MyMatrix MyMatrix::operator- (double a) const
 {
+  // make copy
   NewMatMatrix op1 = (*this);
   op1 -= a;
   return (MyMatrix&) op1;
@@ -88,6 +90,7 @@ MyMatrix MyMatrix::operator- (double a) const
 
 MyMatrix MyMatrix::operator* (double a) const
 {
+  // make copy
   NewMatMatrix op1 = (*this);
   op1 *= a;
   return (MyMatrix&) op1;
@@ -95,6 +98,7 @@ MyMatrix MyMatrix::operator* (double a) const
 
 MyMatrix MyMatrix::operator/ (double a) const
 {
+  // make copy
   NewMatMatrix op1 = (*this);
   op1 /= a;
   return (MyMatrix&) op1;
@@ -111,24 +115,24 @@ MyMatrix::operator =(const MySymmetricMatrix& a)
 // MATRIX - MATRIX Operators
 MyMatrix MyMatrix::operator- (const MyMatrix& a) const
 {
-  NewMatMatrix op1 = (*this);
-  NewMatMatrix op2 = a;
+  const NewMatMatrix& op1 = (*this);
+  const NewMatMatrix& op2 = a;
   NewMatMatrix result = (NewMatMatrix) (op1 - op2);
   return (MyMatrix) result;
 }
 
 MyMatrix MyMatrix::operator+ (const MyMatrix& a) const
 {
-  NewMatMatrix op1 = (*this);
-  NewMatMatrix op2 = a;
+  const NewMatMatrix& op1 = (*this);
+  const NewMatMatrix& op2 = a;
   NewMatMatrix result = (NewMatMatrix) (op1 + op2);
   return (MyMatrix) result;
 }
 
 MyMatrix MyMatrix::operator* (const MyMatrix& a) const
 {
-  NewMatMatrix op1 = (*this);
-  NewMatMatrix op2 = a;
+  const NewMatMatrix& op1 = (*this);
+  const NewMatMatrix& op2 = a;
   NewMatMatrix result = (NewMatMatrix) (op1 * op2);
   return (MyMatrix) result;
 }
@@ -153,16 +157,14 @@ MyMatrix & MyMatrix::operator-= (const MyMatrix& a)
 // MATRIX - VECTOR Operators
 MyColumnVector MyMatrix::operator* (const MyColumnVector &b) const
 {
-  const NewMatMatrix op1 = (NewMatMatrix) *this;
-  const NewMatColumnVector op2 = (NewMatMatrix) b;
-  NewMatColumnVector result = op1 * op2;
-  return (MyColumnVector) result;
+  const NewMatMatrix& op1 = (*this);
+  const NewMatColumnVector& op2 = b;
+  return (MyColumnVector) (op1 * op2);
 }
 
 
 // Set all elements equal to a
-MyMatrix&
- MyMatrix::operator=(double a)
+MyMatrix& MyMatrix::operator=(double a)
 {
   NewMatMatrix temp = (NewMatMatrix) *this;
   temp = a;
@@ -174,13 +176,13 @@ MyMatrix&
 
 MyRowVector MyMatrix::rowCopy(unsigned int r) const
 {
-  NewMatMatrix temp = (NewMatMatrix) *this;
+  const NewMatMatrix& temp = (*this);
   return (MyRowVector) temp.Row(r);
 }
 
 MyColumnVector MyMatrix::columnCopy(unsigned int c) const
 {
-  NewMatMatrix temp = (NewMatMatrix) *this;
+  const NewMatMatrix& temp = (*this);
   return (MyColumnVector) temp.Column(c);
 }
 
@@ -189,14 +191,14 @@ MyColumnVector MyMatrix::columnCopy(unsigned int c) const
 
 MyMatrix MyMatrix::transpose() const
 {
-  NewMatMatrix & base = (NewMatMatrix &) *this;
+  const NewMatMatrix & base = (*this);
   NewMatMatrix transposedbase = base.t();
   return (MyMatrix) transposedbase;
 }
 
 double MyMatrix::determinant() const
 {
-  NewMatMatrix& base = (NewMatMatrix &) *this;
+  const NewMatMatrix& base = (*this);
   NEWMAT::LogAndSign temp = base.LogDeterminant();
   double result = temp.Value();
   return result;
@@ -205,7 +207,7 @@ double MyMatrix::determinant() const
 
 MyMatrix MyMatrix::inverse() const
 {
-  NewMatMatrix & base = (NewMatMatrix &) *this;
+  const NewMatMatrix & base = (*this);
   NewMatMatrix inverted = base.i();
   return (MyMatrix) inverted;
 }
@@ -327,14 +329,14 @@ MySymmetricMatrix MySymmetricMatrix::transpose() const {return (*this);}
 
 MySymmetricMatrix MySymmetricMatrix::inverse() const
 {
-  NewMatSymmetricMatrix & base = (NewMatSymmetricMatrix &) *this;
+  const NewMatSymmetricMatrix & base = (NewMatSymmetricMatrix &) *this;
   NewMatSymmetricMatrix inverted = base.i();
   return (MySymmetricMatrix) inverted;
 }
 
 double MySymmetricMatrix::determinant() const
 {
-  NewMatSymmetricMatrix & base = (NewMatSymmetricMatrix &) *this;
+  const NewMatSymmetricMatrix & base = (NewMatSymmetricMatrix &) *this;
   NEWMAT::LogAndSign temp = base.LogDeterminant();
   double result = temp.Value();
   return result;
@@ -343,24 +345,22 @@ double MySymmetricMatrix::determinant() const
 
 double& MyMatrix::operator()(unsigned int a, unsigned int b) 
 {
-  NewMatMatrix & op1 = (*this);
+  NewMatMatrix & op1(*this);
   return op1(a,b);
 }
 
 const double MyMatrix::operator()(unsigned int a, unsigned int b) const
 {
-  NewMatMatrix  op1(*this);
+  const NewMatMatrix& op1(*this);
   return op1(a,b);
 }
 
-
-// void MySymmetricMatrix::operator=(const MySymmetricMatrix &a)
-// {
-//   NewMatSymmetricMatrix temp = (NewMatSymmetricMatrix) *this;
-//   const NewMatSymmetricMatrix temp2 = (const NewMatSymmetricMatrix &) a; 
-//   temp = temp2;
-//   *this = (MySymmetricMatrix) temp;
-// }
+const bool MyMatrix::operator==(const MyMatrix& a) const
+{
+  const NewMatMatrix& op1 = *this;
+  const NewMatMatrix& op2 = a;
+  return (op1 == op2);
+}
 
 // Set all elements equal to a
 MySymmetricMatrix& MySymmetricMatrix::operator=(const double a)
@@ -404,6 +404,7 @@ MySymmetricMatrix& MySymmetricMatrix::operator /=(double b)
 
 MySymmetricMatrix MySymmetricMatrix::operator +(double a) const
 {
+  // make copy
   NewMatSymmetricMatrix op1 = (*this);
   op1 += a;
   return (MySymmetricMatrix) op1;
@@ -411,6 +412,7 @@ MySymmetricMatrix MySymmetricMatrix::operator +(double a) const
 
 MySymmetricMatrix MySymmetricMatrix::operator -(double a) const
 {
+  // make copy
   NewMatSymmetricMatrix op1 = (*this);
   op1 -= a;
   return (MySymmetricMatrix) op1;
@@ -418,6 +420,7 @@ MySymmetricMatrix MySymmetricMatrix::operator -(double a) const
 
 MySymmetricMatrix MySymmetricMatrix::operator *(double b) const
 {
+  // make copy
   NewMatSymmetricMatrix op1 = (*this);
   op1 *= b;
   return (MySymmetricMatrix) op1;
@@ -425,6 +428,7 @@ MySymmetricMatrix MySymmetricMatrix::operator *(double b) const
   
 MySymmetricMatrix MySymmetricMatrix::operator /(double b) const
 {
+  // make copy
   NewMatSymmetricMatrix op1 = (*this);
   op1 /= b;
   return (MySymmetricMatrix) op1;
@@ -453,24 +457,24 @@ MyMatrix& MySymmetricMatrix::operator -=(const MyMatrix& a)
 
 MyMatrix MySymmetricMatrix::operator+ (const MyMatrix &a) const
 {
-  const NewMatMatrix op1 = (*this);
-  NewMatMatrix op2 = a;
+  const NewMatMatrix& op1 = (*this);
+  const NewMatMatrix& op2 = a;
   NewMatMatrix result = (NewMatMatrix) (op1 + op2);
   return (MyMatrix) result;
 }
 
 MyMatrix MySymmetricMatrix::operator- (const MyMatrix &a) const
 {
-  const NewMatMatrix op1 = (*this);
-  NewMatMatrix op2 = a;
+  const NewMatMatrix& op1 = (*this);
+  const NewMatMatrix& op2 = a;
   NewMatMatrix result = (NewMatMatrix) (op1 - op2);
   return (MyMatrix) result;
 }
 
 MyMatrix MySymmetricMatrix::operator* (const MyMatrix &a) const
 {
-  const NewMatMatrix op1 = (*this);
-  NewMatMatrix op2 = a;
+  const NewMatMatrix& op1 = (*this);
+  const NewMatMatrix& op2 = a;
   NewMatMatrix result = (NewMatMatrix) (op1 * op2);
   return (MyMatrix) result;
 }
@@ -496,26 +500,25 @@ MySymmetricMatrix& MySymmetricMatrix::operator -=(const MySymmetricMatrix& a)
 
 MySymmetricMatrix MySymmetricMatrix::operator+ (const MySymmetricMatrix &a) const
 {
-  NewMatSymmetricMatrix op1 = (*this);
-  NewMatSymmetricMatrix op2 = a;
+  const NewMatSymmetricMatrix& op1 = (*this);
+  const NewMatSymmetricMatrix& op2 = a;
   NewMatSymmetricMatrix result = (NewMatSymmetricMatrix) (op1 + op2);
   return (MySymmetricMatrix) result;
 }
 
 MySymmetricMatrix MySymmetricMatrix::operator- (const MySymmetricMatrix &a) const
 {
-  NewMatSymmetricMatrix op1 = (*this);
-  NewMatSymmetricMatrix op2 = a;
+  const NewMatSymmetricMatrix& op1 = (*this);
+  const NewMatSymmetricMatrix& op2 = a;
   NewMatSymmetricMatrix result = (NewMatSymmetricMatrix) (op1 - op2);
   return (MySymmetricMatrix) result;
 }
 
 MySymmetricMatrix MySymmetricMatrix::operator* (const MySymmetricMatrix &a) const
 {
-  NewMatSymmetricMatrix op1 = (*this);
-  NewMatSymmetricMatrix op2 = a;
-  NewMatSymmetricMatrix result = (NewMatSymmetricMatrix) (op1 * op2);
-  return (MySymmetricMatrix) result;
+  const NewMatSymmetricMatrix& op1 = (*this);
+  const NewMatSymmetricMatrix& op2 = a;
+  return (MySymmetricMatrix) (op1 * op2);
 }
 
 
@@ -523,10 +526,9 @@ MySymmetricMatrix MySymmetricMatrix::operator* (const MySymmetricMatrix &a) cons
 
 MyColumnVector MySymmetricMatrix::operator* (const MyColumnVector &b) const
 {
-  const NewMatSymmetricMatrix op1 = (NewMatSymmetricMatrix) *this;
-  NewMatColumnVector op2 = (NewMatMatrix) b;
-  NewMatColumnVector result = op1 * op2;
-  return (MyColumnVector) result;
+  const NewMatSymmetricMatrix& op1 = *this;
+  const NewMatColumnVector& op2 = b;
+  return (MyColumnVector) (op1 * op2);
 }
 
 MyMatrix MySymmetricMatrix::sub(int i_start, int i_end, 
@@ -563,8 +565,15 @@ double& MySymmetricMatrix::operator()(unsigned int a, unsigned int b)
 
 const double MySymmetricMatrix::operator()(unsigned int a, unsigned int b) const
 {
-  NewMatSymmetricMatrix op1(*this);
+  const NewMatSymmetricMatrix op1(*this);
   return op1(a,b);
+}
+
+const bool MySymmetricMatrix::operator==(const MySymmetricMatrix& a) const
+{
+  const NewMatSymmetricMatrix& op1 = *this;
+  const NewMatSymmetricMatrix& op2 = a;
+  return (op1 == op2);
 }
 
 

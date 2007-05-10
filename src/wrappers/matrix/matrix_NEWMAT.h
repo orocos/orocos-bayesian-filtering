@@ -56,6 +56,7 @@ class Matrix : public NewMatMatrix, public Matrix_Wrapper
   virtual unsigned int columns() const;
   virtual double& operator()(unsigned int,unsigned int);
   virtual const double operator()(unsigned int,unsigned int) const;
+  virtual const bool operator==(const MyMatrix& a) const;
 
   virtual MyMatrix& operator =(double a);
 
@@ -116,6 +117,7 @@ class SymmetricMatrix : public NewMatSymmetricMatrix, public SymmetricMatrix_Wra
 
   virtual double& operator()(unsigned int,unsigned int);
   virtual const double operator()(unsigned int,unsigned int) const;
+  virtual const bool operator==(const MySymmetricMatrix& a) const;
 
   virtual MySymmetricMatrix& operator=(double a);
 

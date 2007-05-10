@@ -78,6 +78,13 @@ const double MyMatrix::operator()(unsigned int a, unsigned int b) const
   return this->at(a-1,b-1);
 }
 
+const bool MyMatrix::operator==(const MyMatrix& a) const
+{
+  const ltiMatrix& op1 = *this;
+  const ltiMatrix& op2 = a;
+  return (op1 == op2);
+}
+
 
 // MATRIX - SCALAR operators
 MyMatrix& MyMatrix::operator+= (double a)
@@ -366,7 +373,11 @@ double MySymmetricMatrix::determinant() const
 double& MySymmetricMatrix::operator()(unsigned int a, unsigned int b) 
 {
   ltiSymmetricMatrix & op1 = (*this);
-  return op1.at(a-1,b-1);
+  // only fill in lower triangle
+  if (a < b)
+    return op1.at(b-1,a-1);
+  else
+    return op1.at(a-1,b-1);
 }
 const double MySymmetricMatrix::operator()(unsigned int a, unsigned int b) const
 {
@@ -374,6 +385,13 @@ const double MySymmetricMatrix::operator()(unsigned int a, unsigned int b) const
   return op1.at(a-1,b-1);
 }
 
+
+const bool MySymmetricMatrix::operator==(const MySymmetricMatrix& a) const
+{
+  const ltiSymmetricMatrix& op1 = *this;
+  const ltiSymmetricMatrix& op2 = a;
+  return (op1 == op2);
+}
 
 // MATRIX - SCALAR operators
 MySymmetricMatrix& MySymmetricMatrix::operator=(const double a)
@@ -558,7 +576,14 @@ MyColumnVector MySymmetricMatrix::operator* (const MyColumnVector &b) const
 MyMatrix MySymmetricMatrix::sub(int i_start, int i_end, 
 				int j_start , int j_end) const
 {
-  ltiMatrix m(*this,i_start-1,i_end-1, j_start-1,j_end-1);
+  // first copy all elements from lower triangle to upper triangle
+  unsigned int r = this->rows();
+  unsigned int c = this->columns();
+  ltiMatrix copy = *this;
+  for (unsigned int i=0; i<r; i++)
+    for (unsigned int j=0; j<=i; j++)
+      copy.at(j,i) = copy.at(i,j);
+  ltiMatrix m(copy,i_start-1,i_end-1, j_start-1,j_end-1);
   return (MyMatrix) m;
 }
 

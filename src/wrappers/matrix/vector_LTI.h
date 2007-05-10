@@ -59,6 +59,7 @@ public:
   virtual ColumnVector vectorAdd(const MyColumnVector& v2) const;
   virtual ColumnVector& operator =(const MyColumnVector& a);
   virtual ColumnVector& operator =(double a);
+  virtual const bool operator==(const MyColumnVector& a) const;
 
   virtual MyColumnVector & operator+= (const MyColumnVector& a);
   virtual MyColumnVector & operator-= (const MyColumnVector& a);
@@ -106,6 +107,7 @@ class MyRowVector : public ltiRowVector, public RowVector_Wrapper
   virtual unsigned int columns() const;
   virtual RowVector& operator =(double a);
   virtual RowVector& operator =(const MyRowVector& a);
+  virtual const bool operator==(const MyRowVector& a) const;
 
   virtual MyRowVector & operator+= (const MyRowVector& a);
   virtual MyRowVector & operator-= (const MyRowVector& a);
