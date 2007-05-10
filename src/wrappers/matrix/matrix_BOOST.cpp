@@ -580,8 +580,8 @@ MySymmetricMatrix::resize(unsigned int i, bool copy, bool initialize)
 bool
 MySymmetricMatrix::cholesky(MyMatrix& m) const
 {
-  double r = this->rows();
-  double c = this->columns();
+  unsigned int r = this->rows();
+  unsigned int c = this->columns();
 
   if (r != m.rows() || c != m.columns())
     m = Matrix(r,c);
