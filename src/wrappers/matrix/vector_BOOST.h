@@ -26,6 +26,7 @@
 #include "matrix_wrapper.h"
 #include "vector_wrapper.h"
 #include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/vector_proxy.hpp>
 #include <boost/numeric/ublas/io.hpp>
 
 
@@ -81,6 +82,7 @@ public:
   virtual MyColumnVector operator/ (double b) const;
 
   virtual const double operator()(unsigned int) const;
+  virtual const bool operator==(const MyColumnVector& a) const;
   virtual double& operator()(unsigned int);
   virtual MyMatrix operator* (const MyRowVector &a) const;
   virtual MyColumnVector sub(int j_start , int j_end) const;
@@ -130,6 +132,7 @@ class RowVector : public BoostRowVector, public RowVector_Wrapper
   virtual MyRowVector operator/ (double b) const;
 
   virtual const double operator()(unsigned int) const;
+  virtual const bool operator==(const MyRowVector& a) const;
   virtual double& operator()(unsigned int);
   virtual MyRowVector sub(int j_start , int j_end) const;
   virtual MyColumnVector transpose() const;

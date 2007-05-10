@@ -22,6 +22,7 @@
 
 #include "matrix_BOOST.h"
 
+using namespace std;
 
 // Passing the constructor arguments...
 MyMatrix::Matrix() : BoostMatrix() {}
@@ -60,7 +61,7 @@ MyMatrix& MyMatrix::operator*= (double a)
 {
   BoostMatrix & op1 = (*this);
   op1 *= a;
-  return (MyMatrix&) op1;
+  return *this;
 }
 
 MyMatrix& MyMatrix::operator/= (double a)
@@ -72,26 +73,24 @@ MyMatrix& MyMatrix::operator/= (double a)
 
 MyMatrix MyMatrix::operator+ (double a) const
 {
-  return (BoostMatrix)(((BoostMatrix)(*this)) + boost::numeric::ublas::scalar_matrix<double>(rows(),columns(),a));
+  return (MyMatrix)(((BoostMatrix)(*this)) + boost::numeric::ublas::scalar_matrix<double>(rows(),columns(),a));
 }
 
 MyMatrix MyMatrix::operator- (double a) const
 {
-  return (BoostMatrix)(((BoostMatrix)(*this)) - boost::numeric::ublas::scalar_matrix<double>(rows(),columns(),a));
+  return (MyMatrix)(((BoostMatrix)(*this)) - boost::numeric::ublas::scalar_matrix<double>(rows(),columns(),a));
 }
 
 MyMatrix MyMatrix::operator* (double a) const
 {
-  BoostMatrix op1 = (*this);
-  op1 *= a;
-  return (MyMatrix&) op1;
+  const BoostMatrix& op1 = (*this);
+  return (MyMatrix) (op1 *  a);
 }
 
 MyMatrix MyMatrix::operator/ (double a) const
 {
-  BoostMatrix op1 = (*this);
-  op1 /= a;
-  return (MyMatrix&) op1;
+  const BoostMatrix& op1 = (*this);
+  return (MyMatrix) (op1 /  a);
 }
 
 MyMatrix& 
@@ -105,20 +104,26 @@ MyMatrix::operator =(const MySymmetricMatrix& a)
 // MATRIX - MATRIX Operators
 MyMatrix MyMatrix::operator- (const MyMatrix& a) const
 {
-  return (MyMatrix)((BoostMatrix&)(*this) - (BoostMatrix&)(a));
+  const BoostMatrix& op1 = *this;
+  const BoostMatrix& op2 = a;
+  
+  return (MyMatrix)(op1 - op2);
 }
 
 MyMatrix MyMatrix::operator+ (const MyMatrix& a) const
 {
-  BoostMatrix op2 = a;
-  BoostMatrix result = (BoostMatrix) ((BoostMatrix)(*this) + op2);
-  return (MyMatrix) result;
+  const BoostMatrix& op1 = *this;
+  const BoostMatrix& op2 = a;
+  
+  return (MyMatrix)(op1 + op2);
 }
 
 MyMatrix MyMatrix::operator* (const MyMatrix& a) const
 {
-  const BoostMatrix & op1 = (*this);
-  return (MyMatrix) prod(op1, (const BoostMatrix&)a);
+  const BoostMatrix& op1 = *this;
+  const BoostMatrix& op2 = a;
+  
+  return (MyMatrix) prod(op1,op2);
 }
 
 MyMatrix & MyMatrix::operator+= (const MyMatrix& a)
@@ -142,8 +147,28 @@ MyMatrix & MyMatrix::operator-= (const MyMatrix& a)
 MyColumnVector MyMatrix::operator* (const MyColumnVector &b) const
 {
   const BoostMatrix op1 = (BoostMatrix) *this;
-  BoostColumnVector result = prod(op1, ((const BoostColumnVector&)b));
-  return (MyColumnVector) result;
+  return (MyColumnVector) prod(op1, ((const BoostColumnVector&)b));
+}
+
+
+
+double& MyMatrix::operator()(unsigned int a, unsigned int b) 
+{
+  BoostMatrix & op1 = (*this);
+  return op1(a-1,b-1);
+}
+
+const double MyMatrix::operator()(unsigned int a, unsigned int b) const
+{
+  BoostMatrix  op1(*this);
+  return op1(a-1,b-1);
+}
+
+const bool MyMatrix::operator==(const MyMatrix& a) const
+{
+  if (this->rows() != a.rows()) return false;
+  if (this->columns() != a.columns()) return false;
+  return(norm_inf((BoostMatrix)(*this)-(BoostMatrix)a) == 0);
 }
 
 
@@ -151,9 +176,7 @@ MyColumnVector MyMatrix::operator* (const MyColumnVector &b) const
 MyMatrix&
  MyMatrix::operator=(double a)
 {
-  for (unsigned int i=0; i<this->rows(); i++)
-    for (unsigned int j=0; j<this->columns(); j++)
-      (*this)(i,j) = a;
+  *this = (MyMatrix)boost::numeric::ublas::scalar_matrix<double>(rows(),columns(),a);
 
   return *this;
 }
@@ -182,33 +205,48 @@ MyColumnVector MyMatrix::columnCopy(unsigned int c) const
 
 MyMatrix MyMatrix::transpose() const
 {
-  return (MyMatrix) trans((BoostMatrix &) *this);
+  const BoostMatrix &op1 = (*this);
+  return (MyMatrix) trans(op1);
 }
 
 double MyMatrix::determinant() const
 {
-  assert(rows() == columns());
- 
-  // create a working copy of the input 
-  BoostMatrix mat(*this);
-  boost::numeric::ublas::permutation_matrix<std::size_t> pivots(rows());
-  lu_factorize(mLu, pivots);
-  double det = 1.0;
-  for (std::size_t i=0; i < pivots.size(); ++i) {
-    if (pivots(i) != i) 
-      det *= -1.0;
-    det *= mLu(i,i);
+  unsigned int r = this->rows();
+  assert(r == this->columns());
+  const BoostMatrix& A = (*this);
+  BoostMatrix LU(r,r);
+  boost::numeric::ublas::permutation_matrix<> ndx(r);
+  noalias(LU) = A;
+  int res = lu_factorize(LU,ndx);
+  assert(res == 0);
+
+  double result = 1.0;
+  int s = 1;
+  for (boost::numeric::ublas::matrix<double>::size_type i=0;i<LU.size1();++i) {
+    result *= LU(i,i);
+    if (ndx(i)!=i) s = -s;
   }
-  return det;
+  return result*s;
 }
 
 
 MyMatrix MyMatrix::inverse() const
 {
-  BoostMatrix & base = (BoostMatrix &) *this;
-  BoostMatrix inverted = base.i();
-  return (MyMatrix) inverted;
+  unsigned int r = this->rows();
+  assert(r == this->columns());
+  const BoostMatrix& A = (*this);
+  BoostMatrix LU(r,r);
+  boost::numeric::ublas::permutation_matrix<> ndx(r);
+  noalias(LU) = A;
+  int res = lu_factorize(LU,ndx);
+  assert(res == 0);
+  BoostMatrix Ai(r,r);
+  noalias(Ai) = boost::numeric::ublas::identity_matrix<double>(r);
+  lu_substitute(LU,ndx,Ai);
+
+  return Ai;
 }
+
 
 MyMatrix MyMatrix::pseudoinverse(double epsilon) const
 {
@@ -247,8 +285,7 @@ MyMatrix::convertToSymmetricMatrix(MySymmetricMatrix& sym)
   // if necessairy, resize sym
   // only check cols or rows. Symmetric matrix is square.
   if ( sym.rows() != this->rows() )
-    sym.ReSize(this->rows());
-  
+    sym = MySymmetricMatrix(this->rows());
   
   // copy elements 
   for ( unsigned int i=0; i<this->rows(); i++ )
@@ -261,40 +298,30 @@ void
 MyMatrix::resize(unsigned int i, unsigned int j, bool copy, bool initialize)
 {
   BoostMatrix & temp = (BoostMatrix &) (*this);
-  temp.ReSize(i,j);
+  temp.resize(i,j,copy);
 }
 
 // get sub matrix
 MyMatrix MyMatrix::sub(int i_start, int i_end, int j_start , int j_end) const
 {
-  return (MyMatrix)(this->SubMatrix(i_start, i_end, j_start, j_end));
+  MyMatrix submatrix(i_end-i_start+1, j_end-j_start+1);
+  for (unsigned int i=i_start; i<=i_end; i++)
+    for (unsigned int j=j_start; j<=j_end; j++)
+      submatrix(i,j) = (*this)(i,j);
+
+  return submatrix;
 }
 
 
 bool 
 MyMatrix::SVD(MyColumnVector& D, MyMatrix& U, MyMatrix& V) const
 {
-  if (columns() > rows()){
-    cout << endl << "ERROR" << endl;    
-    cout << "Boost doesn't support svd for columns > rows" << endl;
-    cout << "you can avoid this problem by using the LTI library" << endl;
-    return false;
-  }
-
-  int Acolumns = columns();
-  BOOST::DiagonalMatrix d(Acolumns);
-  BoostMatrix u(rows(),Acolumns); 
-  BoostMatrix v(Acolumns, Acolumns);
-  BOOST::SVD(*this,d,u,v);
-  D.ReSize(Acolumns);
-  for ( int row = 0; row < Acolumns; row++) 
-      D(row+1) = d(row+1);
-
-  U = (MyMatrix &) u;
-  V = (MyMatrix &) v;
+  assert(0);
 
   return true;
 }
+
+
 
 
 /////////////////////////////
@@ -312,55 +339,54 @@ MySymmetricMatrix::SymmetricMatrix(const BoostSymmetricMatrix & a) : BoostSymmet
 MySymmetricMatrix::~SymmetricMatrix(){}
 
 // Ask Number of Rows and Columns
-unsigned int MySymmetricMatrix::rows() const { return this->Nrows();}
-unsigned int MySymmetricMatrix::columns() const { return this->Ncols();}
+unsigned int MySymmetricMatrix::rows() const { return this->size1();}
+unsigned int MySymmetricMatrix::columns() const { return this->size2();}
 
 
 MySymmetricMatrix MySymmetricMatrix::transpose() const {return (*this);}
 
 MySymmetricMatrix MySymmetricMatrix::inverse() const
 {
-  BoostSymmetricMatrix & base = (BoostSymmetricMatrix &) *this;
-  BoostSymmetricMatrix inverted = base.i();
-  return (MySymmetricMatrix) inverted;
+  unsigned int r = this->rows();
+  assert(r == this->columns());
+  const BoostMatrix& A = (*this);
+  BoostSymmetricMatrix LU(r,r);
+  boost::numeric::ublas::permutation_matrix<> ndx(r);
+  noalias(LU) = A;
+  int res = lu_factorize(LU,ndx);
+  assert(res == 0);
+  BoostSymmetricMatrix Ai(r,r);
+  noalias(Ai) = boost::numeric::ublas::identity_matrix<double>(r);
+  lu_substitute(LU,ndx,Ai);
+
+  return Ai;
 }
 
 double MySymmetricMatrix::determinant() const
 {
-  BoostSymmetricMatrix & base = (BoostSymmetricMatrix &) *this;
-  BOOST::LogAndSign temp = base.LogDeterminant();
-  double result = temp.Value();
-  return result;
+  unsigned int r = this->rows();
+  assert(r == this->columns());
+  const BoostMatrix& A = (*this);
+  BoostSymmetricMatrix LU(r,r);
+  boost::numeric::ublas::permutation_matrix<> ndx(r);
+  noalias(LU) = A;
+  int res = lu_factorize(LU,ndx);
+  assert(res == 0);
+
+  double result = 1.0;
+  int s = 1;
+  for (boost::numeric::ublas::matrix<double>::size_type i=0;i<LU.size1();++i) {
+    result *= LU(i,i);
+    if (ndx(i)!=i) s = -s;
+  }
+  return result*s;
 }
 
-
-double& MyMatrix::operator()(unsigned int a, unsigned int b) 
-{
-  BoostMatrix & op1 = (*this);
-  return op1(a,b);
-}
-
-const double MyMatrix::operator()(unsigned int a, unsigned int b) const
-{
-  BoostMatrix  op1(*this);
-  return op1(a,b);
-}
-
-
-// void MySymmetricMatrix::operator=(const MySymmetricMatrix &a)
-// {
-//   BoostSymmetricMatrix temp = (BoostSymmetricMatrix) *this;
-//   const BoostSymmetricMatrix temp2 = (const BoostSymmetricMatrix &) a; 
-//   temp = temp2;
-//   *this = (MySymmetricMatrix) temp;
-// }
 
 // Set all elements equal to a
 MySymmetricMatrix& MySymmetricMatrix::operator=(const double a)
 {
-  BoostSymmetricMatrix temp = (BoostSymmetricMatrix) *this;
-  temp = a;
-  *this = (MySymmetricMatrix) temp;
+  *this = (MySymmetricMatrix)boost::numeric::ublas::scalar_matrix<double>(rows(),columns(),a);
 
   return *this;
 }
@@ -369,16 +395,16 @@ MySymmetricMatrix& MySymmetricMatrix::operator=(const double a)
 // SYMMETRICMATRIX - SCALAR operators
 MySymmetricMatrix& MySymmetricMatrix::operator +=(double a)
 {
-  BoostSymmetricMatrix & op1 = (*this);
-  op1 += a;
-  return (MySymmetricMatrix&) op1;
+  BoostSymmetricMatrix & op1 = *this;
+  op1 += boost::numeric::ublas::scalar_matrix<double>(rows(),columns(),a);
+  return (MySymmetricMatrix&)op1;
 }
 
 MySymmetricMatrix& MySymmetricMatrix::operator -=(double a)
 {
-  BoostSymmetricMatrix & op1 = (*this);
-  op1 -= a;
-  return (MySymmetricMatrix&) op1;
+  BoostSymmetricMatrix & op1 = *this;
+  op1 -= boost::numeric::ublas::scalar_matrix<double>(rows(),columns(),a);
+  return (MySymmetricMatrix&)op1;
 }
 
 MySymmetricMatrix& MySymmetricMatrix::operator *=(double b)
@@ -397,30 +423,24 @@ MySymmetricMatrix& MySymmetricMatrix::operator /=(double b)
 
 MySymmetricMatrix MySymmetricMatrix::operator +(double a) const
 {
-  BoostSymmetricMatrix op1 = (*this);
-  op1 += a;
-  return (MySymmetricMatrix) op1;
+  return (MySymmetricMatrix)(((BoostSymmetricMatrix)(*this)) + boost::numeric::ublas::scalar_matrix<double>(rows(),columns(),a));
 }
 
 MySymmetricMatrix MySymmetricMatrix::operator -(double a) const
 {
-  BoostSymmetricMatrix op1 = (*this);
-  op1 -= a;
-  return (MySymmetricMatrix) op1;
+  return (MySymmetricMatrix)(((BoostSymmetricMatrix)(*this)) - boost::numeric::ublas::scalar_matrix<double>(rows(),columns(),a));
 }
 
 MySymmetricMatrix MySymmetricMatrix::operator *(double b) const
 {
-  BoostSymmetricMatrix op1 = (*this);
-  op1 *= b;
-  return (MySymmetricMatrix) op1;
+ const BoostSymmetricMatrix& op1 = (*this);
+  return (MySymmetricMatrix) (op1 *  b);
 }
   
 MySymmetricMatrix MySymmetricMatrix::operator /(double b) const
 {
-  BoostSymmetricMatrix op1 = (*this);
-  op1 /= b;
-  return (MySymmetricMatrix) op1;
+  const BoostSymmetricMatrix& op1 = (*this);
+  return (MySymmetricMatrix) (op1 /  b);
 }
 
 
@@ -430,42 +450,40 @@ MySymmetricMatrix MySymmetricMatrix::operator /(double b) const
 MyMatrix& MySymmetricMatrix::operator +=(const MyMatrix& a)
 {
   BoostSymmetricMatrix & op1 = (*this);
-  const BoostMatrix & op2 = a;
-  op1 += op2;
+  op1 += a;
   return (MyMatrix &) op1;
 }
 
 MyMatrix& MySymmetricMatrix::operator -=(const MyMatrix& a)
 {
   BoostSymmetricMatrix & op1 = (*this);
-  const BoostMatrix & op2 = a;
-  op1 -= op2;
+  op1 -= a;
   return (MyMatrix &) op1;
 }
 
 
 MyMatrix MySymmetricMatrix::operator+ (const MyMatrix &a) const
 {
-  const BoostMatrix op1 = (*this);
-  BoostMatrix op2 = a;
-  BoostMatrix result = (BoostMatrix) (op1 + op2);
-  return (MyMatrix) result;
+  const BoostSymmetricMatrix& op1 = *this;
+  const BoostMatrix& op2 = a;
+  
+  return (MyMatrix) (op1 + op2);
 }
 
 MyMatrix MySymmetricMatrix::operator- (const MyMatrix &a) const
 {
-  const BoostMatrix op1 = (*this);
-  BoostMatrix op2 = a;
-  BoostMatrix result = (BoostMatrix) (op1 - op2);
-  return (MyMatrix) result;
+  const BoostSymmetricMatrix& op1 = *this;
+  const BoostMatrix& op2 = a;
+  
+  return (MyMatrix) (op1 - op2);
 }
 
 MyMatrix MySymmetricMatrix::operator* (const MyMatrix &a) const
 {
-  const BoostMatrix op1 = (*this);
-  BoostMatrix op2 = a;
-  BoostMatrix result = (BoostMatrix) (op1 * op2);
-  return (MyMatrix) result;
+  const BoostSymmetricMatrix& op1 = *this;
+  const BoostMatrix& op2 = a;
+  
+  return (MyMatrix) prod(op1, op2);
 }
 
 
@@ -489,26 +507,26 @@ MySymmetricMatrix& MySymmetricMatrix::operator -=(const MySymmetricMatrix& a)
 
 MySymmetricMatrix MySymmetricMatrix::operator+ (const MySymmetricMatrix &a) const
 {
-  BoostSymmetricMatrix op1 = (*this);
-  BoostSymmetricMatrix op2 = a;
-  BoostSymmetricMatrix result = (BoostSymmetricMatrix) (op1 + op2);
-  return (MySymmetricMatrix) result;
+  const BoostSymmetricMatrix& op1 = *this;
+  const BoostSymmetricMatrix& op2 = a;
+  
+  return (MySymmetricMatrix) (op1 + op2);
 }
 
 MySymmetricMatrix MySymmetricMatrix::operator- (const MySymmetricMatrix &a) const
 {
-  BoostSymmetricMatrix op1 = (*this);
-  BoostSymmetricMatrix op2 = a;
-  BoostSymmetricMatrix result = (BoostSymmetricMatrix) (op1 - op2);
-  return (MySymmetricMatrix) result;
+  const BoostSymmetricMatrix& op1 = *this;
+  const BoostSymmetricMatrix& op2 = a;
+  
+  return (MySymmetricMatrix) (op1 - op2);
 }
 
 MySymmetricMatrix MySymmetricMatrix::operator* (const MySymmetricMatrix &a) const
 {
-  BoostSymmetricMatrix op1 = (*this);
-  BoostSymmetricMatrix op2 = a;
-  BoostSymmetricMatrix result = (BoostSymmetricMatrix) (op1 * op2);
-  return (MySymmetricMatrix) result;
+  const BoostSymmetricMatrix& op1 = *this;
+  const BoostSymmetricMatrix& op2 = a;
+  
+  return (MySymmetricMatrix) prod(op1, op2);
 }
 
 
@@ -517,48 +535,78 @@ MySymmetricMatrix MySymmetricMatrix::operator* (const MySymmetricMatrix &a) cons
 MyColumnVector MySymmetricMatrix::operator* (const MyColumnVector &b) const
 {
   const BoostSymmetricMatrix op1 = (BoostSymmetricMatrix) *this;
-  BoostColumnVector op2 = (BoostMatrix) b;
-  BoostColumnVector result = op1 * op2;
-  return (MyColumnVector) result;
+  return (MyColumnVector) prod(op1, ((const BoostColumnVector&)b));
 }
 
 MyMatrix MySymmetricMatrix::sub(int i_start, int i_end, 
 				int j_start , int j_end) const
 {
-  return (MyMatrix)(this->SubMatrix(i_start, i_end, j_start, j_end));
+  MyMatrix submatrix(i_end-i_start+1, j_end-j_start+1);
+  for (unsigned int i=i_start; i<=i_end; i++)
+    for (unsigned int j=j_start; j<=j_end; j++)
+      submatrix(i,j) = (*this)(i,j);
+
+  return submatrix;
 }
 
-
-void
-MySymmetricMatrix::resize(unsigned int i, bool copy, bool initialize)
-{
-  BoostSymmetricMatrix & temp = (BoostSymmetricMatrix &) (*this);
-  temp.ReSize(i);
-}
-
-
-
-bool
-MySymmetricMatrix::cholesky(MyMatrix& m) const
-{
-  BoostMatrix & op1 = m;
-  try{op1 = Cholesky(*this);}
-  catch(BOOST::NPDException t){ return false;}
-  return true;
-}
 
 
 double& MySymmetricMatrix::operator()(unsigned int a, unsigned int b) 
 {
   BoostSymmetricMatrix & op1 = (*this);
-  return op1(a,b);
+  return op1(a-1,b-1);
 }
 
 const double MySymmetricMatrix::operator()(unsigned int a, unsigned int b) const
 {
   BoostSymmetricMatrix op1(*this);
-  return op1(a,b);
+  return op1(a-1,b-1);
 }
+
+const bool MySymmetricMatrix::operator==(const MySymmetricMatrix& a) const
+{
+  if (this->rows() != a.rows()) return false;
+  if (this->columns() != a.columns()) return false;
+  return(norm_inf((BoostSymmetricMatrix)(*this)-(BoostSymmetricMatrix)a) == 0);
+}
+
+void
+MySymmetricMatrix::resize(unsigned int i, bool copy, bool initialize)
+{
+  BoostSymmetricMatrix & temp = (BoostSymmetricMatrix &) (*this);
+  temp.resize(i, copy);
+}
+
+bool
+MySymmetricMatrix::cholesky(MyMatrix& m) const
+{
+  double r = this->rows();
+  double c = this->columns();
+
+  if (r != m.rows() || c != m.columns())
+    m = Matrix(r,c);
+  m=0;
+      
+  // indices should be SIGNED ! otherwise >=0 does not work !
+  for (int i=0;i<(int)r;++i) {
+    for (int j=i;j<(int)c;++j) {
+      double sum = (*this)(i+1,j+1);
+      for (int k=i-1;k>=0;k--)
+	sum -= m(i+1,k+1)*m(j+1,k+1);
+      double p;
+      if (i ==j) {
+	if (sum <= 0.0) return false;
+	p = sqrt(sum);
+	m(i+1,i+1) = p;
+      }
+      else {
+	m(j+1,i+1) = sum/p;
+      }
+    }
+  }
+  return true;
+}
+
 
 
 #endif

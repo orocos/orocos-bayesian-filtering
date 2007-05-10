@@ -22,6 +22,7 @@
 
 #include "vector_BOOST.h"
 
+
 // Constructors
 MyColumnVector::ColumnVector() : BoostColumnVector() {}
 MyColumnVector::ColumnVector(int num_rows) : BoostColumnVector(num_rows){}
@@ -33,11 +34,11 @@ MyColumnVector::ColumnVector(const MyColumnVector& a, const MyColumnVector& b) :
   
   // copy elements of a to opl
   for (i=0; i< a.rows(); i++)
-    opl(i+1) = a(i+1);
+    opl(i) = a(i+1);
 
   // copy elements of b to opl
   for (i=0; i< b.rows(); i++)
-    opl(a.rows() + i+1) = b(i+1);
+    opl(a.rows() + i) = b(i+1);
 }
 
 // Destructor
@@ -53,12 +54,12 @@ MyColumnVector::ColumnVector(const BoostColumnVector & a) :
 void MyColumnVector::resize(int num_rows)
 {
   BoostColumnVector & op1 = (*this);
-  op1.ReSize(num_rows);
+  op1.resize(num_rows);
 }
 
 // Number of Rows / Cols
-unsigned int MyColumnVector::rows() const { return this->Nrows();}
-unsigned int MyColumnVector::columns() const { return this->Ncols();}
+unsigned int MyColumnVector::rows() const { return this->size();}
+unsigned int MyColumnVector::columns() const { return 1;}
 
 MyColumnVector 
 MyColumnVector::vectorAdd(const MyColumnVector& v2) const
@@ -78,15 +79,21 @@ MyColumnVector::vectorAdd(const MyColumnVector& v2) const
 double& MyColumnVector::operator()(unsigned int i)
 {
   BoostColumnVector& op1 = *(this);
-  return op1(i);
+  return op1(i-1);
 }
 
 const double MyColumnVector::operator()(unsigned int i) const 
 {
   BoostColumnVector op1 = (*this);
-  return op1(i);
+  return op1(i-1);
 }
 
+
+const bool MyColumnVector::operator==(const MyColumnVector& a) const
+{
+  if (this->rows() != a.rows()) return false;
+  return(norm_inf((BoostColumnVector)(*this)-(BoostColumnVector)a) == 0);
+}
 
 // Operators
 MyColumnVector & MyColumnVector::operator+= (const MyColumnVector& a)
@@ -94,7 +101,7 @@ MyColumnVector & MyColumnVector::operator+= (const MyColumnVector& a)
   BoostColumnVector & op1 = (*this);
   const BoostColumnVector & op2 = a;
   op1 += op2;
-  return (MyColumnVector &) op1 ;
+  return (MyColumnVector &) op1;
 }
 
 MyColumnVector & MyColumnVector::operator-= (const MyColumnVector& a)
@@ -102,39 +109,33 @@ MyColumnVector & MyColumnVector::operator-= (const MyColumnVector& a)
   BoostColumnVector & op1 = (*this);
   const BoostColumnVector & op2 = a;
   op1 -= op2;
-  return (MyColumnVector &) op1 ;
+  return (MyColumnVector &) op1;
 }
 
 MyColumnVector MyColumnVector::operator+ (const MyColumnVector &a) const
 {
-  const BoostColumnVector& op1 = (*this);
-  const BoostColumnVector & op2 = a;
-  BoostColumnVector result = (BoostColumnVector) (op1 + op2);
-  return (MyColumnVector) result;
+  return (MyColumnVector) ((BoostColumnVector)(*this) + (BoostColumnVector)a);
 }
 
 MyColumnVector MyColumnVector::operator- (const MyColumnVector &a) const
 {
-  const BoostColumnVector & op1 = (*this);
-  const BoostColumnVector & op2 = a;
-  BoostColumnVector result = (BoostColumnVector) (op1 - op2);
-  return (MyColumnVector) result;
+  return (MyColumnVector) ((BoostColumnVector)(*this) - (BoostColumnVector)a);
 }
 
 
 
 MyColumnVector& MyColumnVector::operator+= (double a)
 {
-  BoostColumnVector& op1 = *this;
-  op1 += a;
-  return (MyColumnVector&) op1;
+  BoostColumnVector & op1 = *this;
+  op1 += boost::numeric::ublas::scalar_vector<double>(rows(),a);
+  return (MyColumnVector&)op1;
 }
 
 MyColumnVector& MyColumnVector::operator-= (double a)
 {
-  BoostColumnVector& op1 = *this;
-  op1 -= a;
-  return (MyColumnVector&) op1;
+  BoostColumnVector & op1 = *this;
+  op1 -= boost::numeric::ublas::scalar_vector<double>(rows(),a);
+  return (MyColumnVector&)op1;
 }
 
 MyColumnVector& MyColumnVector::operator*= (double a)
@@ -154,14 +155,12 @@ MyColumnVector& MyColumnVector::operator/= (double a)
 
 MyColumnVector MyColumnVector::operator+ (double a) const
 {
-  const BoostColumnVector & op1 = (*this);
-  return (MyColumnVector) (op1 + a);
+  return (MyColumnVector)(((BoostColumnVector)(*this)) + boost::numeric::ublas::scalar_vector<double>(rows(),a));
 }
 
 MyColumnVector MyColumnVector::operator- (double a) const
 {
-  const BoostColumnVector & op1 = (*this);
-  return (MyColumnVector) (op1 - a);
+  return (MyColumnVector)(((BoostColumnVector)(*this)) - boost::numeric::ublas::scalar_vector<double>(rows(),a));
 }
 
 MyColumnVector MyColumnVector::operator* (double a) const
@@ -180,68 +179,52 @@ MyColumnVector MyColumnVector::operator/ (double a) const
 
 MyRowVector MyColumnVector::transpose() const
 {
-  BoostColumnVector & base = (BoostColumnVector &) *this;
-  BoostRowVector transposedbase = base.t();
-  return (MyRowVector) transposedbase;
+  unsigned int r = this->rows();
+  MyRowVector result(r);
+  for (unsigned int i=0; i<r; i++)
+    result(i+1) = (*this)(i+1);
+  return result;
 }
 
 MyMatrix MyColumnVector::operator* (const MyRowVector &a) const
 {
-  const BoostColumnVector & op1 = (*this);
-  const BoostRowVector & op2 = a;
-  BoostMatrix result = (BoostMatrix) (op1 * op2);
-  return (MyMatrix) result;
+  unsigned int r = this->rows();
+  unsigned int c = a.columns();
+  
+  MyMatrix result(r,c);
+  for (unsigned int i=0; i<r; i++)
+    for (unsigned int j=0; j<c; j++)
+      result(i+1,j+1) = (*this)(i+1) * a(j+1);
+  return result;
 }
 
 MyColumnVector&
 MyColumnVector::operator=(const MyColumnVector &a)
 {
-  // Both these implementations result in the same
-  BoostColumnVector * op1; const BoostColumnVector * op2;
-  op1 = this; op2 = &a;
-  *op1 = *op2;
-  return *(this);
+  BoostColumnVector& op1 = *this;
+  op1 = (BoostColumnVector)a;
+  return *this;
 }
 
 MyColumnVector&
 MyColumnVector::operator=(double a)
 {
-  // Both these implementations result in the same
-  BoostColumnVector * op1;
-  op1 = this;
-  *op1 = a;
+  BoostColumnVector& op1 = *this;
+  op1 = boost::numeric::ublas::scalar_vector<double>(this->rows(),a);
   return *this;
 }
 
-// KG temporary: to read in files fast
-istream& operator >> (istream& is, MyColumnVector& a)
-{
-  int nr = a.rows();
-  int nc = 1;
-
-  if (nr < 1 || nc < 1)
-    is.clear (ios::badbit);
-  else
-    {
-      double tmp;
-      for (int i = 0; i < nr; i++)
-	{
-	  is >> tmp;
-	  if (is)
-	    a(i+1) = tmp; // check if this is ok
-	  else
-	    goto done;
-	}
-    }
-done:
-  return is;
-}
-
-
 MyColumnVector MyColumnVector::sub(int j_start , int j_end) const
 {
-  return (MyColumnVector)(this->SubMatrix(j_start, j_end, 1, 1));
+  MyColumnVector subvector(j_end-j_start+1);
+  for (unsigned int j=j_start; j<=j_end; j++)
+    subvector(j) = (*this)(j);
+
+  return subvector;
 }
+
+
+
 
 //////////////////////////////////////////////////////////////////////
 ////////////////////////////// ROWVECTOR /////////////////////////////
@@ -249,18 +232,60 @@ MyColumnVector MyColumnVector::sub(int j_start , int j_end) const
 
 // Constructors
 MyRowVector::RowVector() : BoostRowVector() {}
-MyRowVector::RowVector(int num_rows) : BoostRowVector(num_rows){}
+MyRowVector::RowVector(int num_cols) : BoostRowVector(num_cols){}
 
 // Destructor
 MyRowVector::~RowVector(){}
 
 // Copy constructor
-MyRowVector::RowVector(const MyRowVector& a) : BoostRowVector(a){}
-MyRowVector::RowVector(const BoostRowVector & a) : BoostRowVector(a){}
+MyRowVector::RowVector(const MyRowVector& a) : 
+  BoostRowVector(a){}
+MyRowVector::RowVector(const BoostRowVector & a) : 
+  BoostRowVector(a){}
+
+// Resizing
+void MyRowVector::resize(int num_columns)
+{
+  BoostRowVector & op1 = (*this);
+  op1.resize(num_columns);
+}
 
 // Number of Rows / Cols
-unsigned int MyRowVector::rows() const { return this->Nrows();}
-unsigned int MyRowVector::columns() const { return this->Ncols();}
+unsigned int MyRowVector::rows() const { return 1;}
+unsigned int MyRowVector::columns() const { return this->size();}
+
+MyRowVector 
+MyRowVector::vectorAdd(const MyRowVector& v2) const
+{
+  const MyRowVector& v1 = *this;
+  MyRowVector res(v1.columns() + v2.columns());
+  
+  for (unsigned int i=0; i<v1.columns(); i++)
+    res(i+1) = v1(i+1);
+
+  for (unsigned int i=0; i<v2.columns(); i++)
+    res(v1.columns()+i+1) = v2(i+1);
+ 
+  return res;
+}
+
+double& MyRowVector::operator()(unsigned int i)
+{
+  BoostRowVector& op1 = *(this);
+  return op1(i-1);
+}
+
+const double MyRowVector::operator()(unsigned int i) const 
+{
+  BoostRowVector op1 = (*this);
+  return op1(i-1);
+}
+
+const bool MyRowVector::operator==(const MyRowVector& a) const
+{
+  if (this->columns() != a.columns()) return false;
+  return(norm_inf((BoostRowVector)(*this)-(BoostRowVector)a) == 0);
+}
 
 // Operators
 MyRowVector & MyRowVector::operator+= (const MyRowVector& a)
@@ -268,7 +293,7 @@ MyRowVector & MyRowVector::operator+= (const MyRowVector& a)
   BoostRowVector & op1 = (*this);
   const BoostRowVector & op2 = a;
   op1 += op2;
-  return (MyRowVector &) op1 ;
+  return (MyRowVector &) op1;
 }
 
 MyRowVector & MyRowVector::operator-= (const MyRowVector& a)
@@ -276,80 +301,33 @@ MyRowVector & MyRowVector::operator-= (const MyRowVector& a)
   BoostRowVector & op1 = (*this);
   const BoostRowVector & op2 = a;
   op1 -= op2;
-  return (MyRowVector &) op1 ;
+  return (MyRowVector &) op1;
 }
 
 MyRowVector MyRowVector::operator+ (const MyRowVector &a) const
 {
-  const BoostRowVector & op1 = (*this);
-  const BoostRowVector & op2 = a;
-  BoostRowVector result = (BoostRowVector) (op1 + op2);
-  return (MyRowVector) result;
+  return (MyRowVector) ((BoostRowVector)(*this) + (BoostRowVector)a);
 }
 
 MyRowVector MyRowVector::operator- (const MyRowVector &a) const
 {
-  const BoostRowVector & op1 = (*this);
-  const BoostRowVector & op2 = a;
-  BoostRowVector result = (BoostRowVector) (op1 - op2);
-  return (MyRowVector) result;
-}
-
-
-
-
-double 
-MyRowVector::operator*(const MyColumnVector& a) const
-{
-  assert(this->columns() == a.rows());
-
-  const BoostRowVector& op1 = (*this);
-  const BoostColumnVector & op2 = a;
-  BoostMatrix matrixresult = op1 * op2;
-  double result = matrixresult.AsScalar();
-  return result;
-}
-
-
-MyRowVector&
-MyRowVector::operator=(const MyRowVector &a)
-{
-  // Both these implementations result in the same
-  BoostRowVector * op1; const BoostRowVector * op2;
-  op1 = this; op2 = &a;
-  *op1 = *op2;
-
-  return *this;
-}
-
-
-MyColumnVector MyRowVector::transpose() const
-{
-  BoostRowVector & base = (BoostRowVector &) *this;
-  BoostColumnVector transposedbase = base.t();
-  return (MyColumnVector) transposedbase;
-}
-
-
-MyRowVector MyRowVector::sub(int j_start , int j_end) const
-{
-  return (MyRowVector)(this->SubMatrix(1, 1, j_start, j_end));
+  return (MyRowVector) ((BoostRowVector)(*this) - (BoostRowVector)a);
 }
 
 
 
 MyRowVector& MyRowVector::operator+= (double a)
 {
-  BoostRowVector& op1 = *this;
-  op1 += a;
-  return (MyRowVector&) op1;
+  BoostRowVector & op1 = *this;
+  op1 += boost::numeric::ublas::scalar_vector<double>(columns(),a);
+  return (MyRowVector&)op1;
 }
 
 MyRowVector& MyRowVector::operator-= (double a)
 {
-  BoostRowVector& op1 = *this;
-  op1 -= a;
-  return (MyRowVector&) op1;
+  BoostRowVector & op1 = *this;
+  op1 -= boost::numeric::ublas::scalar_vector<double>(columns(),a);
+  return (MyRowVector&)op1;
 }
 
 MyRowVector& MyRowVector::operator*= (double a)
@@ -369,14 +347,12 @@ MyRowVector& MyRowVector::operator/= (double a)
 
 MyRowVector MyRowVector::operator+ (double a) const
 {
-  const BoostRowVector & op1 = (*this);
-  return (MyRowVector) (op1 + a);
+  return (MyRowVector)(((BoostRowVector)(*this)) + boost::numeric::ublas::scalar_vector<double>(columns(),a));
 }
 
 MyRowVector MyRowVector::operator- (double a) const
 {
-  const BoostRowVector & op1 = (*this);
-  return (MyRowVector) (op1 - a);
+  return (MyRowVector)(((BoostRowVector)(*this)) - boost::numeric::ublas::scalar_vector<double>(columns(),a));
 }
 
 MyRowVector MyRowVector::operator* (double a) const
@@ -393,51 +369,50 @@ MyRowVector MyRowVector::operator/ (double a) const
 
 
 
-MyRowVector&
-MyRowVector::operator=(double a)
+MyColumnVector MyRowVector::transpose() const
 {
-  // Both these implementations result in the same
-  BoostRowVector * op1;
-  op1 = this;
-  *op1 = a;
+  unsigned int c = this->columns();
+  MyColumnVector result(c);
+  for (unsigned int i=0; i<c; i++)
+    result(i+1) = (*this)(i+1);
+  return result;
+}
+
+double MyRowVector::operator* (const MyColumnVector &a) const
+{
+  unsigned int r = a.rows();
+  unsigned int c = this->columns();
+  
+  double result = 0;
+  for (unsigned int i=0; i<r; i++)
+    for (unsigned int j=0; j<c; j++)
+      result += (*this)(j+1) * a(i+1);
+  return result;
+}
+
+MyRowVector&
+MyRowVector::operator=(const MyRowVector &a)
+{
+  BoostRowVector& op1 = *this;
+  op1 = (BoostRowVector)a;
   return *this;
 }
 
-
-double& MyRowVector::operator()(unsigned int i)
+MyRowVector&
+MyRowVector::operator=(double a)
 {
-  BoostRowVector& op1 = *(this);
-  return  op1(i);
+  BoostRowVector& op1 = *this;
+  op1 = boost::numeric::ublas::scalar_vector<double>(this->columns(),a);
+  return *this;
 }
 
-const double MyRowVector::operator()(unsigned int i) const 
+MyRowVector MyRowVector::sub(int j_start , int j_end) const
 {
-  BoostRowVector op1 = (*this);
-  return  op1(i);
+  MyRowVector subvector(j_end-j_start+1);
+  for (unsigned int j=j_start; j<=j_end; j++)
+    subvector(j) = (*this)(j);
+
+  return subvector;
 }
-
-MyRowVector 
-MyRowVector::vectorAdd(const MyRowVector& v2) const
-{
-  const MyRowVector& v1 = *this;
-  MyRowVector res(v1.rows() + v2.rows());
-  
-  for (unsigned int i=0; i<v1.rows(); i++)
-    res(i+1) = v1(i+1);
-
-  for (unsigned int i=0; i<v2.rows(); i++)
-    res(v1.rows()+i+1) = v2(i+1);
- 
-  return res;
-}
-
-
-// Resizing
-void MyRowVector::resize(int num_cols)
-{
-  BoostRowVector & op1 = (*this);
-  op1.ReSize(num_cols);
-}
-
 
 #endif
