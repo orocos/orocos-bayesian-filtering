@@ -1,3 +1,9 @@
+2007-05-10  Wim Meeussen <first dot last at mech dot kuleuven dot be>
+	* add extensive testing for matrix/vector wrapper
+
+2007-05-10  Wim Meeussen <first dot last at mech dot kuleuven dot be>
+	* add first support for boost matrix/vector library
+
 2007-05-03  Wim Meeussen <first dot last at mech dot kuleuven dot be>
 	* move experimental branch to new trunk location in orocos repository
 
