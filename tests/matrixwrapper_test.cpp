@@ -363,11 +363,11 @@ MatrixwrapperTest::testMatrixwrapperValue()
   Ps(3,1) = 1;   Ps(3,2) = 1;    Ps(3,3) = 1;
   Matrix CHs;
   Matrix CHs_check(c,c);
-  CHs_check(1,1) = 1.73205;   CHs_check(1,2) = 1.15470;    CHs_check(1,3) = 0.57735;
-  CHs_check(2,1) = 0;   CHs_check(2,2) = 0.81650;    CHs_check(2,3) = 0.40825;
-  CHs_check(3,1) = 0;   CHs_check(3,2) = 0;    CHs_check(3,3) = 0.70711;
+  CHs_check(1,1) = 1.73205;   CHs_check(2,1) = 1.15470;    CHs_check(3,1) = 0.57735;
+  CHs_check(1,2) = 0;   CHs_check(2,2) = 0.81650;    CHs_check(3,2) = 0.40825;
+  CHs_check(1,3) = 0;   CHs_check(2,3) = 0;    CHs_check(3,3) = 0.70711;
   cout << Ps << endl;
-  Ps.cholesky(CHs);
+  Ps.cholesky_semidefinite(CHs);
   cout << CHs << endl;
   cout << CHs_check << endl;
   CPPUNIT_ASSERT_EQUAL(approxEqual(CHs, CHs_check, epsilon),true);  

@@ -8,7 +8,7 @@ MESSAGE("Searching for rng lib ${RNG_LIB}")
 
 SET(__RNGWRAPPER_LTI__ OFF)
 SET(__RNGWRAPPER_BOOST__ OFF)
-
+SET(__RNGWRAPPER_SCYTHE__ OFF)
 
 IF (RNG_LIB STREQUAL "lti")
   SET(LTI_FOUND LTI_FOUND-NOTFOUND)
@@ -44,8 +44,24 @@ IF (RNG_LIB STREQUAL "boost")
 ELSE (RNG_LIB STREQUAL "boost")
 
 
-MESSAGE( FATAL_ERROR "No valid rng lib specified. Please choose lti or boost")
-
-
+IF (RNG_LIB STREQUAL "scythe")
+  SET(SCYTHE_FOUND SCYTHE_FOUND-NOTFOUND)
+  MARK_AS_ADVANCED(SCYTHE_FOUND)
+  FIND_FILE(SCYTHE_FOUND mersenne.h ${RNG_INSTALL}/include/scythestat/rng/ )
+  IF ( SCYTHE_FOUND )
+    MESSAGE("-- Looking for Scythe in ${RNG_INSTALL}/include/scythestat/ - found")
+    SET( RNG_INCLUDE "${RNG_INSTALL}/include/")
+    SET( RNG_LIBS "") 
+    MESSAGE( "-- Scythe includes ${RNG_INCLUDE}")
+    MESSAGE( "-- Scythe libs     ${RNG_LIBS}")
+    SET(__RNGWRAPPER_SCYTHE__ ON)	
+  ELSE ( SCYTHE_FOUND )
+    MESSAGE(FATAL_ERROR "Looking for Scythe in ${RNG_INSTALL}/include/scythestat/ - not found")
+  ENDIF ( SCYTHE_FOUND )
+ELSE (RNG_LIB STREQUAL "scythe")
+ 
+MESSAGE( FATAL_ERROR "No valid rng lib specified. Please choose lti, boost or scythe")
+ 
+ENDIF (RNG_LIB STREQUAL "scythe")
 ENDIF (RNG_LIB STREQUAL "boost")
 ENDIF (RNG_LIB STREQUAL "lti")

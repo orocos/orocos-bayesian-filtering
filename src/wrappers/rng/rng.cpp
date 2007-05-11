@@ -45,25 +45,36 @@ double BFL::runif()
 
 #endif // __RNGWRAPPER_BOOST__
 
-#if 0
+
+
+
+
 #ifdef __RNGWRAPPER_SCYTHE__  // SCYTHE RANDOM LIBRARY
 
-#include <scythe/Scythe_Optimize.h>
-#include <scythe/Scythe_Simulate.h>
+#include <scythestat/rng.h>
+#include <scythestat/rng/mersenne.h>
+#include <scythestat/distributions.h>
+
+
+static scythe::mersenne bfl_mersenne;
 
 // Sample from univariate normal distribution with mu and sigma
 double BFL::rnorm(const double & mu, const double & sigma)
 {
-  return (SCYTHE::rnorm(mu,sigma));
+  return (bfl_mersenne.rnorm(mu,sigma));
 }
 
 // Sample from uniform distribution
 double BFL::runif()
 {
-  return (SCYTHE::ranmars());
+  return (bfl_mersenne.runif());
 }
 #endif // __RNGWRAPPER_SCYTHE__
-#endif // 0
+
+
+
+
+
 #ifdef __RNGWRAPPER_LTI__  // LTILIB
 
 #include <ltilib/ltiUniformDist.h>
