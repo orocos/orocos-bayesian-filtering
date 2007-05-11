@@ -13,7 +13,7 @@ namespace MatrixWrapper
         a = (*(MySymmetricMatrix*)this);
         int sz = a.rows(); 
           for (int k=1; k<sz+1; ++k) {
-           if (a(k,k) < 0.0) {
+           if (a(k,k) < std::numeric_limits<double>::epsilon()) {
                  std::cout<< "Warning: matrix of which cholesky decomposition is asked, is negative definite!: returning zero matrix" << std::endl;
                  a = 0.0; return false;//matrix is negative definite
            } 
