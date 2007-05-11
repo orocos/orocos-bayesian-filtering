@@ -373,8 +373,8 @@ double MySymmetricMatrix::determinant() const
 double& MySymmetricMatrix::operator()(unsigned int a, unsigned int b) 
 {
   ltiSymmetricMatrix & op1 = (*this);
-  // only fill in lower triangle
-  if (a < b)
+  // only fill in upper triangle
+  if (a > b)
     return op1.at(b-1,a-1);
   else
     return op1.at(a-1,b-1);
@@ -382,7 +382,11 @@ double& MySymmetricMatrix::operator()(unsigned int a, unsigned int b)
 const double MySymmetricMatrix::operator()(unsigned int a, unsigned int b) const
 {
   ltiSymmetricMatrix op1(*this);
-  return op1.at(a-1,b-1);
+  // only fill in upper triangle
+  if (a > b)
+    return op1.at(b-1,a-1);
+  else
+    return op1.at(a-1,b-1);
 }
 
 
