@@ -561,7 +561,7 @@ MyMatrix
 MySymmetricMatrix::operator* (const MySymmetricMatrix &a) const
 {
   ltiSymmetricMatrix op1 = (*this);
-  return (MySymmetricMatrix) (op1.multiply(a));
+  return (MyMatrix) (op1.multiply(a));
 }
 
 

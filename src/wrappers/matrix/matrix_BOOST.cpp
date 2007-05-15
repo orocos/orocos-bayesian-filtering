@@ -526,7 +526,7 @@ MyMatrix MySymmetricMatrix::operator* (const MySymmetricMatrix &a) const
   const BoostSymmetricMatrix& op1 = *this;
   const BoostSymmetricMatrix& op2 = a;
   
-  return (MySymmetricMatrix) prod(op1, op2);
+  return (MyMatrix) prod(op1, op2);
 }
 
 
