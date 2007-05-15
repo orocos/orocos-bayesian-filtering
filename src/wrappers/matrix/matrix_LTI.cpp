@@ -557,7 +557,7 @@ MySymmetricMatrix::operator- (const MySymmetricMatrix &a) const
   return (MySymmetricMatrix &) op1;
 }
 
-MySymmetricMatrix 
+MyMatrix 
 MySymmetricMatrix::operator* (const MySymmetricMatrix &a) const
 {
   ltiSymmetricMatrix op1 = (*this);

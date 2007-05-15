@@ -521,7 +521,7 @@ MySymmetricMatrix MySymmetricMatrix::operator- (const MySymmetricMatrix &a) cons
   return (MySymmetricMatrix) (op1 - op2);
 }
 
-MySymmetricMatrix MySymmetricMatrix::operator* (const MySymmetricMatrix &a) const
+MyMatrix MySymmetricMatrix::operator* (const MySymmetricMatrix &a) const
 {
   const BoostSymmetricMatrix& op1 = *this;
   const BoostSymmetricMatrix& op2 = a;

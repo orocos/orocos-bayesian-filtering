@@ -514,11 +514,11 @@ MySymmetricMatrix MySymmetricMatrix::operator- (const MySymmetricMatrix &a) cons
   return (MySymmetricMatrix) result;
 }
 
-MySymmetricMatrix MySymmetricMatrix::operator* (const MySymmetricMatrix &a) const
+MyMatrix MySymmetricMatrix::operator* (const MySymmetricMatrix &a) const
 {
   const NewMatSymmetricMatrix& op1 = (*this);
   const NewMatSymmetricMatrix& op2 = a;
-  return (MySymmetricMatrix) (op1 * op2);
+  return (MyMatrix) (op1 * op2);
 }
 
 

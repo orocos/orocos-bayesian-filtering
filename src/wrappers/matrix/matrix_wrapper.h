@@ -240,7 +240,7 @@ public:
   virtual MySymmetricMatrix operator- (const MySymmetricMatrix &a) const= 0;
 
   /// SYMMETRICMATRIX - SYMMETRICMATRIX operators
-  virtual MySymmetricMatrix operator* (const MySymmetricMatrix &a) const = 0;
+  virtual MyMatrix operator* (const MySymmetricMatrix &a) const = 0;
 
 
 

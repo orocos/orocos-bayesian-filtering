@@ -140,7 +140,7 @@ class SymmetricMatrix : public NewMatSymmetricMatrix, public SymmetricMatrix_Wra
   virtual MySymmetricMatrix& operator -=(const MySymmetricMatrix& a);
   virtual MySymmetricMatrix  operator + (const MySymmetricMatrix &a) const;
   virtual MySymmetricMatrix  operator - (const MySymmetricMatrix &a) const;
-  virtual MySymmetricMatrix  operator * (const MySymmetricMatrix& a) const;
+  virtual MyMatrix  operator * (const MySymmetricMatrix& a) const;
 
   virtual MyColumnVector operator* (const MyColumnVector &b) const;
 

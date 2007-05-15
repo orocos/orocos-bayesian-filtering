@@ -147,7 +147,7 @@ class MySymmetricMatrix : public ltiSymmetricMatrix, public SymmetricMatrix_Wrap
         virtual MySymmetricMatrix& operator -=(const MySymmetricMatrix& a);
         virtual MySymmetricMatrix  operator + (const MySymmetricMatrix &a) const;
         virtual MySymmetricMatrix  operator - (const MySymmetricMatrix &a) const;
-        virtual MySymmetricMatrix  operator * (const MySymmetricMatrix& a) const;
+        virtual MyMatrix  operator * (const MySymmetricMatrix& a) const;
       
         virtual MyColumnVector operator* (const MyColumnVector &b) const;
       
