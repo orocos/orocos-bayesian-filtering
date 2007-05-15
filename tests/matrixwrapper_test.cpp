@@ -282,7 +282,13 @@ MatrixwrapperTest::testMatrixwrapperValue()
     }
   }
 
+  SymmetricMatrix Cs_check(r);
+  Cs_check(1,1) = 686;   Cs_check(1,2) = 728;    Cs_check(1,3) = 812;   Cs_check(1,4) = 980;
+  Cs_check(2,1) = 728;   Cs_check(2,2) = 822;    Cs_check(2,3) = 964;   Cs_check(2,4) = 1196;
+  Cs_check(3,1) = 812;   Cs_check(3,2) = 964;    Cs_check(3,3) = 1206;  Cs_check(3,4) = 1544;
+  Cs_check(4,1) = 980;   Cs_check(4,2) = 1196;   Cs_check(4,3) = 1544;  Cs_check(4,4) = 2030;
   SymmetricMatrix Cs = As * As_trans;
+  CPPUNIT_ASSERT_EQUAL(Cs, Cs_check);
   for (unsigned int i=0; i<r; i++){
     for (unsigned int j=0; j<=i; j++){
       CPPUNIT_ASSERT_EQUAL(As(i+1,j+1),  REF[i][j]);
