@@ -153,7 +153,6 @@ class MySymmetricMatrix : public ltiSymmetricMatrix, public SymmetricMatrix_Wrap
       
         virtual void resize(unsigned int i, bool copy=true, bool initialize=true);
         virtual MyMatrix sub(int i_start, int i_end, int j_start , int j_end) const;
-        virtual bool cholesky(MyMatrix& m) const;
 
 };
 

@@ -27,7 +27,6 @@
 #include <ltilib/ltiSVD.h>
 #include <ltilib/ltiMatrixDecomposition.h>
 #include <ltilib/ltiSymmetricMatrixInversion.h>
-#include <ltilib/ltiCholeskyDecomposition.h>
 
 
 
@@ -373,8 +372,8 @@ double MySymmetricMatrix::determinant() const
 double& MySymmetricMatrix::operator()(unsigned int a, unsigned int b) 
 {
   ltiSymmetricMatrix & op1 = (*this);
-  // only fill in upper triangle
-  if (a > b)
+  // only fill in lower triangle
+  if (a < b)
     return op1.at(b-1,a-1);
   else
     return op1.at(a-1,b-1);
@@ -382,8 +381,8 @@ double& MySymmetricMatrix::operator()(unsigned int a, unsigned int b)
 const double MySymmetricMatrix::operator()(unsigned int a, unsigned int b) const
 {
   ltiSymmetricMatrix op1(*this);
-  // only fill in upper triangle
-  if (a > b)
+  // only fill in lower triangle
+  if (a < b)
     return op1.at(b-1,a-1);
   else
     return op1.at(a-1,b-1);
@@ -600,10 +599,4 @@ MySymmetricMatrix::resize(unsigned int i, bool copy, bool initialize)
 }
 
 
-bool
-MySymmetricMatrix::cholesky(MyMatrix& m) const
-{
-  lti::choleskyDecomposition<double> Cholesky;
-  return Cholesky.apply(*this,m);
-}
 #endif

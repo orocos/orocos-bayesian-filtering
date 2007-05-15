@@ -30,7 +30,7 @@ SRIteratedExtendedKalmanFilter::SRIteratedExtendedKalmanFilter(Gaussian* prior, 
     : KalmanFilter(prior),
       nr_iterations(nr_it), JP(prior->CovarianceGet().rows(),prior->CovarianceGet().rows())
   {
-	  (prior->CovarianceGet()).cholesky(JP);
+	  (prior->CovarianceGet()).cholesky_semidefinite(JP);
   }
 	
   SRIteratedExtendedKalmanFilter::~SRIteratedExtendedKalmanFilter(){}
@@ -49,7 +49,7 @@ SRIteratedExtendedKalmanFilter::SRIteratedExtendedKalmanFilter(Gaussian* prior, 
   //  cout<<"JP2\n"<<JP<<endl;
    // cout<<"post_covar\n"<<_post->CovarianceGet()<<endl;
     
-    ((_post->CovarianceGet()).cholesky(JP));
+    ((_post->CovarianceGet()).cholesky_semidefinite(JP));
     JP = JP.transpose();
     // cout<<"JP3\n"<<JP<<endl;
 
@@ -107,7 +107,7 @@ SRIteratedExtendedKalmanFilter::SRIteratedExtendedKalmanFilter(Gaussian* prior, 
          }
          else
          {
-                     R_i.cholesky(R_vf);
+                     R_i.cholesky_semidefinite(R_vf);
                      R_vf = R_vf.transpose();
          }
 	
@@ -194,7 +194,7 @@ void
 	S_temp1 = (S_i1 + S_i2).transpose();
 	S_temp1.convertToSymmetricMatrix(S_temp);
 	
-	S_temp.cholesky(Sr);
+	S_temp.cholesky_semidefinite(Sr);
 	Sr  = Sr.transpose();
 	
 	invS = Sr.inverse();

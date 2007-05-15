@@ -547,16 +547,6 @@ MySymmetricMatrix::resize(unsigned int i, bool copy, bool initialize)
 
 
 
-bool
-MySymmetricMatrix::cholesky(MyMatrix& m) const
-{
-  NewMatMatrix & op1 = m;
-  try{op1 = Cholesky(*this);}
-  catch(NEWMAT::NPDException t){ return false;}
-  return true;
-}
-
-
 double& MySymmetricMatrix::operator()(unsigned int a, unsigned int b) 
 {
   NewMatSymmetricMatrix & op1 = (*this);

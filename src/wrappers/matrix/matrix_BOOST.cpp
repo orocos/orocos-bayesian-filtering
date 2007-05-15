@@ -577,36 +577,5 @@ MySymmetricMatrix::resize(unsigned int i, bool copy, bool initialize)
   temp.resize(i, copy);
 }
 
-bool
-MySymmetricMatrix::cholesky(MyMatrix& m) const
-{
-  unsigned int r = this->rows();
-  unsigned int c = this->columns();
-
-  if (r != m.rows() || c != m.columns())
-    m = Matrix(r,c);
-  m=0;
-      
-  // indices should be SIGNED ! otherwise >=0 does not work !
-  for (int i=0;i<(int)r;++i) {
-    for (int j=i;j<(int)c;++j) {
-      double sum = (*this)(i+1,j+1);
-      for (int k=i-1;k>=0;k--)
-	sum -= m(i+1,k+1)*m(j+1,k+1);
-      double p;
-      if (i ==j) {
-	if (sum <= 0.0) return false;
-	p = sqrt(sum);
-	m(i+1,i+1) = p;
-      }
-      else {
-	m(j+1,i+1) = sum/p;
-      }
-    }
-  }
-  return true;
-}
-
-
 
 #endif

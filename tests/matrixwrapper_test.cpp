@@ -281,7 +281,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
       CPPUNIT_ASSERT_EQUAL(Cm(i+1,j+1),  REF[i][j] * v);
     }
   }
-  /*
+
   SymmetricMatrix Cs = As * As_trans;
   for (unsigned int i=0; i<r; i++){
     for (unsigned int j=0; j<=i; j++){
@@ -327,8 +327,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
   Cr = Ar / v;
   for (unsigned int i=0; i<c; i++)
     CPPUNIT_ASSERT_EQUAL(Cr(i+1),  REF[0][i] / v);
-  */
-  cout << "asdfasdfasdf" << endl;
+
   // test inverse
   Matrix Rm(c,c);
   Rm(1,1) = 3;   Rm(1,2) = 3;    Rm(1,3) = 3;
@@ -363,13 +362,10 @@ MatrixwrapperTest::testMatrixwrapperValue()
   Ps(3,1) = 1;   Ps(3,2) = 1;    Ps(3,3) = 1;
   Matrix CHs;
   Matrix CHs_check(c,c);
-  CHs_check(1,1) = 1.73205;   CHs_check(2,1) = 1.15470;    CHs_check(3,1) = 0.57735;
-  CHs_check(1,2) = 0;   CHs_check(2,2) = 0.81650;    CHs_check(3,2) = 0.40825;
-  CHs_check(1,3) = 0;   CHs_check(2,3) = 0;    CHs_check(3,3) = 0.70711;
-  cout << Ps << endl;
+  CHs_check(1,1) = 1.73205;   CHs_check(1,2) = 0.00000;    CHs_check(1,3) = 0.00000;
+  CHs_check(2,1) = 1.15470;   CHs_check(2,2) = 0.81650;    CHs_check(2,3) = 0.00000;
+  CHs_check(3,1) = 0.57735;   CHs_check(3,2) = 0.40825;    CHs_check(3,3) = 0.70711;
   Ps.cholesky_semidefinite(CHs);
-  cout << CHs << endl;
-  cout << CHs_check << endl;
   CPPUNIT_ASSERT_EQUAL(approxEqual(CHs, CHs_check, epsilon),true);  
 
   // test operator - -=

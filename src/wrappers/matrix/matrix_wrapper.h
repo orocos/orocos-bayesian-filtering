@@ -262,9 +262,6 @@ public:
   /// get sub matrix
   virtual MyMatrix sub(int i_start, int i_end, int j_start , int j_end) const = 0;
 
-  /// Cholesky Decomposition
-  virtual bool cholesky(MyMatrix& m) const = 0;
-
   /// Cholesky Decomposition for semidefinite matrices
   virtual bool cholesky_semidefinite(MyMatrix& m) const ;
 
