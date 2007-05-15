@@ -117,7 +117,7 @@ package, or compile it from source.
 \begin{verbatim}
   cd ~/sources/
 \end{verbatim}
-\item UN-tar and unzip the file:
+\item Untar and unzip the file:
 \begin{verbatim}
   tar -xzvf ltilib.tar.gz
 \end{verbatim}
@@ -157,30 +157,29 @@ package, or compile it from source.
 
 \item To install the Newmat library from source:
 \begin{enumerate}
-\item Then download the latest version of the Newmat library from the
-  Newmat web page
-  \url{http://www.robertnz.net/index.html}
-\item Move the downloaded file to your installation folder:
+\item Create a directory in which you will put the source of newmat:
 \begin{verbatim}
-  mv newmat1x.tar.gz ~/sources
+ mkdir ~/sources/newmat/
+\end{verbatim}
+\item Then download the latest version (version 11) of the Newmat library from the
+  Newmat web page:
+  \url{http://www.robertnz.net/download.html}
+\item Move the downloaded file to your source folder:
+\begin{verbatim}
+  mv newmat11.tar.gz ~/sources/newmat
 \end{verbatim}
 \item Go to the directory \ $\mathtt{\tilde{ }}$\texttt{/sources/}
 \begin{verbatim}
-  cd ~/sources
+  cd ~/sources/newmat
 \end{verbatim}
-\item UN-tar and unzip the file:
+\item Untar and unzip the file:
 \begin{verbatim}
-  tar -xzvf newmat1x.tar.gz
+  tar -xzvf newmat11.tar.gz
 \end{verbatim}
-\item Then copy the Makefile.newmat and the include.h.newmat from
-  bfl/aids (see further instructions to get BFL sources):
-\begin{verbatim}
-  cp ~/sources/bfl/aids/Makefile.newmat ~/sources/newmat1x/Makefile
-  cp ~/sources/bfl/aids/include.h.newmat1x ~/sources/newmat1x/include.h
-\end{verbatim}
+\item Then go to \url{http://people.mech.kuleuven.be/~tdelaet/Makefile.Newmat} and save the file as Makefile in your newmat directory.
+\item Also get the adapted include.h at \url{http://people.mech.kuleuven.be/~tdelaet/include.h.newmat11} and save the file as include.h. in your newmat directory.
 \item Build the library:
 \begin{verbatim}
-  cd newmat1x
   make 
 \end{verbatim}
 \item Finally, install the library.  By default newmat gets installed
@@ -192,8 +191,6 @@ package, or compile it from source.
 \end{verbatim}
 \end{enumerate}
 \end{itemize}
-
-
 
 
 
@@ -221,8 +218,34 @@ package, or install it from source.
 \begin{verbatim}
   sudo apt-get install libboost-dev
 \end{verbatim}
-\item To install the Boost library from source, follow the
-  instructions on the boost webpage \url{http://www.boost.org}
+\item To get the source of the Boost library from source, download it from \url{http://sourceforge.net/project/showfiles.php?group_id=7586}.
+\begin{enumerate}
+ \item Move the downloaded file to your source folder:
+	\begin{verbatim}
+	mv boost_1_34_0.tar.gz ~/sources/
+	\end{verbatim}
+ \item Untar and unzip the file?
+ 	\begin{verbatim}
+ 	 tar -xzvf boost_1_34_0.tar.gz
+ 	\end{verbatim}
+ \item Go into the created directory:
+ 	\begin{verbatim}
+ 	cd boost_1_34_o
+ 	\end{verbatim}
+ \item Configure the library:
+	\begin{verbatim}
+	 ./configure
+	\end{verbatim}
+ \item Make the package:
+	\begin{verbatim}
+	 make
+	\end{verbatim}
+\item Install boost:
+	\begin{verbatim}
+	 sudo make install
+	\end{verbatim}
+\end{enumerate}
+
 \end{itemize}
 
 
@@ -250,11 +273,11 @@ available from our subversion server.
   mkdir ~/sources/bfl/build
   cd ~/sources/bfl/build
 \end{verbatim}
-\item and run ccmake
+\item Run ccmake:
 \begin{verbatim}
   ccmake ..
 \end{verbatim}
-\item and type 'c' to configure, and 'e' to exit the page that shows
+\item Then type 'c' to configure, and 'e' to exit the page that shows
   the configure output. Now you see the cmake configuration menu. In
   this menu you can change the following options:
 \begin{itemize}
@@ -277,7 +300,7 @@ with 'q' quit.
 \begin{verbatim}
   make check
 \end{verbatim}	
-\item and to install BFL use
+\item To install BFL use
 \begin{verbatim}
   sudo make install
 \end{verbatim}
