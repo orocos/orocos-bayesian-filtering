@@ -34,7 +34,7 @@ namespace BFL
     public:
       Probability(double p)
 	{
-	  assert( (std::isfinite(p) != 0) && (p >= 0));
+	  assert( p >= 0 );
 	  _prob = p;
 	}
       virtual ~Probability(){};
