@@ -16,6 +16,10 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 //  
  
+#ifndef MOBILE_ROBOT_HPP
+#define MOBILE_ROBOT_HPP
+
+
 #include <model/analyticsystemmodel_gaussianuncertainty.h>
 #include <model/linearanalyticmeasurementmodel_gaussianuncertainty.h>
 #include <pdf/gaussian.h>
@@ -44,3 +48,5 @@ namespace BFL{
       MatrixWrapper::ColumnVector _state;
     };
 }
+
+#endif

@@ -22,6 +22,11 @@ IF (BUILD_TESTS)
   TARGET_LINK_LIBRARIES( test_model orocos-bfl ${MATRIX_LIBS} ${RNG_LIBS} ${GINAC_LIBS} cppunit )
   ADD_TEST( test_model test_model )
 
+  ADD_EXECUTABLE( test_complete_filter ${DO_EXCLUDE} test-runner.cpp approxEqual.cpp complete_filter_test.cpp complete_filter_test.hpp
+                  ${PROJ_SOURCE_DIR}/examples/mobile_robot.cpp ${PROJ_SOURCE_DIR}/examples/compare_filters/nonlinearanalyticconditionalgaussianmobile.cpp)
+  TARGET_LINK_LIBRARIES( test_complete_filter orocos-bfl ${MATRIX_LIBS} ${RNG_LIBS} ${GINAC_LIBS} cppunit )
+  ADD_TEST( test_complete_filter test_complete_filter )
+
 IF (GINAC_SUPPORT)
   ADD_EXECUTABLE( test_model_ginac ${DO_EXCLUDE} test-runner.cpp approxEqual.cpp model_test_ginac.cpp model_test_ginac.hpp)
   TARGET_LINK_LIBRARIES( test_model_ginac orocos-bfl ${MATRIX_LIBS} ${RNG_LIBS} ${GINAC_LIBS} cppunit )

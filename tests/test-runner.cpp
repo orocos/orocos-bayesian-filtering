@@ -24,9 +24,6 @@
 #include <cppunit/CompilerOutputter.h>
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
-#include <wrappers/matrix/matrix_wrapper.h>
-#include <wrappers/matrix/vector_wrapper.h>
-
 
 
 int main(int argc, char** argv)
