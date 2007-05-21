@@ -231,8 +231,6 @@ SmootherTest::testKalmanSmoother()
     
         } // estimation loop
 
-  cout << posteriors_it->ExpectedValueGet() << endl;
-  cout << posteriors_it->CovarianceGet() << endl;
   ColumnVector mean_smoother_check(STATE_SIZE);
   mean_smoother_check(1) = 0.75; mean_smoother_check(2) = 0.27; mean_smoother_check(3) = 0.82; 
   SymmetricMatrix cov_smoother_check(STATE_SIZE);
@@ -240,7 +238,7 @@ SmootherTest::testKalmanSmoother()
   cov_smoother_check(2,1) = -0.004; cov_smoother_check(2,2) = 0.005; cov_smoother_check(2,3) = -0.006;
   cov_smoother_check(3,1) = 0.006;  cov_smoother_check(3,2) = -0.006;  cov_smoother_check(3,3) = 0.01;
   CPPUNIT_ASSERT_EQUAL(approxEqual(posteriors_it->ExpectedValueGet(), mean_smoother_check, epsilon_large),true);
-  //CPPUNIT_ASSERT_EQUAL(approxEqual(posteriors_it->CovarianceGet(), cov_smoother_check, epsilon_large),true);
+  CPPUNIT_ASSERT_EQUAL(approxEqual(posteriors_it->CovarianceGet(), cov_smoother_check, epsilon_large),true);
     
 }
 
