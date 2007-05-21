@@ -23,7 +23,7 @@
 
 // To use measurements specify 1
 // To do deadreckoning (no measurements) specify 0
-#define USE_MEASUREMENTS 1
+#define USE_MEASUREMENTS 0
 
 #define DELTA_T 1	        // Delta t (for discretisation)
 #define NUM_TIME_STEPS 101  // Number of steps that  simulation is running 

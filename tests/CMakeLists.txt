@@ -22,6 +22,11 @@ IF (BUILD_TESTS)
   TARGET_LINK_LIBRARIES( test_model orocos-bfl ${MATRIX_LIBS} ${RNG_LIBS} ${GINAC_LIBS} cppunit )
   ADD_TEST( test_model test_model )
 
+  ADD_EXECUTABLE( test_smoother ${DO_EXCLUDE} test-runner.cpp approxEqual.cpp smoother_test.cpp smoother_test.hpp
+                  ${PROJ_SOURCE_DIR}/examples/mobile_robot.cpp ${PROJ_SOURCE_DIR}/examples/compare_filters/nonlinearanalyticconditionalgaussianmobile.cpp)
+  TARGET_LINK_LIBRARIES( test_smoother orocos-bfl ${MATRIX_LIBS} ${RNG_LIBS} ${GINAC_LIBS} cppunit )
+  ADD_TEST( test_smoother test_smoother )
+
   ADD_EXECUTABLE( test_complete_filter ${DO_EXCLUDE} test-runner.cpp approxEqual.cpp complete_filter_test.cpp complete_filter_test.hpp
                   ${PROJ_SOURCE_DIR}/examples/mobile_robot.cpp ${PROJ_SOURCE_DIR}/examples/compare_filters/nonlinearanalyticconditionalgaussianmobile.cpp)
   TARGET_LINK_LIBRARIES( test_complete_filter orocos-bfl ${MATRIX_LIBS} ${RNG_LIBS} ${GINAC_LIBS} cppunit )
@@ -37,7 +42,7 @@ ENDIF (GINAC_SUPPORT)
 
 
   ADD_CUSTOM_TARGET(check ctest -V 
-                    DEPENDS test_pdf test_sample test_matrixwrapper test_model
+                    DEPENDS test_pdf test_sample test_matrixwrapper test_model test_smoother
                     WORKING_DIRECTORY ${PROJ_BINARY_DIR}/tests)
 
 IF (GINAC_SUPPORT)
