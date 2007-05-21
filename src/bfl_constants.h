@@ -34,6 +34,11 @@ namespace BFL
     public:
       Probability(double p)
 	{
+          #ifndef _MSC_VER
+   	    assert( p >= 0 );
+          #endif  
+	  assert(std::isfinite(p) != 0);
+	  
 	  assert( p >= 0 );
 	  _prob = p;
 	}
