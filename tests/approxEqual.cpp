@@ -38,7 +38,14 @@ bool approxEqual(const MatrixWrapper::Matrix& a, const MatrixWrapper::Matrix& b,
 
 bool approxEqual(const MatrixWrapper::SymmetricMatrix& a, const MatrixWrapper::SymmetricMatrix& b, double epsilon)
 {
-  return approxEqual((const MatrixWrapper::Matrix&) a, (const MatrixWrapper::Matrix&)b, epsilon);
+  if (a.rows() != b.rows()) return false;
+  if (a.columns() != b.columns()) return false;
+  
+  for (unsigned int r=0; r<a.rows(); r++)
+    for (unsigned int c=0; c<a.columns(); c++)
+      if (!approxEqual(a(r+1, c+1), b(r+1,c+1),epsilon)) return false;
+
+  return true;
 }
 
 bool approxEqual(const MatrixWrapper::ColumnVector& a, const MatrixWrapper::ColumnVector& b, double epsilon)
