@@ -431,6 +431,7 @@ namespace BFL
 	  current_weight = it->WeightGet();
 	  SumOfWeights += current_weight;
 	}
+      assert(SumOfWeights > 0);
       this->_SumWeights = SumOfWeights;
       //  CumPDFUpdate();
 #ifdef __MCPDF_DEBUG__
