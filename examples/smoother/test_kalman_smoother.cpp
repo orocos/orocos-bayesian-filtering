@@ -298,14 +298,9 @@ RauchTungStriebel backwardfilter((Gaussian*)posterior);
                << posterior->CovarianceGet()(2,3) << "," << posterior->CovarianceGet()(3,3) << ";" << endl;
 
       // make copy of posterior
-      //cout << "make copy of posterior" << endl;
       posteriors_it->ExpectedValueSet(posterior->ExpectedValueGet());
       posteriors_it->CovarianceSet(posterior->CovarianceGet());
 
-      //cout << "Result of smoothing" << endl;
-      //cout << "time_step: " << time_step << endl;
-      //cout << " Posterior Mean = " << endl << posteriors_it->ExpectedValueGet() << endl
-      // << " Covariance = " << endl << posteriors_it->CovarianceGet() << "" << endl;
     } // estimation loop
 
   cout << "After Smoothing first timestep " << endl;
