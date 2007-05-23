@@ -52,12 +52,12 @@
 
 // Prior: 
 // Initial estimate of position and orientation
-#define PRIOR_MU_X -1
-#define PRIOR_MU_Y 1
+#define PRIOR_MU_X -0.1
+#define PRIOR_MU_Y 0.1
 #define PRIOR_MU_THETA M_PI/4	//M_PI/4
 // Initial covariances of position and orientation
-#define PRIOR_COV_X pow(1.0,2)
-#define PRIOR_COV_Y pow(1.0,2)
+#define PRIOR_COV_X pow(0.2,2)
+#define PRIOR_COV_Y pow(0.2,2)
 #define PRIOR_COV_THETA pow(M_PI/8,2) 
 
 // System Noise
