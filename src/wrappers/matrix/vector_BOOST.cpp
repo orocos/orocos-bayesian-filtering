@@ -84,7 +84,7 @@ double& MyColumnVector::operator()(unsigned int i)
 
 const double MyColumnVector::operator()(unsigned int i) const 
 {
-  BoostColumnVector op1 = (*this);
+  const BoostColumnVector op1 = (*this);
   return op1(i-1);
 }
 
