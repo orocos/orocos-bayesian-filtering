@@ -48,7 +48,7 @@ namespace BFL
       /// Constructor (dimension = number of classes) An equal probability is set for all classes 
       /** @param num_states number of different classes or states
        */
-      DiscretePdf(int num_states=0);
+      DiscretePdf(unsigned int num_states=0);
 
       /// Copy Constructor
       DiscretePdf(const DiscretePdf &);
@@ -57,12 +57,12 @@ namespace BFL
       virtual ~DiscretePdf();
 
       /// Implementation of virtual base class method
-      Probability ProbabilityGet(const int& input) const;
+      Probability ProbabilityGet(const unsigned int& input) const;
       /// Only relevant for discrete Pdf's
-      bool ProbabilitySet(int input, Probability a);
+      bool ProbabilitySet(unsigned int input, Probability a);
 
       bool SampleFrom (vector<Sample<int> >& list_samples,
-		       const int num_samples,
+		       const unsigned int num_samples,
 		       int method = DEFAULT, 
 		       void * args = NULL) const;
       bool SampleFrom (Sample<int>& one_sample, int method = DEFAULT, void * args = NULL) const;

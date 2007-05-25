@@ -47,7 +47,7 @@ namespace BFL
 	  vector for the continuous case, or the discrete number of states
 	  for the discrete case
       */
-      Pdf(int dimension=0);
+      Pdf(unsigned int dimension=0);
   
       // Default Copy Constructor will do the job
   
@@ -72,7 +72,7 @@ namespace BFL
 	  @bug Sometimes the compiler doesn't know which method to choose!
       */
       virtual bool SampleFrom (vector<Sample<T> >& list_samples,
-			       const int num_samples,
+			       const unsigned int num_samples,
 			       int method = DEFAULT, 
 			       void * args = NULL) const;
 
@@ -105,7 +105,7 @@ namespace BFL
       /// Set the dimension of the argument
       /** @param dim the dimension
        */
-      virtual void DimensionSet(int dim);
+      virtual void DimensionSet(unsigned int dim);
 
       /// Get the expected value E[x] of the pdf 
       /** Get low order statistic (Expected Value) of this AnalyticPdf
@@ -137,8 +137,10 @@ namespace BFL
     };
 
 template<typename T> 
-Pdf<T>::Pdf(int dim)
+Pdf<T>::Pdf(unsigned int dim)
 {
+  assert((int)dim >= 0);
+
   _dimension = dim;
 #ifdef __CONSTRUCTOR__
   cout << "Pdf constructor" << endl;
@@ -160,14 +162,15 @@ Pdf<T>::DimensionGet () const
 }
 
 template<typename T> void 
-Pdf<T>::DimensionSet ( int dim )
+Pdf<T>::DimensionSet ( unsigned int dim )
 {
+  assert((int)dim >= 0);  
   _dimension = dim;
 }
 
 template<typename T> bool
 Pdf<T>::SampleFrom (vector<Sample<T> >& list_samples, 
-		    const int num_samples, 
+		    const unsigned int num_samples, 
 		    int method, 
 		    void * args) const
 {

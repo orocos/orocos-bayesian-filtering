@@ -28,7 +28,7 @@ namespace BFL
   using namespace MatrixWrapper;
   
 
-  DiscretePdf::DiscretePdf(int dim): Pdf<int>(dim)
+  DiscretePdf::DiscretePdf(unsigned int dim): Pdf<int>(dim)
   {
     _Values_p = new ColumnVector(dim);
     _SumWeights = 1.0;
@@ -41,7 +41,7 @@ namespace BFL
 
   DiscretePdf::DiscretePdf(const DiscretePdf & my_dpdf)
   { 
-    int dim = my_dpdf.DimensionGet();
+    unsigned int dim = my_dpdf.DimensionGet();
     _Values_p = new ColumnVector(dim);
     (*_Values_p) = my_dpdf.ProbabilitiesGet();
 #ifdef __CONSTRUCTOR__
@@ -58,15 +58,17 @@ namespace BFL
     delete _Values_p;
   }
 
-  Probability DiscretePdf::ProbabilityGet(const int& input) const
+  Probability DiscretePdf::ProbabilityGet(const unsigned int& input) const
   {
+    assert((int)input >= 0 && input < DimensionGet());
+
     return (*_Values_p)(input+1);
   }
 
-  bool DiscretePdf::ProbabilitySet(int input, Probability a) 
+  bool DiscretePdf::ProbabilitySet(unsigned int input, Probability a) 
   {
-    if (input < 0)
-      return false;
+    assert((int)input >= 0 && input < DimensionGet());
+
     (*_Values_p)(input+1) = a;
     CumPDFUpdate();
     return true;
@@ -74,11 +76,6 @@ namespace BFL
 
   ColumnVector DiscretePdf::ProbabilitiesGet() const
   {
-    /*
-    ColumnVector result(DimensionGet());
-    result = *_Values_p;
-    return result;
-    */
     return *_Values_p;
   }
 
@@ -93,7 +90,7 @@ namespace BFL
   // For optimal performance!
   bool
   DiscretePdf::SampleFrom (vector<Sample<int> >& list_samples,
-			   const int num_samples,
+			   const unsigned int num_samples,
 			   int method, 
 			   void * args) const
   {
