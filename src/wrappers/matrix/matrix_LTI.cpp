@@ -1,4 +1,3 @@
-// $id: matrix_LTI.cpp 6578 2006-03-28 13:50:58Z wmeeusse $
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
 
 //  
@@ -24,7 +23,6 @@
 #include "matrix_LTI.h"
 
 #include <ltilib/ltiMatrixInversion.h>
-#include <ltilib/ltiSVD.h>
 #include <ltilib/ltiMatrixDecomposition.h>
 #include <ltilib/ltiSymmetricMatrixInversion.h>
 
@@ -226,34 +224,6 @@ MyMatrix MyMatrix::inverse() const
   return (MyMatrix) base;
 }
 
-// See <http://dsp.ee.sun.ac.za/~schwardt/dsp813/lecture10/node7.html>
-MyMatrix MyMatrix::pseudoinverse(double epsilon) const
-{
-  int rows;
-  rows = this->rows();
-  int cols = this->columns();
-  // calculate SVD decomposition
-  MyMatrix U,V;
-  MyColumnVector D;
-  
-  bool res;
-  res = SVD(D,U,V);  // U=mxn  D=n  V=nxn
-  assert(res);
-  
-  Matrix Dinv(cols,cols);
-  Dinv = 0;
-  for (unsigned int i=0; i<D.rows(); i++)
-    if ( D(i+1) < epsilon )
-      Dinv(i+1,i+1) = 0;
-    else
-      Dinv(i+1,i+1) = 1/D(i+1);
-
-  #ifdef __DEBUG__
-    std::cout << "MATRIX::pseudoinverse() Dinv =\n" << Dinv << std::endl;
-  #endif //__DEBUG__
-
-  return V * Dinv * U.transpose();
-}
 
 int 
 MyMatrix::convertToSymmetricMatrix(MySymmetricMatrix& sym)
@@ -290,41 +260,6 @@ MyMatrix::resize(unsigned int i, unsigned int j, bool copy, bool initialize)
   ltiMatrix& base = (ltiMatrix &) *this;
   base.resize(i,j, copy, initialize);
 }
-
-
-
-bool 
-MyMatrix::SVD(MyColumnVector& D, MyMatrix& U, MyMatrix& V) const
-{
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-
-  lti::singularValueDecomp<double> mysvd(true);  //true = sort singular values
-  return mysvd.apply(*this,U,D,V);
-
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-  // BIG FAT WARNING: THIS ALGORITHM HAS PROBLEMS WHEN VALUES OF MATRIX ARE TOO SMALL
-}
-
-
 
 /////////////////////////////
 // CLASS SYMMETRIC MATRIX  //

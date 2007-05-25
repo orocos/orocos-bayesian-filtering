@@ -212,33 +212,6 @@ MyMatrix MyMatrix::inverse() const
   return (MyMatrix) inverted;
 }
 
-MyMatrix MyMatrix::pseudoinverse(double epsilon) const
-{
-  MyMatrix result, U,V;  MyColumnVector D;
-  int rows = this->rows();
-  int cols = this->columns();
-
-  if (cols > rows)
-    this->transpose().SVD(D,U,V);
-  else
-    this->SVD(D,U,V);  // U=rxc  D=c   V=cxc
-  
-  int D_size = min(rows, cols);
-  MyMatrix Dinv(D_size,D_size);
-  Dinv = 0;
-  for (unsigned int i=0; i<(unsigned int)D_size; i++)
-    if ( D(i+1) < epsilon )
-      Dinv(i+1,i+1) = 0;
-    else
-      Dinv(i+1,i+1) = 1/D(i+1);
-
-  if (cols > rows)
-    result = U * Dinv * V.transpose();
-  else
-    result = V * Dinv * U.transpose();
-
-  return result;
-}
 
 int 
 MyMatrix::convertToSymmetricMatrix(MySymmetricMatrix& sym)
@@ -279,31 +252,6 @@ MyMatrix MyMatrix::sub(int i_start, int i_end, int j_start , int j_end) const
   return (MyMatrix)(this->SubMatrix(i_start, i_end, j_start, j_end));
 }
 
-
-bool 
-MyMatrix::SVD(MyColumnVector& D, MyMatrix& U, MyMatrix& V) const
-{
-  if (columns() > rows()){
-    cout << endl << "ERROR" << endl;    
-    cout << "Newmat doesn't support svd for columns > rows" << endl;
-    cout << "you can avoid this problem by using the LTI library" << endl;
-    return false;
-  }
-
-  int Acolumns = columns();
-  NEWMAT::DiagonalMatrix d(Acolumns);
-  NewMatMatrix u(rows(),Acolumns); 
-  NewMatMatrix v(Acolumns, Acolumns);
-  NEWMAT::SVD(*this,d,u,v);
-  D.ReSize(Acolumns);
-  for ( int row = 0; row < Acolumns; row++) 
-      D(row+1) = d(row+1);
-
-  U = (MyMatrix &) u;
-  V = (MyMatrix &) v;
-
-  return true;
-}
 
 
 /////////////////////////////

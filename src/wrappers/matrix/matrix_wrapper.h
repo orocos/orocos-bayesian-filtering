@@ -1,4 +1,3 @@
-
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
 
@@ -28,7 +27,6 @@
 #define MyColumnVector    MatrixWrapper::ColumnVector
 #define MyRowVector       MatrixWrapper::RowVector
 #define MySymmetricMatrix MatrixWrapper::SymmetricMatrix
-
 
 namespace MatrixWrapper{
 
@@ -129,7 +127,7 @@ public:
 		      bool copy=true, bool initialize=true) = 0;
 
   /// get pseudoinverse
-  virtual MyMatrix pseudoinverse(double epsilon) const = 0;
+  virtual MyMatrix pseudoinverse(double epsilon = 0.01 ) const;
 
   /// get inverse
   virtual MyMatrix inverse() const = 0;
@@ -150,9 +148,11 @@ public:
   virtual MyMatrix sub(int i_start, int i_end, int j_start , int j_end) const = 0;
 
   /// SVD Decomposition (for pseudo-inverse properties)
-  virtual bool SVD(MyColumnVector& D, MyMatrix& U, MyMatrix& V) const = 0;
-
-
+  virtual bool SVD(MyColumnVector& D, MyMatrix& U, MyMatrix& V) const ;
+  
+  double PYTHAG(double a,double b) const; 
+ 
+  double SIGN(double a,double b) const;
 
 }; // class Matrix_Wrapper
  

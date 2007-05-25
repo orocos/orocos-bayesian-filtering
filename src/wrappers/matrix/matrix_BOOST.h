@@ -92,13 +92,11 @@ class Matrix : public BoostMatrix, public Matrix_Wrapper
 
   virtual void resize(unsigned int i, unsigned int j, 
 		      bool copy=true, bool initialize=true);
-  virtual MyMatrix pseudoinverse(double epsilon = 0.01) const;
   virtual MyMatrix inverse() const;
   virtual MyMatrix transpose() const;
   virtual double determinant() const;
   virtual int convertToSymmetricMatrix(MySymmetricMatrix& sym);
   virtual MyMatrix sub(int i_start, int i_end, int j_start , int j_end) const;
-  virtual bool SVD(MyColumnVector& D, MyMatrix& U, MyMatrix& V) const;
 
 };
 

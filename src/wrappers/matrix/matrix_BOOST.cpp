@@ -248,34 +248,6 @@ MyMatrix MyMatrix::inverse() const
 }
 
 
-MyMatrix MyMatrix::pseudoinverse(double epsilon) const
-{
-  MyMatrix result, U,V;  MyColumnVector D;
-  int rows = this->rows();
-  int cols = this->columns();
-
-  if (cols > rows)
-    this->transpose().SVD(D,U,V);
-  else
-    this->SVD(D,U,V);  // U=rxc  D=c   V=cxc
-  
-  int D_size = min(rows, cols);
-  MyMatrix Dinv(D_size,D_size);
-  Dinv = 0;
-  for (unsigned int i=0; i<(unsigned int)D_size; i++)
-    if ( D(i+1) < epsilon )
-      Dinv(i+1,i+1) = 0;
-    else
-      Dinv(i+1,i+1) = 1/D(i+1);
-
-  if (cols > rows)
-    result = U * Dinv * V.transpose();
-  else
-    result = V * Dinv * U.transpose();
-
-  return result;
-}
-
 int 
 MyMatrix::convertToSymmetricMatrix(MySymmetricMatrix& sym)
 {
@@ -311,18 +283,6 @@ MyMatrix MyMatrix::sub(int i_start, int i_end, int j_start , int j_end) const
 
   return submatrix;
 }
-
-
-bool 
-MyMatrix::SVD(MyColumnVector& D, MyMatrix& U, MyMatrix& V) const
-{
-  assert(0);
-
-  return true;
-}
-
-
-
 
 /////////////////////////////
 // CLASS SYMMETRIC MATRIX  //
