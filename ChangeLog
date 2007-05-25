@@ -1,4 +1,8 @@
 
+2007-05-25  Tinne De Laet <first dot last at mech dot kuleuven dot be>
+	* Singular value decomposition and pseudoinverse added to the matrix wrapper
+	(revision 28197)
+
 2007-05-21  Tinne De Laet <first dot last at mech dot kuleuven dot be>
 	* Smoother example included (and thoroughly tested ofcourse)
 
