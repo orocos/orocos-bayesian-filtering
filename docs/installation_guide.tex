@@ -86,7 +86,7 @@ home directory.
 \subsection{Install an external matrix library}
 %----------------------------------
 BFL requires an external library for matrix computations. You can
-choose to use the LTI library, or the Newmat library.
+choose to use the LTI library, the Newmat library, or the Boost library.
 
 \subsubsection{LTI matrix library}
 \label{subsec:lti}
@@ -192,6 +192,13 @@ package, or compile it from source.
 \end{enumerate}
 \end{itemize}
 
+\subsubsection{Boost matrix library}
+You can install the Boost library as a precompiled Ubuntu/Debian
+package. To install the precompiled Boost package run:
+\begin{verbatim}
+  sudo apt-get install libboost-dev
+\end{verbatim}
+
 
 
 
@@ -257,17 +264,23 @@ package, or install it from source.
 \subsection{Install BFL itself}
 %----------------------------------
 Now we arrived to the installation of the BFL library itself. BFL is
-available from our subversion server.
-% FIXME: Provide installation instructions for releases too!
+available from our subversion server, or as a tarbal.
 \begin{enumerate}
 \item First go to the \ $\mathtt{\tilde{ }}$\texttt{/sources/} folder:
 \begin{verbatim}
   cd ~/sources/
 \end{verbatim}
-\item Then, to get a copy of BFL, use:
+\item Then, to get a copy of BFL, use
+ \begin{itemize}
+ \item For subversion access:
 \begin{verbatim}
   svn co http://svn.mech.kuleuven.be/repos/orocos/trunk/bfl
 \end{verbatim}
+ \item To extract a BFL tarbal:
+\begin{verbatim}
+  tar xvf orocos-bfl.tar.gz
+\end{verbatim}
+\end{itemize}
 \item Now create and go to a build directory in ~/sources/bfl
 \begin{verbatim}
   mkdir ~/sources/bfl/build
