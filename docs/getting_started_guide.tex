@@ -116,50 +116,39 @@ There are different ways to get some help/support:
 %----------------------------------
 \section{How to prepare the tutorial examples}
 
-\begin{enumerate}
-\item First you get the source of the tutorial examples. Two
-  possibilities are available:
+First you get the source of the tutorial examples. To see the source
+code of the examples, you need to get the BFL source:
 \begin{itemize}
-\item Get the source of svn:
-\begin{verbatim}
-  svn co http://svn.mech.kuleuven.be/repos/actsens/software/...
-                    .../bfl/getting_started_guide/progs/
-\end{verbatim}
-and go into then new directory and run autogen:
-\begin{verbatim}
-  cd progs
-  ./autogen
-\end{verbatim}
-\item Download the tarred source code from the web at\\
-  \url{http://people.mech.kuleuven.be/~tdelaet/tutorial-0.0.1.tar.gz}
-  and untar the package.
-\begin{verbatim}
-  tar -xzvvf tutorial-0.0.1.tar.gz 
-\end{verbatim}
-and go to the new directory:
-\begin{verbatim}
-  cd tutorial-0.0.1
-\end{verbatim}
+\item You can download the bfl tarbal, or
+\item get BFL from subversion.
 \end{itemize}
-\item Now you make a build directory and go to this directory.
+Both cases are explained in the BFL installation guide on
+\url{www.orocos.org/bfl}. After doing this, you will find the example
+programs in bfl/examples.
+
+
+Now you are already set to start the tutorial. However, if you also
+want to execute the examples, and seen the numerical results yourself,
+you need to choose one of these two options:
+\begin{itemize}
+\item Compile the BFL source as explained in the installation guide,
+  and find the binary examples in bf/build/examples
+\item Or you can get the precompiled BFL examples from our aptitude
+  server. Therefore you need to:\
+\begin{enumerate}
+\item First add the following line to your /etc/apt/sources.list:
 \begin{verbatim}
-  mkdir build
-  cd build
+  deb http://people.mech.kuleuven.be/~tdelaet/bfl _mydistro_ main
 \end{verbatim}
-\item Configure and build the tutorial examples\\ \\
-  If you use the Ubuntu breezy/dapper and Debian package:
+  where \emph{\_mydistro\_} is breezy, dapper, edgy or feisty.
+\item Then apt-get the packages:
 \begin{verbatim}
-  ../configure --with-bfl=/usr
-  make check
+  sudo apt-get update
+  sudo apt-get install orocos-bfl-examples
 \end{verbatim}
-When you installed BFL from the source:
-\begin{verbatim}
-  ../configure --with-bfl=/usr/local
-  make check
-\end{verbatim}
+Now you find the percompiled BFL examples in /usr/bin/bfl.
 \end{enumerate}
-Now, you'll find the builded tutorial examples in the subdirectory
-src. Have fun!
+\end{itemize}
 
 
 
