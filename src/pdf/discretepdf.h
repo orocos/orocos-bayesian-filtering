@@ -38,12 +38,12 @@ namespace BFL
       /// Total sum of weighs associated with the variables
       double _SumWeights;
       /// Update the Sum of weights (eg. after setting a weight)
-      void SumWeightsUpdate();
+      bool SumWeightsUpdate();
 
       /// STL-vector containing the Cumulative PDF (for efficient sampling)
       vector<double> _CumPDF;
       /// After updating weights, we have to update the cumPDF
-      void CumPDFUpdate();
+      bool CumPDFUpdate();
     public:
       /// Constructor (dimension = number of classes) An equal probability is set for all classes 
       /** @param num_states number of different classes or states
@@ -70,7 +70,7 @@ namespace BFL
       /// Get all probabilities
       MatrixWrapper::ColumnVector ProbabilitiesGet() const;
       /// Set all probabilities
-      void ProbabilitiesSet(MatrixWrapper::ColumnVector & values);
+      bool ProbabilitiesSet(MatrixWrapper::ColumnVector & values);
 
     };
 

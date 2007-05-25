@@ -45,7 +45,8 @@ ParticleFilter<SV,MV>::ParticleFilter(MCPdf<SV> * prior,
   /* Note: Dirty cast should be avoided by not demanding an MCPdf as
      prior and just sample from the prior instead  :-( 
   */
-  (dynamic_cast<MCPdf<SV> *>(this->_post))->ListOfSamplesSet(prior->ListOfSamplesGet());
+  bool ret = (dynamic_cast<MCPdf<SV> *>(this->_post))->ListOfSamplesSet(prior->ListOfSamplesGet());
+  assert(ret);
 
   // Initialise lists of samples
   _old_samples = (prior->ListOfSamplesGet());
@@ -85,7 +86,8 @@ ParticleFilter<SV,MV>::ParticleFilter(MCPdf<SV> * prior,
   /* Note: Dirty cast should be avoided by not demanding an MCPdf as
      prior and just sample from the prior instead  :-( 
   */
-  (dynamic_cast<MCPdf<SV> *>(this->_post))->ListOfSamplesSet(prior->ListOfSamplesGet());
+  bool ret = (dynamic_cast<MCPdf<SV> *>(this->_post))->ListOfSamplesSet(prior->ListOfSamplesGet());
+  assert(ret);
 
   // Initialise lists of samples
   _old_samples = (prior->ListOfSamplesGet());
@@ -266,7 +268,7 @@ ParticleFilter<SV,MV>::UpdateWeightsInternal(SystemModel<SV> * const sysmodel,
 
 }
 
-template <typename SV, typename MV> void 
+template <typename SV, typename MV> bool
 ParticleFilter<SV,MV>::DynamicResampleStep()
 {
   // Resampling?
@@ -296,16 +298,19 @@ ParticleFilter<SV,MV>::DynamicResampleStep()
 	}
     }
   if (resampling == true)
-    this->Resample();
+    return this->Resample();
+  else
+    return true;
 }
 
 
-template <typename SV, typename MV> void 
+template <typename SV, typename MV> bool
 ParticleFilter<SV,MV>::StaticResampleStep()
 {
   // Resampling if necessary
   if ( (!this->_dynamicResampling) &&  (((this->_timestep) % _resamplePeriod) == 0) && (this->_timestep != 0))
-    this->Resample();
+    return this->Resample();
+  return true;
 }
 
 
@@ -322,14 +327,15 @@ ParticleFilter<SV,MV>::UpdateInternal(SystemModel<StateVar>* const sysmodel,
   // Bug, not completely true, but should do for now...
   if (sysmodel != NULL)
     {
-      this->StaticResampleStep();
-      result = this->ProposalStepInternal(sysmodel,u,measmodel,z,s) && result;
+      result = result && this->StaticResampleStep();
+      result = result && this->ProposalStepInternal(sysmodel,u,measmodel,z,s);
+
     }
   // Updating the weights only makes sense using a measurement model
   if (measmodel != NULL)
     {
-      result = this->UpdateWeightsInternal(sysmodel,u,measmodel,z,s) && result;
-      this->DynamicResampleStep();
+      result = result && this->UpdateWeightsInternal(sysmodel,u,measmodel,z,s);
+      result = result && this->DynamicResampleStep();
     }
 
   return result;

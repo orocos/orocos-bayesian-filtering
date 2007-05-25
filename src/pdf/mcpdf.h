@@ -51,7 +51,7 @@ namespace BFL
 
   
       /// After updating weights, we have to recalculate the sum of weights
-      void SumWeightsUpdate();
+      bool SumWeightsUpdate();
       /// Normalizing the weights
       bool NormalizeWeights();
       /// After updating weights, we have to update the cumPDF
@@ -420,7 +420,7 @@ namespace BFL
     }
 
 
-  template <typename T> void 
+  template <typename T> bool
     MCPdf<T>::SumWeightsUpdate()
     {
       double SumOfWeights = 0.0; 
@@ -431,32 +431,36 @@ namespace BFL
 	  current_weight = it->WeightGet();
 	  SumOfWeights += current_weight;
 	}
-      assert(SumOfWeights > 0);
-      this->_SumWeights = SumOfWeights;
-      //  CumPDFUpdate();
+
 #ifdef __MCPDF_DEBUG__
       cout << "MCPDF::SumWeightsUpdate: SumWeights = " << _SumWeights << endl;
 #endif // __MCPDF_DEBUG__
+
+      if (SumOfWeights > 0){
+	this->_SumWeights = SumOfWeights;
+	return true;
+      }
+      else{
+	cerr << "MCPDF::SumWeightsUpdate: SumWeights = " << _SumWeights << endl;
+	return false;
+      }
     }
 
   template <typename T> bool
     MCPdf<T>::NormalizeWeights()
     {
       static typename vector<WeightedSample<T> >::iterator it;
-      this->SumWeightsUpdate();
-      if (this->_SumWeights != 0)
+
+      // if sumweights = 0, something is wrong
+      if (!this->SumWeightsUpdate()) return false;
+
+      for ( it = _listOfSamples.begin() ; it != _listOfSamples.end() ; it++ )
 	{
-	  for ( it = _listOfSamples.begin() ; it != _listOfSamples.end() ; it++ )
-	    {
-	      it->WeightSet(it->WeightGet() / _SumWeights);
-	    }
-	  this->_SumWeights = 1.0;
-	  this->CumPDFUpdate();
-	  return true;
+	  it->WeightSet(it->WeightGet() / _SumWeights);
 	}
-      // all samples have weight = 0
-      else
-	return false;
+      this->_SumWeights = 1.0;
+      this->CumPDFUpdate();
+      return true;
     }
 
 

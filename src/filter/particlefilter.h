@@ -222,12 +222,12 @@ namespace BFL
       /// Resample if necessary
       /** @bug let the user implement her/his own resamplescheme
        */
-      virtual void DynamicResampleStep();
+      virtual bool DynamicResampleStep();
 
       /// Resample if wanted
       /** @bug let the user implement her/his own resamplescheme
        */
-      virtual void StaticResampleStep();
+      virtual bool StaticResampleStep();
 
       /// Actual Resampling happens here;
       virtual bool Resample();

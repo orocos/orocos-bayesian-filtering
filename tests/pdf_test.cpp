@@ -104,8 +104,6 @@ PdfTest::testDiscretePdf()
        CPPUNIT_ASSERT_EQUAL(true, a_discretepdf.ProbabilitySet(new_el,prob_new));
        CPPUNIT_ASSERT_EQUAL(prob_new, (double) a_discretepdf.ProbabilityGet(new_el));
     }
-  int new_el = -1;
-  CPPUNIT_ASSERT_EQUAL( false, a_discretepdf.ProbabilitySet(new_el,prob_new));
   ColumnVector prob_vec(NUM_DS);
   prob_vec(1) = 0.9;
   for (int i = 2; i < NUM_DS + 1 ; i++)

@@ -70,8 +70,7 @@ namespace BFL
     assert((int)input >= 0 && input < DimensionGet());
 
     (*_Values_p)(input+1) = a;
-    CumPDFUpdate();
-    return true;
+    return CumPDFUpdate();
   }
 
   ColumnVector DiscretePdf::ProbabilitiesGet() const
@@ -79,12 +78,12 @@ namespace BFL
     return *_Values_p;
   }
 
-  void DiscretePdf::ProbabilitiesSet(ColumnVector & v)
+  bool DiscretePdf::ProbabilitiesSet(ColumnVector & v)
   {
     assert(v.rows() == DimensionGet());
 
     *_Values_p = v;
-    CumPDFUpdate();
+    return CumPDFUpdate();
   }
 
   // For optimal performance!
@@ -168,17 +167,24 @@ namespace BFL
       }
   }
 
-  void DiscretePdf::SumWeightsUpdate()
+  bool DiscretePdf::SumWeightsUpdate()
   {
     double SumOfWeights = 0.0; 
     for ( unsigned int row = 1; row < DimensionGet() + 1; row++) SumOfWeights += (*_Values_p)(row);
-    this->_SumWeights = SumOfWeights;
+    if (SumOfWeights > 0){
+      this->_SumWeights = SumOfWeights;
+      return true;
+    }
+    else{
+      cerr << "DiscretePdf::SumWeightsUpdate(): SumOfWeithts = " << SumOfWeights << endl;
+      return false;
+    }
   }
 
-  void DiscretePdf::CumPDFUpdate()
+  bool DiscretePdf::CumPDFUpdate()
   {
     // Update Sum Of Weights
-    SumWeightsUpdate();
+    if (!SumWeightsUpdate()) return false;
     
     double CumSum=0.0; 
     static vector<double>::iterator CumPDFit;
@@ -198,6 +204,8 @@ namespace BFL
 	    (_CumPDF[DimensionGet()] <= 1.0 + NUMERIC_PRECISION) );
 
     _CumPDF[DimensionGet()]=1;
+
+    return true;
   } 
 
   
