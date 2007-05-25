@@ -59,7 +59,7 @@ namespace BFL
       /** @param weight the weight :-)
 	  @return true if weight is a reasonable value
        */
-      bool WeightSet ( double weight );
+      void WeightSet ( double weight );
   
       /// Print a weighted sample
       /** @param stream the stream to be returned
@@ -93,12 +93,11 @@ namespace BFL
       return Weight;
     }
 
-  template <typename T> bool WeightedSample<T>::WeightSet ( double weight )
+  template <typename T> void WeightedSample<T>::WeightSet ( double weight )
     { 
       assert(weight >= 0);
       
       Weight = weight;
-      return true;
     }
 
   template <typename S> ostream & operator<< (ostream & stream, 
