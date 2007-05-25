@@ -67,7 +67,8 @@ SampleTest::testWeightedSample()
 {
   double weight = 0.75;
   a_weighted_sample_cv.ValueSet(a);
-  CPPUNIT_ASSERT_EQUAL( true,a_weighted_sample_cv.WeightSet(weight));
+  a_weighted_sample_cv.WeightSet(weight);
+  CPPUNIT_ASSERT_EQUAL( weight, a_weighted_sample_cv.WeightGet());
 
   b_weighted_sample_cv = a_weighted_sample_cv;
   CPPUNIT_ASSERT_EQUAL( a_weighted_sample_cv.ValueGet(), b_weighted_sample_cv.ValueGet());
