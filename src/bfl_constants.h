@@ -20,10 +20,10 @@
 
 #define NUMERIC_PRECISION 0.000000001
 
-#pragma warning( disable : 4996) 
- 
-#ifndef M_PI  
-    #define M_PI 3.1415926535897932384626433832795  
+#pragma warning( disable : 4996)
+
+#ifndef M_PI
+#define M_PI 3.141592653589793284626433832795
 #endif
 
 // Check if double is probability value (maybe this should be solved
