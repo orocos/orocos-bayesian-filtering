@@ -40,7 +40,7 @@ Section~\ref{sec:linux} contains installation instructions for Linux, while Sect
 \label{sec:linux}
 %----------------------------------
 This section contains installation instructions for BFL for Linux.
-The first Section~\ref{subsec:ubuntu} explains the most easy way of installation, which is through the use of precompiled Ubuntu/Debian packages.
+The first Section~\ref{subsec:ubuntu} explains the most easy way to install, which is through the use of precompiled Ubuntu/Debian packages.
 For non Ubuntu/Debian users, the next Section~\ref{subsec:source} contains the instructions to install BFL from source.
 
 \subsection{Precompiled Ubuntu/Debian packages}
@@ -83,17 +83,15 @@ started:
   Debian and Ubuntu. However we've received success reports from other
   distributions and architectures, such as Gentoo, MAC OS X and MS
   Windows.
-\item BFL compiles without warnings with g++ 2.95.0 up to g++ 4.0.
+\item BFL compiles without warnings with g++ 2.95.0 up to g++ 4.1.2
   However, it is preferred to use the latest g++ version.
 \item We use cmake in the build system of BFL. You'll need cmake 2.2
   or 2.4.
 \item To download the latest version from our subversion server, you
   will need a subversion client.
 \end{enumerate}
-The instructions explain how to install libraries in the /usr/local
-directory. You will need write permissions in this directory. When you
-don't have these permissions, you can also install everything in your
-home directory.
+The instructions explain how to install libraries in the ~/install
+directory.
 
 \subsubsection{Install an external matrix library}
 \label{subsec:matrix}
@@ -106,7 +104,7 @@ You can install the LTI library as a precompiled Ubuntu/Debian
 package, or compile it from source. 
 \begin{itemize}
 \item To install the precompiled LTI package, add the line in your
-  sources.list as described in section~\ref{sec:ubuntu}, and then run:
+  sources.list as described in Section~\ref{subsec:ubuntu}, and then run:
 \begin{verbatim}
   sudo apt-get update
   sudo apt-get install liblti-dev
@@ -137,12 +135,11 @@ package, or compile it from source.
 \begin{verbatim}
   cd ltilib/linux
   make -f Makefile.cvs
-  ./configure --disable-debug --without-gtk --disable-gtk
+  ./configure --disable-debug --without-gtk --disable-gtk --prefix=~/install
   make
 \end{verbatim}
-  If you don't want to install ltilib in \texttt{/usr/local}
-  (e.g.~because you don't have admin rights), pass the
-  \texttt{--prefix} option to the configure script.
+  If you don't want to install ltilib in \texttt{~/install}
+   pass another argument for the \texttt{--prefix} option to the configure script.
 \item Finally, install the library
 \begin{verbatim}
   [sudo] make install
@@ -195,9 +192,7 @@ package, or compile it from source.
   make 
 \end{verbatim}
 \item Finally, install the library.  By default newmat gets installed
-  in \texttt{/usr/local}.  If you want to install it somewhere else,
-  edit the \emph{PREFIX} variable in \texttt{Makefile.newmat} before
-  running make install.
+  in \texttt{/usr/local}.  So change the \emph{PREFIX} variable in \texttt{Makefile.Newmat} to \texttt{~/install} or any other installation directory before running make install.
 \begin{verbatim}
   [sudo] make install
 \end{verbatim}
@@ -206,10 +201,42 @@ package, or compile it from source.
 
 \paragraph{Boost matrix library}
 You can install the Boost library as a precompiled Ubuntu/Debian
-package. To install the precompiled Boost package run:
+package, or install it from source.
+\begin{itemize}
+\item To install the precompiled Boost package run:
 \begin{verbatim}
   sudo apt-get install libboost-dev
 \end{verbatim}
+\item To get the source of the Boost library from source, download it from \url{http://sourceforge.net/project/showfiles.php?group_id=7586}.
+\begin{enumerate}
+ \item Move the downloaded file to your source folder:
+	\begin{verbatim}
+	mv boost_1_34_0.tar.gz ~/sources/
+	\end{verbatim}
+ \item Untar and unzip the file?
+ 	\begin{verbatim}
+ 	 tar -xzvf boost_1_34_0.tar.gz
+ 	\end{verbatim}
+ \item Go into the created directory:
+ 	\begin{verbatim}
+ 	cd boost_1_34_o
+ 	\end{verbatim}
+ \item Configure the library:
+	\begin{verbatim}
+	 ./configure
+	\end{verbatim}
+ \item Make the package:
+	\begin{verbatim}
+	 make
+	\end{verbatim}
+\item Install boost:
+	\begin{verbatim}
+	 sudo make install
+	\end{verbatim}
+\end{enumerate}
+
+\end{itemize}
+
 
 
 
@@ -231,7 +258,9 @@ as the matrix library, you already have everything for the rng library.
 
 \paragraph{Boost rng library}
 You can install the Boost library as a precompiled Ubuntu/Debian
-package, or install it from source.
+package, or install it from source (follow the same instructions as
+described in section~\ref{subsec:matrix}). If you already installed LTI
+as the matrix library, you already have everything for the rng library.
 \begin{itemize}
 \item To install the precompiled Boost package run:
 \begin{verbatim}
@@ -288,7 +317,7 @@ available from our subversion server, or as a tarbal.
 \begin{verbatim}
   svn co http://svn.mech.kuleuven.be/repos/orocos/trunk/bfl
 \end{verbatim}
- \item To extract a BFL tarbal:
+ \item To extract a BFL tarbal you got from the website:
 \begin{verbatim}
   tar xvf orocos-bfl.tar.gz
 \end{verbatim}
@@ -306,12 +335,18 @@ available from our subversion server, or as a tarbal.
   the configure output. Now you see the cmake configuration menu. In
   this menu you can change the following options:
 \begin{itemize}
-\item matrix\_install: the path where you external matrix library is
-  installed
-\item matrix\_lib: the matrix library you choose: lti or newmat
-\item rng\_install: the path where you external rng library is
-  installed
-\item rng\_lib: the rng library you choose: lti or boost
+ \item BUILD\_EXAMPLES: ON if building the examples is desired,
+ \item BUILD\_TESTS: ON if building the cppunit tests is desired,
+ \item CMAKE\_BUILD\_TYPE: Debug or e.g. Release,
+ \item CMAKE\_INSTALL\_PREFIX: directory where to install bfl, e.g. \texttt{~/install}, 
+ \item CPPUNIT\_INSTALL: directory where the CPPUNIT is installed, e.g. \texttt{/usr},
+ \item GINAC\_INSTALL: directory where GINAC is installed, e.g. \texttt{/usr},
+ \item GINAC\_SUPPORT: OFF if you don't want to use GINAC support,
+ \item LIBRARY\_TYPE: type of library build, shared or static,
+ \item MATRIX\_INSTALL: directory where the matrix library is installed: e.g. \texttt{/usr},
+ \item MATRIX\_LIB: matrix library used: boost, lti or newmat,
+ \item RNG\_INSTALL: directory where the random number generator is installed: e.g. \texttt{/usr},
+ \item RNG\_LIB: random number generator used: boost or lti.
 \end{itemize}
 Now repeat the 'c' configure and 'e' exit cycle, until you get no more
 errors. When this is the case, you'll have the 'g' generate option
@@ -383,7 +418,7 @@ This section offers a step-by-step guide for BFL installation with Visual Studio
 		\item RNG\_LIB: boost
 		\end{itemize}
 	\item Press the Configure botton until you can press OK.
-	\item Press OK. CMake will shut down now, and BFL is ready to build. (If you get unexpected errors check the common problems section).
+	\item Press OK. CMake will shut down now, and BFL is ready to build. (If you get unexpected errors check the common problems section \ref{subsec:problems}).
 	\end{itemize}
 \item Build BFL with Visual Studio
 	\begin{itemize}
@@ -394,7 +429,15 @@ This section offers a step-by-step guide for BFL installation with Visual Studio
 	\end{itemize}
 \end{enumerate}
 
+In the \ $\mathtt{\tilde{ }}$\texttt{/sources/sources/bfl/examples} directory, you find some example BFL
+filters. A good next step is to check out the BFL tutorial on
+\url{http://www.orocos.org/bfl}, for a step-by-step introduction in building
+your own filters in BFL.
+\\\\\\
+Good luck!
+
 \subsection{Common problems}
+\label{subsec:problems}
 
 \subsubsection{Why does CMakeSetup with the message \emph{LINK : fatal error LNK1104: cannot open 
 file 'user32.lib'} while configuring a project?}
