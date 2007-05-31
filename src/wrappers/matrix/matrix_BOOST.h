@@ -22,7 +22,7 @@
 
 #ifndef __MATRIX_BOOST__
 #define __MATRIX_BOOST__
-
+#include "../../bfl_constants.h"
 #include "matrix_wrapper.h"
 #include "vector_wrapper.h"
 #include <boost/numeric/ublas/matrix.hpp>

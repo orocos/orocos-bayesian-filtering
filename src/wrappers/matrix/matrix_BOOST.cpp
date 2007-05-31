@@ -277,8 +277,8 @@ MyMatrix::resize(unsigned int i, unsigned int j, bool copy, bool initialize)
 MyMatrix MyMatrix::sub(int i_start, int i_end, int j_start , int j_end) const
 {
   MyMatrix submatrix(i_end-i_start+1, j_end-j_start+1);
-  for (unsigned int i=i_start; i<=i_end; i++)
-    for (unsigned int j=j_start; j<=j_end; j++)
+  for (int i=i_start; i<=i_end; i++)
+    for (int j=j_start; j<=j_end; j++)
       submatrix(i,j) = (*this)(i,j);
 
   return submatrix;
@@ -502,8 +502,8 @@ MyMatrix MySymmetricMatrix::sub(int i_start, int i_end,
 				int j_start , int j_end) const
 {
   MyMatrix submatrix(i_end-i_start+1, j_end-j_start+1);
-  for (unsigned int i=i_start; i<=i_end; i++)
-    for (unsigned int j=j_start; j<=j_end; j++)
+  for (int i=i_start; i<=i_end; i++)
+    for (int j=j_start; j<=j_end; j++)
       submatrix(i,j) = (*this)(i,j);
 
   return submatrix;

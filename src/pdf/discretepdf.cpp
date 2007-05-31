@@ -103,7 +103,7 @@ namespace BFL
 	  list_samples.resize(num_samples);
 	  // GENERATE N ORDERED IID UNIFORM SAMPLES
 	  std::vector<double> unif_samples(num_samples);
-	  for ( int i = 0; i < num_samples ; i++)
+	  for ( unsigned int i = 0; i < num_samples ; i++)
 	    unif_samples[i] = runif();
 
 	  /* take n-th racine of u_N */
@@ -119,7 +119,7 @@ namespace BFL
 	  vector<double>::const_iterator CumPDFit = _CumPDF.begin();
 	  vector<Sample<int> >::iterator sit = list_samples.begin();
 
-	  for ( int i = 0; i < num_samples ; i++)
+	  for ( unsigned int i = 0; i < num_samples ; i++)
 	    {
 	      while ( unif_samples[i] > *CumPDFit )
 	      {

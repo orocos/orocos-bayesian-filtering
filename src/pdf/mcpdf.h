@@ -71,7 +71,7 @@ namespace BFL
 
       // implemented virtual functions
       bool SampleFrom (Sample<T>& one_sample, int method = DEFAULT, void * args = NULL) const;
-      bool SampleFrom (vector<Sample<T> >& list_samples, unsigned int num_samples, int method = DEFAULT, 
+      bool SampleFrom (vector<Sample<T> >& list_samples, const unsigned int num_samples, int method = DEFAULT, 
 		       void * args = NULL) const;
       T ExpectedValueGet() const;
       MatrixWrapper::SymmetricMatrix CovarianceGet() const;
