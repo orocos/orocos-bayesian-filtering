@@ -10,7 +10,7 @@
 
 %opening
 \title{Installation Guide \\  Bayesian Filtering Library}
-\author{Tinne De Laet, Wim Meeussen, Klaas Gadeyne}
+\author{Tinne De Laet, Wim Meeussen, Erwin Aertbeli\"en and Klaas Gadeyne}
 
 \usepackage{amsmath}
 \usepackage{subfigure}
@@ -29,12 +29,23 @@
 
 \maketitle
 
+\begin{abstract}
+This document contains installation instructions for the Bayesian Filtering Library.
+Section~\ref{sec:linux} contains installation instructions for Linux, while Section~\ref{sec:windows} explains installation with Visual Studio for Windows.
+\end{abstract}
 
 
 %----------------------------------
-\section{Precompiled Ubuntu/Debian packages}
+\section{Linux installation}
+\label{sec:linux}
 %----------------------------------
-\label{sec:ubuntu}
+This section contains installation instructions for BFL for Linux.
+The first Section~\ref{subsec:ubuntu} explains the most easy way of installation, which is through the use of precompiled Ubuntu/Debian packages.
+For non Ubuntu/Debian users, the next Section~\ref{subsec:source} contains the instructions to install BFL from source.
+
+\subsection{Precompiled Ubuntu/Debian packages}
+%----------------------------------
+\label{subsec:ubuntu}
 For Ubuntu and Debian users, the easiest way to install BFL is by
 using our precompiled packages.  The BFL package is compiled for the
 LTI matrix library and the LTI random number generator library.  The
@@ -58,7 +69,8 @@ Now all components are installed and you are ready to start using BFL.
 
 
 %----------------------------------
-\section{Installation from source}
+\subsection{Installation from source}
+\label{subsec:source}
 %----------------------------------
 An alternative way to get BFL is to install it from source, e.g.~if
 you are not using Ubuntu or Debian. This section gives step-by-step
@@ -83,13 +95,13 @@ directory. You will need write permissions in this directory. When you
 don't have these permissions, you can also install everything in your
 home directory.
 
-\subsection{Install an external matrix library}
+\subsubsection{Install an external matrix library}
+\label{subsec:matrix}
 %----------------------------------
 BFL requires an external library for matrix computations. You can
 choose to use the LTI library, the Newmat library, or the Boost library.
 
-\subsubsection{LTI matrix library}
-\label{subsec:lti}
+\paragraph{LTI matrix library}
 You can install the LTI library as a precompiled Ubuntu/Debian
 package, or compile it from source. 
 \begin{itemize}
@@ -145,7 +157,7 @@ For more details, see the LTI web page
 
 
 
-\subsubsection{Newmat matrix library}
+\paragraph{Newmat matrix library}
 You can install the Newmat library as a precompiled Ubuntu/Debian
 package, or compile it from source.
 \begin{itemize}
@@ -192,7 +204,7 @@ package, or compile it from source.
 \end{enumerate}
 \end{itemize}
 
-\subsubsection{Boost matrix library}
+\paragraph{Boost matrix library}
 You can install the Boost library as a precompiled Ubuntu/Debian
 package. To install the precompiled Boost package run:
 \begin{verbatim}
@@ -206,18 +218,18 @@ package. To install the precompiled Boost package run:
 
 
 
-\subsection{Install an external random number generator library}
+\subsubsection{Install an external random number generator library}
 %----------------------------------
 BFL requires an external library for matrix computations. You can
 choose to use the LTI library, or the Boost library.
 
-\subsubsection{LTI rng library}
+\paragraph{LTI rng library}
 You can install the LTI library as a precompiled Ubuntu/Debian
 package, or compile it from source (follow the same instructions as
-described in section~\ref{subsec:lti}). If you already installed LTI
+described in section~\ref{subsec:matrix}). If you already installed LTI
 as the matrix library, you already have everything for the rng library.
 
-\subsubsection{Boost rng library}
+\paragraph{Boost rng library}
 You can install the Boost library as a precompiled Ubuntu/Debian
 package, or install it from source.
 \begin{itemize}
@@ -324,6 +336,80 @@ filters. A good next step is to check out the BFL tutorial on
 your own filters in BFL.
 \\\\\\
 Good luck!
+
+
+
+%----------------------------------
+\section{Windows - Visual Studio installation}
+\label{sec:windows}
+%----------------------------------
+This section offers a step-by-step guide for BFL installation with Visual Studio on Windows.
+
+\begin{enumerate}
+\item Download the BFL source code from the website: 
+\url{http://www.orocos.org/bfl/source}. Unzip this code.
+\item Create a folder $build$ and a folder $install$ where you will respectively build and install bfl (what's in a name?).
+ \item Install boost
+ 	\begin{itemize}
+ 	 \item The boost Getting Started Guide gives excellent installation instructions for windows: \url{http://www.boost.org/more/getting_started/index.html}. In accordance with these instructions we advice to use the installer provided by Boost Consulting.
+ 	 \item Change the install of boost such that the include files are located under: $ c:\backslash boost \backslash$
+ 	 Remark that the first part is arbirary, but the $include$ part not; this will make the bfl installation easier.
+ 	\end{itemize}
+\item Install CMake:
+	\begin{itemize}
+	\item You can find cmake at  \url{www.cmake.org}. Install it for windows.
+	\end{itemize}
+\item Run CMake:
+	\begin{itemize}
+	 \item Go to the start menu to start the CMake-GUI.
+	 \item Fill in the location of the source code e.g.:
+	 	\begin{verbatim}
+	 	c:\Users\username\Desktop\orocos-bfl-0.6.0-pre1-src
+	 	\end{verbatim}
+	\item Fill in the location of the build directory (which you previously created), e.g.:
+		\begin{verbatim}
+	 	c:\Users\username\Desktop\orocos-bfl-0.6.0-pre1-src\build
+		\end{verbatim}
+	\item Press the Configure botton. Select `Visual Studio 8, 2005' as a generator.
+	 You well get a lot of `errors' (remark this are actually not errors but messages). You can press the `OK' botton to check all messages or just press the `Cancel' botton to supress all further messages. Also mind the CPP-Unit error, which will prevent you from running the CPP-unit tests, but won't bother the examples nor any of your applications.
+	 \item Fill in:
+		\begin{itemize}
+		\item CMAKE\_BUILD\_TYPE: release
+		\item CMAKE\_INSTALL\_PREFIX: $ c:\backslash Users \backslash username \backslash Desktop \backslash orocos-bfl-0.6.0-pre1-src \backslash build$
+		\item LIBRARY\_TYPE: static
+		\item MATRIX\_INSTALL: $ c:\backslash boost \backslash$
+		\item MATRIX\_LIB: boost
+		\item RNG\_INSTALL: $ c:\backslash boost \backslash$
+		\item RNG\_LIB: boost
+		\end{itemize}
+	\item Press the Configure botton until you can press OK.
+	\item Press OK. CMake will shut down now, and BFL is ready to build. (If you get unexpected errors check the common problems section).
+	\end{itemize}
+\item Build BFL with Visual Studio
+	\begin{itemize}
+	\item Start Visual Studio through the Start botton.
+	\item Open the project `ALL\_BUILD' located in the build directory.
+	\item Build the project (right mouse botton, build). (If you get unexpected errors check the common problems section).
+	\item Build the INSTALL project to install everything.
+	\end{itemize}
+\end{enumerate}
+
+\subsection{Common problems}
+
+\subsubsection{Why does CMakeSetup with the message \emph{LINK : fatal error LNK1104: cannot open 
+file 'user32.lib'} while configuring a project?}
+The path to the SDK libs (user32.lib) must be added by the IDE when the 
+project generator "Visual Studio 8 2005" is used, because cmake uses 
+VCExpress.exe and on the fly generated project files to check for compiling 
+(VCExpress.exe reads some config files for the compiler/linker options) 
+
+So add the sdk lib path  at Tools$\rightarrow$Options$\rightarrow$Projects and Solutions$\rightarrow$VC++ Directories$\rightarrow$Library files
+So you have to install the platform SDK, (available on the Microsoft website \url{http://www.microsoft.com/downloads/details.aspx?FamilyId=A55B6B43-E24F-4EA3-A93E-40C0EC4F68E5&displaylang=en}) but 
+normally you will already have done this.  The installation will take some 
+time.
+
+\subsubsection{CPP UNIT error}
+The CPPunit tests will not compile on windows due to the lack of the libcppunit  library.   (this will give an error message, you can ignore this message), the examples should work however.
 
 
 \end{document}
