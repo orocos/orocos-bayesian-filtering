@@ -1,6 +1,6 @@
-orocos-bfl (0.4.9-3) unstable; urgency=low
+orocos-bfl (0.6.0-1) unstable; urgency=low
 
-  * Update of last release, some adaptions for building on windows
+  * BFL 0.6.0 prerelease package
 
  -- Tinne De Laet <tinne.delaet@mech.kuleuven.be>  Tue,  8 May 2007 07:50:41 +0200
 
