@@ -18,9 +18,10 @@
 #ifndef __LINEAR_MEASUREMENT_MODEL_GAUSSIAN_UNCERTAINTY_IMPLICIT__
 #define __LINEAR_MEASUREMENT_MODEL_GAUSSIAN_UNCERTAINTY_IMPLICIT__
 
-#include "linearanalyticmeasurementmodel_gaussianuncertainty.h"
+
 #include "../pdf/gaussian.h"
 #include "../pdf/linearanalyticconditionalgaussian.h"
+#include "linearanalyticmeasurementmodel_gaussianuncertainty.h"
 
 namespace BFL
 {

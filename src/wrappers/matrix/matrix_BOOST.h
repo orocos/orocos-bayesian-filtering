@@ -16,7 +16,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 //  
-
 #include "../config.h"
 #ifdef __MATRIXWRAPPER_BOOST__
 
@@ -37,8 +36,8 @@
 #include <assert.h>
 
 
-#define BoostMatrix          boost::numeric::ublas::matrix<double>
-#define BoostSymmetricMatrix boost::numeric::ublas::symmetric_matrix<double, boost::numeric::ublas::lower>
+typedef boost::numeric::ublas::matrix<double> BoostMatrix;
+typedef boost::numeric::ublas::symmetric_matrix<double, boost::numeric::ublas::lower> BoostSymmetricMatrix;
 
 namespace MatrixWrapper
 {

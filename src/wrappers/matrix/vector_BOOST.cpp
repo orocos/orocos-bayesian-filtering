@@ -217,7 +217,7 @@ MyColumnVector::operator=(double a)
 MyColumnVector MyColumnVector::sub(int j_start , int j_end) const
 {
   MyColumnVector subvector(j_end-j_start+1);
-  for (unsigned int j=j_start; j<=j_end; j++)
+  for (int j=j_start; j<=j_end; j++)
     subvector(j) = (*this)(j);
 
   return subvector;
@@ -409,7 +409,7 @@ MyRowVector::operator=(double a)
 MyRowVector MyRowVector::sub(int j_start , int j_end) const
 {
   MyRowVector subvector(j_end-j_start+1);
-  for (unsigned int j=j_start; j<=j_end; j++)
+  for (int j=j_start; j<=j_end; j++)
     subvector(j) = (*this)(j);
 
   return subvector;

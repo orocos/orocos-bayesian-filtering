@@ -54,7 +54,8 @@ namespace MatrixWrapper
         V.resize(cols,cols,false,true);
         int i(-1),its(-1),j(-1),jj(-1),k(-1),nm(0);
         int ppi(0);
-        bool flag, maxarg1, maxarg2;
+        bool flag;
+		double maxarg1, maxarg2;
         double  anorm(0),c(0),f(0),g(0),h(0),s(0),scale(0),x(0),y(0),z(0);
     
         // Householder reduction to bidiagonal form

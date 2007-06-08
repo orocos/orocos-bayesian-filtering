@@ -40,6 +40,9 @@ CONFIGURE_FILE(revision.in revision @ONLY)
 EXECUTE_PROCESS(COMMAND ./revision OUTPUT_VARIABLE SVN_REVISION)
 MESSAGE("SVN REVISION ${SVN_REVISION}")
 
+IF (WIN32)
+	ADD_DEFINITIONS( /D_SCL_SECURE_NO_DEPRECATE)
+ENDIF (WIN32)
 
 # Set the build type (affects debugging symbols and optimization)
 # ------------------
@@ -94,7 +97,7 @@ IF (NOT __MATRIXWRAPPER_BOOST__)
   MARK_AS_ADVANCED(__MATRIXWRAPPER_BOOST__)
 ENDIF (NOT __MATRIXWRAPPER_BOOST__)
 IF(NOT MATRIX_LIB)
-  SET( MATRIX_LIB lti CACHE STRING "Which matrix library to use: lti or newmat")
+  SET( MATRIX_LIB lti CACHE STRING "Which matrix library to use: boost, lti or newmat")
 ENDIF(NOT MATRIX_LIB)
 IF(NOT MATRIX_INSTALL)
   SET( MATRIX_INSTALL /usr CACHE PATH "The Matrix lib installation directory.")
