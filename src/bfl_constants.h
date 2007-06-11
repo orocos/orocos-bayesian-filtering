@@ -67,15 +67,8 @@ namespace BFL
  * \section Introduction
  * 
  * Please see <a href="http://www.orocos.org/bfl">this
- * page</a> for more information on this software, as well as download
- * instructions, contact information...
- *
- * \section Tutorial
- * 
- * See <a
- * href="http://people.mech.kuleuven.be/~tdelaet/tutorialBFL.pdf">this
- * page</a>.  Thank you Tinne!
- * 
+ * page</a> for more information on this software, as well as
+ * download/installation/getting started instructions...
  * 
  */
 
