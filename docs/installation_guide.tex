@@ -248,7 +248,7 @@ package, or install it from source.
 \subsubsection{Install an external random number generator library}
 %----------------------------------
 BFL requires an external library for matrix computations. You can
-choose to use the LTI library, or the Boost library.
+choose to use the LTI library, the Boost library, or the Scythe library.
 
 \paragraph{LTI rng library}
 You can install the LTI library as a precompiled Ubuntu/Debian
@@ -259,43 +259,35 @@ as the matrix library, you already have everything for the rng library.
 \paragraph{Boost rng library}
 You can install the Boost library as a precompiled Ubuntu/Debian
 package, or install it from source (follow the same instructions as
-described in section~\ref{subsec:matrix}). If you already installed LTI
+described in section~\ref{subsec:matrix}). If you already installed Boost
 as the matrix library, you already have everything for the rng library.
-\begin{itemize}
-\item To install the precompiled Boost package run:
-\begin{verbatim}
-  sudo apt-get install libboost-dev
-\end{verbatim}
-\item To get the source of the Boost library from source, download it from \url{http://sourceforge.net/project/showfiles.php?group_id=7586}.
+
+\paragraph{Scythe rng library}
+To install the Scythe from source:
 \begin{enumerate}
- \item Move the downloaded file to your source folder:
+\item Download the Scythe from the Scythe web page:
+  \url{http://scythe.wustl.edu/}
+\item Move the downloaded file to your source folder:
 	\begin{verbatim}
-	mv boost_1_34_0.tar.gz ~/sources/
+	mv scythestat-1.0.1.tar.gz ~/sources
 	\end{verbatim}
- \item Untar and unzip the file?
- 	\begin{verbatim}
- 	 tar -xzvf boost_1_34_0.tar.gz
- 	\end{verbatim}
- \item Go into the created directory:
- 	\begin{verbatim}
- 	cd boost_1_34_o
- 	\end{verbatim}
- \item Configure the library:
+\item Untar and unzip the file:
 	\begin{verbatim}
-	 ./configure
+	tar -xzvf scythestat-1.0.1.tar.gz
 	\end{verbatim}
- \item Make the package:
+\item Configure the library:
 	\begin{verbatim}
-	 make
+	./configure
 	\end{verbatim}
-\item Install boost:
+\item Make the package:
+	\begin{verbatim}
+	make
+	\end{verbatim}
+\item Install scythe:
 	\begin{verbatim}
 	 sudo make install
 	\end{verbatim}
 \end{enumerate}
-
-\end{itemize}
-
 
 
 
@@ -346,7 +338,7 @@ available from our subversion server, or as a tarbal.
  \item MATRIX\_INSTALL: directory where the matrix library is installed: e.g. \texttt{/usr},
  \item MATRIX\_LIB: matrix library used: boost, lti or newmat,
  \item RNG\_INSTALL: directory where the random number generator is installed: e.g. \texttt{/usr},
- \item RNG\_LIB: random number generator used: boost or lti.
+ \item RNG\_LIB: random number generator used: boost, lti or scythe.
 \end{itemize}
 Now repeat the 'c' configure and 'e' exit cycle, until you get no more
 errors. When this is the case, you'll have the 'g' generate option
