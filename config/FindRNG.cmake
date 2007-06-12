@@ -4,12 +4,40 @@
 # RNG_INSTALL where to find include, lib, bin, etc.
 # RNG_FOUND, is set to true
 
-MESSAGE("Searching for rng lib ${RNG_LIB}")
-
-SET(__RNGWRAPPER_LTI__ OFF)
+# variables
+# ---------
+IF (NOT __RNGWRAPPER_BOOST__)
+  SET(__RNGWRAPPER_BOOST__ OFF CACHE BOOL "define for boost")
+  MARK_AS_ADVANCED(__RNGWRAPPER_BOOST__)
+ENDIF (NOT __RNGWRAPPER_BOOST__)
 SET(__RNGWRAPPER_BOOST__ OFF)
+
+IF (NOT __RNGWRAPPER_LTI__)
+  SET(__RNGWRAPPER_LTI__ OFF CACHE BOOL "define for lti")
+  MARK_AS_ADVANCED(__RNGWRAPPER_LTI__)
+ENDIF (NOT __RNGWRAPPER_LTI__)
+SET(__RNGWRAPPER_LTI__ OFF)
+
+IF (NOT __RNGWRAPPER_SCYTHE__)
+  SET(__RNGWRAPPER_SCYTHE__ OFF CACHE BOOL "define for scythe")
+  MARK_AS_ADVANCED(__RNGWRAPPER_SCYTHE__)
+ENDIF (NOT __RNGWRAPPER_SCYTHE__)
 SET(__RNGWRAPPER_SCYTHE__ OFF)
 
+
+# install path
+# ------------
+IF(NOT RNG_LIB)
+  SET( RNG_LIB lti CACHE STRING "Which rng library to use: lti, boost or scythe")
+ENDIF(NOT RNG_LIB)
+IF(NOT RNG_INSTALL)
+  SET( RNG_INSTALL /usr CACHE PATH "The rng lib installation directory.")
+ENDIF(NOT RNG_INSTALL)
+MESSAGE("Searching for rng lib ${RNG_LIB}")
+
+
+# find libs
+# ---------
 IF (RNG_LIB STREQUAL "lti")
   SET(LTI_FOUND LTI_FOUND-NOTFOUND)
   MARK_AS_ADVANCED(LTI_FOUND)

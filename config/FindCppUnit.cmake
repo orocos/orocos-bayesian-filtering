@@ -4,6 +4,10 @@
 # CPPUNIT_INSTALL where to find include, lib, bin, etc.
 # CPPUNIT_FOUND, is set to true
 
+IF(NOT CPPUNIT_INSTALL)
+  SET( CPPUNIT_INSTALL /usr CACHE PATH "The CppUnit lib installation directory.")
+ENDIF(NOT CPPUNIT_INSTALL)
+
 MESSAGE("Searching for cppunit lib ${CPPUNIT_LIB}")
 
 SET(CPPUNIT_FOUND CPPUNIT_FOUND-NOTFOUND)

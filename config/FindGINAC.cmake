@@ -4,6 +4,11 @@
 # GINAC_INSTALL where to find include, lib, bin, etc.
 # GINAC_FOUND, is set to true
 
+OPTION( GINAC_SUPPORT "Turn me off to disable Ginac support" OFF )
+IF(NOT GINAC_INSTALL)
+  SET( GINAC_INSTALL /usr CACHE PATH "The Ginac lib installation directory.")
+ENDIF(NOT GINAC_INSTALL)
+
 IF (GINAC_SUPPORT)
 
   MESSAGE("Searching for ginac lib")
