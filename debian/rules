@@ -28,8 +28,8 @@ build/Makefile: configure
 	dh_testdir
 	# Add here commands to configure the package.
 	mkdir -p build
-	# LDFLAGS="-Wl,-z,defs"
-	cd build; CXXFLAGS="$(CFLAGS)" ../configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr 
+	cd build
+	cmake -D MATRIX_LIB=boost -D MATRIX_INSTALL=/usr -D RNG_LIB=boost -D RNG_INSTALL=/usr -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/
 
 
 build: build-stamp
