@@ -40,7 +40,7 @@ Description: Orocos Bayesian Filtering Library examples
 Package: orocos-bfl
 Section: libs
 Architecture: any
-Depends: liblti, ${shlibs:Depends}, ${misc:Depends}
+Depends: libboost-dev, ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libbfl
 Replaces: libbfl, libmatrixwrapper
 Description: Orocos Bayesian Filtering Library
