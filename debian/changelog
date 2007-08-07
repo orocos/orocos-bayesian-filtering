@@ -1,6 +1,6 @@
-orocos-bfl (0.6.0-4) unstable; urgency=low
+orocos-bfl (0.6.0-5) unstable; urgency=low
 
-  * BFL 0.6.0 release package
+  * BFL latest trunk package
 
  -- Tinne De Laet <tinne.delaet@mech.kuleuven.be>  Mon, 12 Jun 2007 07:50:41 +0200 
 
