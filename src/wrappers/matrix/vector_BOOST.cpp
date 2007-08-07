@@ -382,11 +382,12 @@ double MyRowVector::operator* (const MyColumnVector &a) const
 {
   unsigned int r = a.rows();
   unsigned int c = this->columns();
+
+  assert(c == r);
   
   double result = 0;
   for (unsigned int i=0; i<r; i++)
-    for (unsigned int j=0; j<c; j++)
-      result += (*this)(j+1) * a(i+1);
+      result += (*this)(i+1) * a(i+1);
   return result;
 }
 
