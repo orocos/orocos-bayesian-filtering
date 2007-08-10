@@ -1,4 +1,5 @@
 // Copyright (C) 2007 Wim Meeussen <wim.meeussen@mech.kuleuven.be>
+//                    Tinne De Laet<first DOT last AT mech.kuleuven.be>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,35 +56,53 @@ MatrixwrapperTest::testMatrixwrapperValue()
     REF.push_back(row);
   }
 
-  // test dimensions
+  // TEST DIMENSIONS
+  //
+  // TEST DIMENSIONS  MATRIX
   Matrix Am(r,c);
+  // rows()
   CPPUNIT_ASSERT_EQUAL(Am.rows(), r);
+  // columns()
   CPPUNIT_ASSERT_EQUAL(Am.columns(), c);
+  // TEST DIMENSIONS SYMMETRICMATRIX
   SymmetricMatrix As(r);
+  // rows()
   CPPUNIT_ASSERT_EQUAL(As.rows(), r);
+  // columns()
   CPPUNIT_ASSERT_EQUAL(As.columns(), r);
+  // TEST DIMENSIONS COLUMNVECTOR
   ColumnVector Ac(r);
+  // rows()
   CPPUNIT_ASSERT_EQUAL(Ac.rows(), r);
+  // columns()
   CPPUNIT_ASSERT_EQUAL(Ac.columns(), one);
+  // TEST DIMENSIONS ROWVECTOR
   RowVector Ar(c);
+  // rows()
   CPPUNIT_ASSERT_EQUAL(Ar.rows(), one);
+  // columns()
   CPPUNIT_ASSERT_EQUAL(Ar.columns(), c);
 
   // test operator = double
   double v = 3.5;
   Am = v;  As = v;  Ac = v;  Ar = v;
+  // MATRIX
   for (unsigned int i=0; i<r; i++)
     for (unsigned int j=0; j<c; j++)
       CPPUNIT_ASSERT_EQUAL(Am(i+1,j+1), v);
+  // SYMMETRICMATRIX
   for (unsigned int i=0; i<r; i++)
     for (unsigned int j=0; j<r; j++)
       CPPUNIT_ASSERT_EQUAL(As(i+1,j+1), v);
+  // COLUMNVECTOR
   for (unsigned int i=0; i<r; i++)
     CPPUNIT_ASSERT_EQUAL(Ac(i+1), v);
+  // ROWVECTOR
   for (unsigned int i=0; i<c; i++)
     CPPUNIT_ASSERT_EQUAL(Ar(i+1), v);
 
   // test operator ()
+  // MATRIX
   Matrix Bm(r,c);
   for (unsigned int i=0; i<r; i++){
     for (unsigned int j=0; j<c; j++){
@@ -91,6 +110,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
       CPPUNIT_ASSERT_EQUAL(Bm(i+1,j+1), REF[i][j]);
     }
   }
+  // SYMMETRICMATRIX
   SymmetricMatrix Bs(r); 
   for (unsigned int i=0; i<r; i++){ // fill in upper triangle
     for (unsigned int j=0; j<=i; j++){
@@ -106,11 +126,13 @@ MatrixwrapperTest::testMatrixwrapperValue()
       CPPUNIT_ASSERT_EQUAL(Bs(j+1,i+1), REF[i][j]);
     }
   }
+  // COLUMNVECTOR
   ColumnVector Bc(r);
   for (unsigned int i=0; i<r; i++){
     Bc(i+1) = REF[0][i];
     CPPUNIT_ASSERT_EQUAL(Bc(i+1), REF[0][i]);
   }
+  // ROWVECTOR
   RowVector Br(c);
   for (unsigned int i=0; i<c; i++){
     Br(i+1) = REF[0][i];
@@ -118,6 +140,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
   }
 
   // test operator = 
+  // MATRIX
   Am = Bm;
   for (unsigned int i=0; i<r; i++){
     for (unsigned int j=0; j<c; j++){
@@ -125,6 +148,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
       CPPUNIT_ASSERT_EQUAL(Bm(i+1,j+1), REF[i][j]);
     }
   }
+  // SYMMETRICMATRIX
   As = Bs;
   for (unsigned int i=0; i<r; i++){
     for (unsigned int j=0; j<=i; j++){
@@ -134,11 +158,13 @@ MatrixwrapperTest::testMatrixwrapperValue()
       CPPUNIT_ASSERT_EQUAL(Bs(j+1,i+1), REF[i][j]);
     }
   }
+  // COLUMNVECTOR
   Ac = Bc;
   for (unsigned int i=0; i<r; i++){
     CPPUNIT_ASSERT_EQUAL(Ac(i+1), REF[0][i]);
     CPPUNIT_ASSERT_EQUAL(Bc(i+1), REF[0][i]);
   }
+  // ROWVECTOR
   Ar = Br;
   for (unsigned int i=0; i<c; i++){
     CPPUNIT_ASSERT_EQUAL(Ar(i+1), REF[0][i]);
@@ -146,7 +172,9 @@ MatrixwrapperTest::testMatrixwrapperValue()
   }
 
 
+
   // test resize
+  // MATRIX
   Matrix Km(r+2,c+2); Km = v;
   Matrix Km_resize(r,c); Km_resize = v;
   CPPUNIT_ASSERT_EQUAL(Km.rows(), r+2);
@@ -154,9 +182,33 @@ MatrixwrapperTest::testMatrixwrapperValue()
   Km.resize(r,c);
   CPPUNIT_ASSERT_EQUAL(Km.rows(), r);
   CPPUNIT_ASSERT_EQUAL(Km.columns(), c);
-  //CPPUNIT_ASSERT_EQUAL(Km, Km_resize);
+  CPPUNIT_ASSERT_EQUAL(Km, Km_resize);
+  // SYMMETRICMATRIX
+  SymmetricMatrix Ks(r+2); Ks = v;
+  SymmetricMatrix Ks_resize(r); Ks_resize = v;
+  CPPUNIT_ASSERT_EQUAL(Ks.rows(), r+2);
+  CPPUNIT_ASSERT_EQUAL(Ks.columns(), r+2);
+//  Ks.resize(r);
+//  CPPUNIT_ASSERT_EQUAL(Ks.rows(), r);
+//  CPPUNIT_ASSERT_EQUAL(Ks.columns(), r);
+//  CPPUNIT_ASSERT_EQUAL(Ks, Ks_resize);
+  // COLUMNVECTOR
+  ColumnVector Kc(r+2); Kc = v;
+  ColumnVector Kc_resize(r); Kc_resize = v;
+  CPPUNIT_ASSERT_EQUAL(Kc.rows(), r+2);
+  Kc.resize(r);
+  CPPUNIT_ASSERT_EQUAL(Kc.rows(), r);
+  CPPUNIT_ASSERT_EQUAL(Kc, Kc_resize);
+  // ROWVECTOR
+  RowVector Kr(c+2); Kr = v;
+  RowVector Kr_resize(c); Kr_resize = v;
+  CPPUNIT_ASSERT_EQUAL(Kr.columns(), c+2);
+  Kr.resize(c);
+  CPPUNIT_ASSERT_EQUAL(Kr.columns(), c);
+  CPPUNIT_ASSERT_EQUAL(Kr, Kr_resize);
 
   // test operator ==
+  // MATRIX
   Matrix Bm_eq; Bm_eq = Bm;
   CPPUNIT_ASSERT_EQUAL(Bm_eq == Bm, true);
   Bm(1,1) = Bm(1,1) + v;
@@ -165,7 +217,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
   CPPUNIT_ASSERT_EQUAL(Bm == Bm_res, false);
   Bm_res = Bm;
   CPPUNIT_ASSERT_EQUAL(Bm == Bm_res, true);
-
+  // SYMMETRICMATRIX
   SymmetricMatrix Bs_eq; Bs_eq = Bs;
   CPPUNIT_ASSERT_EQUAL(Bs_eq == Bs, true);
   Bs(1,1) = Bs(1,1) + v;
@@ -174,7 +226,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
   CPPUNIT_ASSERT_EQUAL(Bs == Bs_res, false);
   Bs_res = Bs;
   CPPUNIT_ASSERT_EQUAL(Bs == Bs_res, true);
-
+  // COLUMNVECTOR
   ColumnVector Bc_eq; Bc_eq = Bc;
   CPPUNIT_ASSERT_EQUAL(Bc_eq == Bc, true);
   Bc(1) = Bc(1) + v;
@@ -183,7 +235,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
   CPPUNIT_ASSERT_EQUAL(Bc == Bc_res, false);
   Bc_res = Bc;
   CPPUNIT_ASSERT_EQUAL(Bc == Bc_res, true);
-
+  // ROWVECTOR
   RowVector Br_eq; Br_eq = Br;
   CPPUNIT_ASSERT_EQUAL(Br_eq == Br, true);
   Br(1) = Br(1) + v;
@@ -195,6 +247,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
 
 
   // test transpose
+  // MATRIX
   Matrix Am_trans = Am.transpose();
   CPPUNIT_ASSERT_EQUAL(Am.rows(),  Am_trans.columns());
   CPPUNIT_ASSERT_EQUAL(Am.columns(),  Am_trans.rows());
@@ -204,6 +257,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
       CPPUNIT_ASSERT_EQUAL(Am_trans(j+1,i+1), REF[i][j]);
     }
   }
+  // SYMMETRICMATRIX
   SymmetricMatrix As_trans = As.transpose();
   CPPUNIT_ASSERT_EQUAL(As.rows(),  As_trans.columns());
   CPPUNIT_ASSERT_EQUAL(As.columns(),  As_trans.rows());
@@ -215,6 +269,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
       CPPUNIT_ASSERT_EQUAL(As_trans(i+1,j+1), REF[i][j]);
     }
   }
+  // COLUMNVECTOR
   RowVector Ac_trans = Ac.transpose();
   CPPUNIT_ASSERT_EQUAL(Ac.rows(),  Ac_trans.columns());
   CPPUNIT_ASSERT_EQUAL(Ac.columns(),  Ac_trans.rows());
@@ -222,6 +277,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
     CPPUNIT_ASSERT_EQUAL(Ac(i+1),  REF[0][i]);
     CPPUNIT_ASSERT_EQUAL(Ac_trans(i+1), REF[0][i]);
   }
+  // ROWVECTOR
   ColumnVector Ar_trans = Ar.transpose();
   CPPUNIT_ASSERT_EQUAL(Ar.rows(),  Ar_trans.columns());
   CPPUNIT_ASSERT_EQUAL(Ar.columns(),  Ar_trans.rows());
@@ -231,6 +287,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
   }
 
   // test sub matrix
+  // MATRIX
   Matrix Am_sub = Am.sub(1,c,1,c);
   CPPUNIT_ASSERT_EQUAL(Am_sub.rows(), c);
   CPPUNIT_ASSERT_EQUAL(Am_sub.columns(), c);
@@ -240,6 +297,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
       CPPUNIT_ASSERT_EQUAL(Am_sub(i+1,j+1), REF[i][j]);
     }
   }
+  // SYMMETRICMATRIX
   Matrix As_sub = As.sub(1,c,1,c);
   CPPUNIT_ASSERT_EQUAL(As_sub.rows(), c);
   CPPUNIT_ASSERT_EQUAL(As_sub.columns(), c);
@@ -251,6 +309,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
       CPPUNIT_ASSERT_EQUAL(As_sub(j+1,i+1), REF[i][j]);
     }
   }
+  // COLUMNVECTOR
   ColumnVector Ac_sub = Ac.sub(1,c);
   CPPUNIT_ASSERT_EQUAL(Ac_sub.rows(), c);
   CPPUNIT_ASSERT_EQUAL(Ac_sub.columns(), one);
@@ -258,6 +317,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
     CPPUNIT_ASSERT_EQUAL(Ac_sub(i+1), Ac(i+1));
     CPPUNIT_ASSERT_EQUAL(Ac_sub(i+1), REF[0][i]);
   }
+  // ROWVECTOR
   RowVector Ar_sub = Ar.sub(1,r-1);
   CPPUNIT_ASSERT_EQUAL(Ar_sub.rows(), one);
   CPPUNIT_ASSERT_EQUAL(Ar_sub.columns(), r-1);
@@ -267,50 +327,181 @@ MatrixwrapperTest::testMatrixwrapperValue()
   }
   
   // test operator *
+  // MATRIX * MATRIX
   Matrix Cm = Am * Am_trans;
+  Matrix Cm_check(r,c);
   for (unsigned int i=0; i<r; i++){
     for (unsigned int j=0; j<c; j++){
+      // test if original elements were maintained
       CPPUNIT_ASSERT_EQUAL(Am(i+1,j+1),  REF[i][j]);
       CPPUNIT_ASSERT_EQUAL(Am_trans(j+1,i+1), REF[i][j]);
+      // test correct multiplication
+      double sum = 0.0;
+      for (unsigned int t=0; t<c; t++){
+          sum += Am(i+1,t+1) * Am_trans(t+1,j+1);
+      }
+      Cm_check(i+1,j+1) = sum;
+      CPPUNIT_ASSERT_EQUAL(Cm(i+1,j+1),  Cm_check(i+1,j+1));
     }
   }
 
+  // MATRIX * DOUBLE
   Cm = Am * v;
   for (unsigned int i=0; i<r; i++){
     for (unsigned int j=0; j<c; j++){
+      // test if original elements were maintained
+      CPPUNIT_ASSERT_EQUAL(Am(i+1,j+1),  REF[i][j]);
+      CPPUNIT_ASSERT_EQUAL(Am_trans(j+1,i+1), REF[i][j]);
+      // test correct multiplication
       CPPUNIT_ASSERT_EQUAL(Cm(i+1,j+1),  REF[i][j] * v);
     }
   }
 
+  // SYMMETRICMATRIX * SYMMETRICMATRIX
   Matrix Cs_check(r,r);
-  Cs_check(1,1) = 686;   Cs_check(1,2) = 728;    Cs_check(1,3) = 812;   Cs_check(1,4) = 980;
-  Cs_check(2,1) = 728;   Cs_check(2,2) = 822;    Cs_check(2,3) = 964;   Cs_check(2,4) = 1196;
-  Cs_check(3,1) = 812;   Cs_check(3,2) = 964;    Cs_check(3,3) = 1206;  Cs_check(3,4) = 1544;
-  Cs_check(4,1) = 980;   Cs_check(4,2) = 1196;   Cs_check(4,3) = 1544;  Cs_check(4,4) = 2030;
   Matrix Cs = As * As_trans;
-  //CPPUNIT_ASSERT_EQUAL(Cs, Cs_check);
   for (unsigned int i=0; i<r; i++){
     for (unsigned int j=0; j<=i; j++){
+      // test if original elements were maintained
       CPPUNIT_ASSERT_EQUAL(As(i+1,j+1),  REF[i][j]);
       CPPUNIT_ASSERT_EQUAL(As_trans(j+1,i+1), REF[i][j]);
       CPPUNIT_ASSERT_EQUAL(As(j+1,i+1),  REF[i][j]);
       CPPUNIT_ASSERT_EQUAL(As_trans(i+1,j+1), REF[i][j]);
+      // test correct multiplication
+      double sum = 0.0;
+      for (unsigned int t=0; t<r; t++){
+          sum += As(i+1,t+1) * As_trans(t+1,j+1);
+      }
+      Cs_check(i+1,j+1) = sum;
+      CPPUNIT_ASSERT_EQUAL(Cs(i+1,j+1),  Cs_check(i+1,j+1));
     }
   }
 
+  // SYMMETRICMATRIX * DOUBLE
   Cs = As * v;
   for (unsigned int i=0; i<r; i++){
     for (unsigned int j=0; j<=i; j++){
+      // test if original elements were maintained
+      CPPUNIT_ASSERT_EQUAL(As(i+1,j+1),  REF[i][j]);
+      CPPUNIT_ASSERT_EQUAL(As(j+1,i+1),  REF[i][j]);
+      // test correct multiplication
       CPPUNIT_ASSERT_EQUAL(Cs(i+1,j+1),  REF[i][j] * v);
       CPPUNIT_ASSERT_EQUAL(Cs(j+1,i+1),  REF[i][j] * v);
     }
   }
+
+  // MATRIX * SYMMETRICMATRIX
+  // TODO: not implemented?
+  
+  // SYMMETRICMATRIX * MATRIX
+  Matrix Csm_check(r,c);
+  Matrix Csm = As * Am;
+  for (unsigned int i=0; i<r; i++){
+    for (unsigned int j=0; j<c; j++){
+      // test if original elements were maintained
+      if (j<=i){
+         CPPUNIT_ASSERT_EQUAL(As(i+1,j+1),  REF[i][j]);
+         CPPUNIT_ASSERT_EQUAL(As(j+1,i+1),  REF[i][j]);
+      }
+      CPPUNIT_ASSERT_EQUAL(Am(i+1,j+1), REF[i][j]);
+      // test correct multiplication
+      double sum = 0.0;
+      for (unsigned int t=0; t<r; t++){
+          sum += As(i+1,t+1) * Am(t+1,j+1);
+      }
+      Csm_check(i+1,j+1) = sum;
+      CPPUNIT_ASSERT_EQUAL(Csm(i+1,j+1),  Csm_check(i+1,j+1));
+    }
+  }
+
+  // COLUMNVECTOR * DOUBLE
   ColumnVector Cc = Ac * v;
-  for (unsigned int i=0; i<r; i++)
-    CPPUNIT_ASSERT_EQUAL(Cc(i+1),  REF[0][i] * v);
+  for (unsigned int i=0; i<r; i++){
+      // test if original elements were maintained
+      CPPUNIT_ASSERT_EQUAL(Ac(i+1),  REF[0][i]);
+      // test correct multiplication
+      CPPUNIT_ASSERT_EQUAL(Cc(i+1),  REF[0][i] * v);
+  }
+
+  // ROWVECTOR * DOUBLE
   RowVector Cr = Ar * v;
-  for (unsigned int i=0; i<c; i++)
-    CPPUNIT_ASSERT_EQUAL(Cr(i+1),  REF[0][i] * v);
+  for (unsigned int i=0; i<c; i++){
+      // test if original elements were maintained
+      CPPUNIT_ASSERT_EQUAL(Ar(i+1),  REF[0][i]);
+      // test correct multiplication
+      CPPUNIT_ASSERT_EQUAL(Cr(i+1),  REF[0][i] * v);
+  }
+
+  // COLUMNVECTOR * ROWVECTOR
+  Matrix Ccr = Ac * Ar;
+  Matrix Ccr_check(r,c);
+  for (unsigned int j=0; j<c; j++)  CPPUNIT_ASSERT_EQUAL(Ar(j+1), REF[0][j]);
+  for (unsigned int i=0; i<r; i++){
+     // test if original elements were maintained
+     CPPUNIT_ASSERT_EQUAL(Ac(i+1),  REF[0][i]);
+    for (unsigned int j=0; j<c; j++){
+      // test correct multiplication
+      Ccr_check(i+1,j+1) = Ac(i+1) * Ar(j+1);
+      CPPUNIT_ASSERT_EQUAL(Ccr(i+1,j+1),  Ccr_check(i+1,j+1));
+    }
+  }
+  
+  // ROWVECTOR * COLUMNVECTOR
+  double rc = Ac_trans * Ac;
+  double rc_check;
+  // test if original elements were maintained
+  for (unsigned int j=0; j<c; j++)  CPPUNIT_ASSERT_EQUAL(Ac_trans(j+1), REF[0][j]);
+  for (unsigned int i=0; i<r; i++)  CPPUNIT_ASSERT_EQUAL(Ac(i+1),  REF[0][i]);
+  // test correct multiplication
+  double sum = 0.0;
+  for (unsigned int t=0; t<r; t++){
+      sum += Ac_trans(t+1) * Ac(t+1);
+  }
+  rc_check = sum;
+  CPPUNIT_ASSERT_EQUAL(rc,  rc_check);
+  
+  // ROWVECTOR * MATRIX
+  // TODO: only implemented for lti
+  //RowVector Cr2= Ar * Am;
+  //Matrix Cr2_check(r);
+  //for (unsigned int j=0; j<c; j++){
+  //  // test if original elements were maintained
+  //  CPPUNIT_ASSERT_EQUAL(Ar(j+1),  REF[0][j]);
+  //  for (unsigned int i=0; i<r; i++){
+  //    // test if original elements were maintained
+  //    CPPUNIT_ASSERT_EQUAL(Am(i+1,j+1),  REF[i][j]);
+  //  }
+  //}
+  //for (unsigned int i=0; i<r; i++){
+  //  // test correct multiplication
+  //  double sum = 0.0;
+  //  for (unsigned int t=0; t<c; t++){
+  //      sum += Ar(t+1) * Am(t+1,j+1);
+  //  }
+  //  Cr2_check(i+1) = sum;
+  //  CPPUNIT_ASSERT_EQUAL(Cr2(i+1),  Cr2_check(i+1));
+  //}
+  
+  // MATRIX * COLUMNVECTOR
+  ColumnVector Cc2= Am_trans * Ac;
+  ColumnVector Cc2_check(c);
+  for (unsigned int j=0; j<r; j++){
+    // test if original elements were maintained
+    CPPUNIT_ASSERT_EQUAL(Ac(j+1),  REF[0][j]);
+    for (unsigned int i=0; i<c; i++){
+      // test if original elements were maintained
+      CPPUNIT_ASSERT_EQUAL(Am_trans(i+1,j+1),  REF[j][i]);
+    }
+  }
+  for (unsigned int i=0; i<c; i++){
+    // test correct multiplication
+    double sum = 0.0;
+    for (unsigned int t=0; t<r; t++){
+        sum += Am_trans(i+1,t+1) * Ac(t+1);
+    }
+    Cc2_check(i+1) = sum;
+    CPPUNIT_ASSERT_EQUAL(Cc2(i+1),  Cc2_check(i+1));
+  }
 
 
   // test operator /
@@ -434,7 +625,6 @@ MatrixwrapperTest::testMatrixwrapperValue()
   A2_svd.SVD(w2_svd,U2_svd,V2_svd);
   for (int i=1; i<=A2_svd.columns() ; i++)  W2_svd(i,i) = w2_svd(i);
   CPPUNIT_ASSERT_EQUAL(approxEqual(A2_svd, U2_svd * W2_svd * V2_svd.transpose(), epsilon),true);
-
 }
 
 

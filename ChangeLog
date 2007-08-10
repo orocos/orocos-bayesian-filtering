@@ -1,4 +1,8 @@
 
+2007-08-10  Tinne De Laet <first dot last at mech dot kuleuven dot be>
+	* tests/matrixwrapper_test.cpp: some extra tests added according to bug#441
+	and existing test made more thoroughly
+
 2007-05-25  Tinne De Laet <first dot last at mech dot kuleuven dot be>
 	* Singular value decomposition and pseudoinverse added to the matrix wrapper
 	(revision 28197)
@@ -23,22 +27,21 @@
 
 2007-05-03  Wim Meeussen <first dot last at mech dot kuleuven dot be>
 	* Finished porting BFL to cmake build system
-	
+
 2007-05-03  Wim Meeussen <first dot last at mech dot kuleuven dot be>
 	* Replace the tests in the src folder with the cppunit tests in
 	the bfl/tests folder
 	* Replace the tests in the src folder with the examples in the
 	bfl/examples folder
-	
+
 2007-05-03  Wim Meeussen <first dot last at mech dot kuleuven dot be>
 	* Add the examples of the getting started guide to the BFL trunk
 	(Klaas should be happy now :-)
 
-
 2007-05-03  Wim Meeussen <first dot last at mech dot kuleuven dot be>
 	* Moved the matrixWrapper into the BFL build system. The namespace
 	MatrixWrapper was kept however for backwards compatibility
-	
+
 2007-05-03  Wim Meeussen <first dot last at mech dot kuleuven dot be>
 	* replace all checks and cerr messages by assert
 	info, see <https://www.fmtc.be/orocos-bugzilla/show_bug.cgi?id=331>

@@ -383,9 +383,6 @@ MyRowVector MyRowVector::operator/ (double a) const
   return (MyRowVector) (op1.divide(a));
 }
 
-
-
-
 MyRowVector MyRowVector::operator*(const MyMatrix& a)
 {
   assert(this->columns() == a.rows());
