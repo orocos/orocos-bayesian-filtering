@@ -174,11 +174,11 @@ namespace BFL
   Gaussian::ExpectedValueSet (const ColumnVector& mu)
   { 
     _Mu = mu;
-    assert(this->DimensionGet() == mu.rows());
     if (this->DimensionGet() == 0)
       {
 	this->DimensionSet(mu.rows());
       }
+    assert(this->DimensionGet() == mu.rows());
   }
 
   void 
@@ -186,12 +186,11 @@ namespace BFL
   {
     _Sigma = cov;
     _Sigma_changed = true;
-    assert(this->DimensionGet() == cov.rows());
-
     if (this->DimensionGet() == 0)
       {
 	this->DimensionSet(cov.rows());
       }
+    assert(this->DimensionGet() == cov.rows());
   }
 
 } // End namespace BFL

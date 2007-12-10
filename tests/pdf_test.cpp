@@ -81,6 +81,10 @@ PdfTest::testGaussian()
   Gaussian b_gaussian(a_gaussian);
   CPPUNIT_ASSERT_EQUAL( _mu, b_gaussian.ExpectedValueGet());
   CPPUNIT_ASSERT_EQUAL( _sigma, b_gaussian.CovarianceGet());
+
+  /* Create Gaussian, allocate memory afterwards */
+  Gaussian c_gaussian;
+  c_gaussian.ExpectedValueSet(_mu);
 }  
 
 void
