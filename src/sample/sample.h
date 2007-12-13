@@ -53,8 +53,8 @@ namespace BFL
     public:
       /// Constructor
       /**
-	 @param dimension of the ColumnVector for the continuous samples,
-	 number of discrete states for the discrete case
+	 @param dimension of the ColumnVector for the continuous
+	 samples.  This parameter is ignored in the discrete case.
       */   
       Sample (unsigned int dimension = 0);
 
