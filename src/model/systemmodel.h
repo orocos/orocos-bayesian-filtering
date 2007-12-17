@@ -80,7 +80,7 @@ namespace BFL
        */
       int StateSizeGet() const;
 
-      /// Number of Conditional Arguments..
+      /// Has the system inputs or not
       bool SystemWithoutInputs() const;
 
       // NO LONGER RELEVANT
