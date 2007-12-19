@@ -103,6 +103,11 @@ PdfTest::testDiscretePdf()
        CPPUNIT_ASSERT_EQUAL( 1.0/NUM_DS, (double)a_discretepdf.ProbabilityGet(i));
     }
 
+  /* Copy constructor */
+  DiscretePdf b_discretepdf(a_discretepdf);
+  CPPUNIT_ASSERT_EQUAL(a_discretepdf.ProbabilitiesGet(),b_discretepdf.ProbabilitiesGet());
+  CPPUNIT_ASSERT_EQUAL(a_discretepdf.DimensionGet(), b_discretepdf.DimensionGet());
+
   /* Set and Get probabilities */
   // one at a time
   double prob_new = 0.57;
