@@ -22,6 +22,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <pdf/pdf.h>
 #include <pdf/gaussian.h>
+#include <pdf/uniform.h>
 #include <pdf/discretepdf.h>
 #include <pdf/linearanalyticconditionalgaussian.h>
 #include <pdf/discreteconditionalpdf.h>
@@ -36,6 +37,7 @@ class PdfTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( PdfTest );
   CPPUNIT_TEST( testGaussian );
+  CPPUNIT_TEST( testUniform );
   CPPUNIT_TEST( testDiscretePdf );
   CPPUNIT_TEST( testLinearAnalyticConditionalGaussian );
   CPPUNIT_TEST( testDiscreteConditionalPdf );
@@ -44,12 +46,14 @@ class PdfTest : public CppUnit::TestFixture
 
   ColumnVector _mu;
   SymmetricMatrix _sigma;
+  ColumnVector _width;
 
 public:
   void setUp();
   void tearDown();
   
   void testGaussian();
+  void testUniform();
   void testDiscretePdf();
   void testLinearAnalyticConditionalGaussian();
   void testDiscreteConditionalPdf();

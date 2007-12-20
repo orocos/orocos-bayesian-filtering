@@ -30,6 +30,8 @@ using namespace BFL;
 #define MU_3 3.4
 #define SIGMA 0.01
 #define SIGMA2 0.00
+#define WIDTH_0 1
+#define WIDTH_1 2
 const unsigned int NUM_COND_ARGS = 2;
 const unsigned int DIMENSION = 2;
 const unsigned int NUM_SAMPLES = 100;
@@ -49,6 +51,9 @@ PdfTest::setUp()
   _sigma.resize(DIMENSION);
   _sigma = 0.0;
   for (unsigned int rows=1; rows < DIMENSION + 1; rows++){ _sigma(rows,rows)=SIGMA; }
+  _width.resize(DIMENSION);
+  _width(1) = WIDTH_0 ;
+  _width(2) = WIDTH_1 ;
 }
 
 void 
@@ -90,6 +95,67 @@ PdfTest::testGaussian()
   CPPUNIT_ASSERT_EQUAL( _sigma, c_gaussian.CovarianceGet());
 }  
 
+void 
+PdfTest::testUniform()
+{
+  Uniform a_uniform(_mu,_width);
+
+  /* Setting and Getting center and widths */
+  CPPUNIT_ASSERT_EQUAL(approxEqual( _mu, a_uniform.CenterGet(),epsilon),true);
+  CPPUNIT_ASSERT_EQUAL(approxEqual( _width, a_uniform.WidthGet(),epsilon),true);
+
+  /* Sampling */
+  vector<Sample<ColumnVector> > los(NUM_SAMPLES);
+  CPPUNIT_ASSERT_EQUAL( true, a_uniform.SampleFrom(los,NUM_SAMPLES,DEFAULT,NULL));
+  // test if samples are located in the area
+  vector<Sample<ColumnVector > >::iterator los_it;
+  for (los_it = los.begin(); los_it!=los.end(); los_it++)
+  { 
+       ColumnVector current_sample = los_it->ValueGet();
+       for (int i = 1; i < _mu.rows()+1 ; i++)
+       {
+            CPPUNIT_ASSERT(current_sample(i) > (_mu(i)-_width(i)/2) ) ;
+            CPPUNIT_ASSERT(current_sample(i) < (_mu(i)+_width(i)/2) ) ;
+       }
+   }
+  // Box-Muller is not implemented yet
+  CPPUNIT_ASSERT_EQUAL( false, a_uniform.SampleFrom(los,NUM_SAMPLES,BOXMULLER,NULL));
+  Sample<ColumnVector> a_sample ;
+  CPPUNIT_ASSERT_EQUAL( true, a_uniform.SampleFrom(a_sample,DEFAULT,NULL));
+  // Box-Muller is not implemented yet
+  CPPUNIT_ASSERT_EQUAL( false, a_uniform.SampleFrom(a_sample,BOXMULLER,NULL));
+
+  /* Getting the probability */
+  double area = 1;
+  for (int i =1 ; i < DIMENSION + 1 ; i++) area = area * _width(i); 
+  CPPUNIT_ASSERT_EQUAL(1/area, (double)a_uniform.ProbabilityGet(_mu));
+  CPPUNIT_ASSERT_EQUAL(0.0, (double)a_uniform.ProbabilityGet(_mu + _width));
+  CPPUNIT_ASSERT_EQUAL(0.0, (double)a_uniform.ProbabilityGet(_mu - _width));
+  ColumnVector test_prob(DIMENSION);
+  test_prob = _mu;
+  test_prob(DIMENSION) = _mu(DIMENSION) + _width(DIMENSION)*2/3;
+  CPPUNIT_ASSERT_EQUAL(0.0, (double)a_uniform.ProbabilityGet(test_prob));
+  
+  /* Copy Constructor etc */
+  Uniform b_uniform(a_uniform);
+  CPPUNIT_ASSERT_EQUAL(approxEqual( _mu, b_uniform.CenterGet(),epsilon),true);
+  CPPUNIT_ASSERT_EQUAL(approxEqual( _width, b_uniform.WidthGet(),epsilon),true);
+
+  /* Create Uniform, allocate memory afterwards */
+  Uniform c_uniform;
+  c_uniform.UniformSet(_mu,_width);
+  CPPUNIT_ASSERT_EQUAL(approxEqual( _mu, c_uniform.CenterGet(),epsilon),true);
+  CPPUNIT_ASSERT_EQUAL(approxEqual( _width, c_uniform.WidthGet(),epsilon),true);
+  /* Getting the probability */
+  area = 1;
+  for (int i =1 ; i < DIMENSION + 1 ; i++) area = area * _width(i); 
+  CPPUNIT_ASSERT_EQUAL(1/area, (double)c_uniform.ProbabilityGet(_mu));
+  CPPUNIT_ASSERT_EQUAL(0.0, (double)c_uniform.ProbabilityGet(_mu + _width));
+  CPPUNIT_ASSERT_EQUAL(0.0, (double)c_uniform.ProbabilityGet(_mu - _width));
+  test_prob = _mu;
+  test_prob(DIMENSION) = _mu(DIMENSION) + _width(DIMENSION)*2/3;
+  CPPUNIT_ASSERT_EQUAL(0.0, (double)c_uniform.ProbabilityGet(test_prob));
+}  
 void
 PdfTest::testDiscretePdf()
 {

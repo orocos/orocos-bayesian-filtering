@@ -1,4 +1,7 @@
 
+2007-12-20  Tinne De Laet <first dot last at mech dot kuleuven dot be>
+	* src/pdf/uniform.*/: added class for uniform distribution
+	* tests/pdf_test.*: added tests to test new class
 
 2007-12-20  Tinne De Laet <first dot last at mech dot kuleuven dot be>
 	* src/rng/rng.*/: added method to sample from uniform distribution with
