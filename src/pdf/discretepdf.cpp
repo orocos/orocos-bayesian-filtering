@@ -39,13 +39,11 @@ namespace BFL
 #endif // __CONSTRUCTOR__
   }
 
-  DiscretePdf::DiscretePdf(const DiscretePdf & my_dpdf)
+  DiscretePdf::DiscretePdf(const DiscretePdf & my_dpdf):Pdf<int>(my_dpdf)
   { 
-    unsigned int dim = my_dpdf.DimensionGet();
-    _dimension = dim;
-    _Values_p = new ColumnVector(dim);
+    _Values_p = new ColumnVector(this->DimensionGet());
     (*_Values_p) = my_dpdf.ProbabilitiesGet();
-    _CumPDF.insert(_CumPDF.begin(),dim+1,0.0);
+    _CumPDF.insert(_CumPDF.begin(),DimensionGet()+1,0.0);
     CumPDFUpdate();
 #ifdef __CONSTRUCTOR__
     cout << "DiscretePdf copy constructor\n";

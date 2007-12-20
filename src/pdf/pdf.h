@@ -139,7 +139,7 @@ namespace BFL
       */
       virtual MatrixWrapper::SymmetricMatrix CovarianceGet() const;
   
-    protected:
+    private:
       /// Dimension of the argument x of P(x | ...).
       /** In case of a discrete pdf, this is the number of discrete
 	  classes
