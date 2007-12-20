@@ -26,6 +26,7 @@ namespace BFL
   // Maybe this should become of type sample in the future!
   double rnorm (const double & mu, const double & sigma);
   double runif ();
+  double runif (const double & min, const double & max);
 }
 
 #endif // __ORO_PSEUDORNG

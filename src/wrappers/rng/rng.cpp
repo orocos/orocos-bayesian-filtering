@@ -43,6 +43,13 @@ double BFL::runif()
   return roll();
 }
 
+double BFL::runif(const double &min, const double& max)
+{
+  boost::uniform_real<double> Uniform_DistributionMinMax(min,max); // Uniform distribution
+  boost::variate_generator<boost::mt19937&,boost::uniform_real<double> > roll(Boost_Rng,Uniform_DistributionMinMax);
+  return roll();
+}
+
 #endif // __RNGWRAPPER_BOOST__
 
 
@@ -68,6 +75,11 @@ double BFL::rnorm(const double & mu, const double & sigma)
 double BFL::runif()
 {
   return (bfl_mersenne.runif());
+}
+
+double BFL::runif(const double &min, const double& max)
+{
+  return (bfl_mersenne.runif()*(max-min)+min);
 }
 #endif // __RNGWRAPPER_SCYTHE__
 
@@ -97,5 +109,11 @@ double BFL::runif()
   return unif.draw();
 }
 
+// Sample from uniform distribution
+double BFL::runif(const double &min, const double& max)
+{
+  lti::uniformDistribution u(min,max);
+  return u.draw();
+}
 #endif // __RNGWRAPPER_LTI__
 

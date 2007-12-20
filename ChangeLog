@@ -1,4 +1,9 @@
 
+
+2007-12-20  Tinne De Laet <first dot last at mech dot kuleuven dot be>
+	* src/rng/rng.*/: added method to sample from uniform distribution with
+	lower and upper border given
+
 2007-08-10  Tinne De Laet <first dot last at mech dot kuleuven dot be>
 	* tests/matrixwrapper_test.cpp: some extra tests added according to bug#441
 	and existing test made more thoroughly
