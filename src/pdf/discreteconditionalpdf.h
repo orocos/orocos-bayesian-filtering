@@ -52,6 +52,9 @@ namespace BFL
   class DiscreteConditionalPdf : public ConditionalPdf<int, int>
     {
     protected:
+      /// number of discrete states
+      unsigned int _num_states;
+
       /// Pointer to the probability values
       /** For now we implement this using a simple row of doubles, this should
 	  probably become a tensor in the future
@@ -85,7 +88,10 @@ namespace BFL
       DiscreteConditionalPdf(const DiscreteConditionalPdf & pdf);
       /// Destructor
       virtual ~DiscreteConditionalPdf();
-
+     
+      /// Get the number of discrete states 
+      unsigned int NumStatesGet()const;
+      
       // Redefine all pure virtuals!
       Probability ProbabilityGet(const int& input) const;
       virtual bool SampleFrom (Sample<int>& one_sample, int method, void * args) const;

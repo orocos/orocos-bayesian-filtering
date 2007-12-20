@@ -27,6 +27,10 @@ namespace BFL
 
   DiscreteSystemModel::DiscreteSystemModel(const DiscreteSystemModel & model) :
     SystemModel<int>(model){}
-
+  
+  unsigned int DiscreteSystemModel::NumStatesGet()const
+  {
+    return ( (DiscreteConditionalPdf*)_SystemPdf )->NumStatesGet();
+  }
 
 }

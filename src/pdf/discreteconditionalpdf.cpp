@@ -27,7 +27,8 @@ namespace BFL
   DiscreteConditionalPdf::DiscreteConditionalPdf(int num_states,
 						 int num_conditional_arguments,
 						 int cond_arg_dimensions[])
-    : ConditionalPdf<int,int>(num_states,num_conditional_arguments)
+    : ConditionalPdf<int,int>(1,num_conditional_arguments)
+    , _num_states(num_states)
   {
     _cond_arg_dims_p = new int[num_conditional_arguments];
     int total_dim = 1;
@@ -55,7 +56,7 @@ namespace BFL
 
 
   DiscreteConditionalPdf::DiscreteConditionalPdf(const DiscreteConditionalPdf & pdf)
-    : ConditionalPdf<int,int>(pdf)
+    : ConditionalPdf<int,int>(pdf),_num_states(pdf.NumStatesGet())
   {
     _cond_arg_dims_p = new int[pdf.NumConditionalArgumentsGet()];
     int total_dim = 1;
@@ -71,6 +72,12 @@ namespace BFL
       }
   }
 
+  // Get the number of discrete states
+  unsigned int DiscreteConditionalPdf::NumStatesGet() const
+  {
+     return _num_states;
+  }
+
   // Calculate index (used by ProbabilityGet and ProbabilitySet)
   int DiscreteConditionalPdf::IndexGet(int input, 
 				       std::vector<int> condargs) const
@@ -80,7 +87,7 @@ namespace BFL
   
     // The first hyperdimension is that of input itself
     index += input * blocksize;
-    blocksize *= DimensionGet();
+    blocksize *= NumStatesGet();
     // The other ons are those of the conditional args
     for (unsigned int arg = 0 ; arg < NumConditionalArgumentsGet() ; arg++ )
       {
@@ -116,11 +123,11 @@ namespace BFL
     // Get the elements of which to sample from
     int startindex = IndexGet(0,ConditionalArgumentsGet());
     double SumWeights = 0.0; double CumSum=0.0;
-    vector<double> probs(DimensionGet());
-    vector<double> valuelist(DimensionGet()+1);
+    vector<double> probs(NumStatesGet());
+    vector<double> valuelist(NumStatesGet()+1);
     unsigned int index;
   
-    for ( index = 0; index < DimensionGet() ; index++ ) 
+    for ( index = 0; index < NumStatesGet() ; index++ ) 
       {
 	probs[index] = _probability_p[startindex+index];
 	CumSum += probs[index];
@@ -131,16 +138,16 @@ namespace BFL
       }
     SumWeights = CumSum;
     valuelist[0] = 0.0; CumSum = 0.0;
-    for ( index = 1; index <= DimensionGet() ; index++ ) 
+    for ( index = 1; index <= NumStatesGet() ; index++ ) 
       {
 	CumSum += probs[index-1]/SumWeights;
 	valuelist[index] = CumSum;
       }  
     // Check if last element of valuelist is +- 1
-    assert ( (valuelist[DimensionGet()] >= 1.0 - NUMERIC_PRECISION) &&
-	     (valuelist[DimensionGet()] <= 1.0 + NUMERIC_PRECISION) );
+    assert ( (valuelist[NumStatesGet()] >= 1.0 - NUMERIC_PRECISION) &&
+	     (valuelist[NumStatesGet()] <= 1.0 + NUMERIC_PRECISION) );
 
-    valuelist[DimensionGet()]=1;
+    valuelist[NumStatesGet()]=1;
   
     // Sample from univariate uniform rng between 0 and 1;
     double unif_sample; unif_sample = runif();
@@ -148,7 +155,7 @@ namespace BFL
     index = 0;
     while ( unif_sample > valuelist[index] )
       {
-	assert(index <= DimensionGet());
+	assert(index <= NumStatesGet());
 	index++;
       }
     one_sample.ValueSet(index-1);

@@ -67,7 +67,7 @@ ModelTest::testDiscreteSystemModel()
   std::vector<int> cond_args(NUM_COND_ARGS);
   /* Set and Get all Probabilities*/
   double prob_diag = 0.98;
-  double prob_nondiag = (1-0.9)/(NUM_DS-1);
+  double prob_nondiag = (1-prob_diag)/(NUM_DS-1);
   for (state_kMinusOne = 0 ; state_kMinusOne < NUM_DS ;  state_kMinusOne++)
     {
        cond_args[0] = state_kMinusOne;
@@ -81,8 +81,11 @@ ModelTest::testDiscreteSystemModel()
   /* Construction */
   DiscreteSystemModel a_discreteSysModel(&a_discretecondpdf);
  
+  /* Number of discrete states*/
+  CPPUNIT_ASSERT_EQUAL( NUM_DS , (int)a_discreteSysModel.NumStatesGet());
+
   /* State size*/
-  CPPUNIT_ASSERT_EQUAL( NUM_DS , a_discreteSysModel.StateSizeGet());
+  CPPUNIT_ASSERT_EQUAL( 1 , a_discreteSysModel.StateSizeGet());
   
   /* SystemWithoutInputs*/ 
   CPPUNIT_ASSERT_EQUAL( true , a_discreteSysModel.SystemWithoutInputs());

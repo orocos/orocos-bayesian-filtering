@@ -28,22 +28,25 @@ namespace BFL
   using namespace MatrixWrapper;
   
 
-  DiscretePdf::DiscretePdf(unsigned int dim): Pdf<int>(dim)
+  DiscretePdf::DiscretePdf(unsigned int num_states): Pdf<int>(1)
+        ,_num_states(num_states)
   {
-    _Values_p = new ColumnVector(dim);
+    //discrete pdf has dimension 1
+    _Values_p = new ColumnVector(num_states);
     _SumWeights = 1.0;
-    (*_Values_p) = 1.0/DimensionGet();
-    _CumPDF.insert(_CumPDF.begin(),dim+1,0.0);
+    (*_Values_p) = 1.0/NumStatesGet();
+    _CumPDF.insert(_CumPDF.begin(),num_states+1,0.0);
 #ifdef __CONSTRUCTOR__
     cout << "DiscretePdf constructor\n";
 #endif // __CONSTRUCTOR__
   }
 
   DiscretePdf::DiscretePdf(const DiscretePdf & my_dpdf):Pdf<int>(my_dpdf)
+        ,_num_states(my_dpdf.NumStatesGet())
   { 
-    _Values_p = new ColumnVector(this->DimensionGet());
+    _Values_p = new ColumnVector(this->NumStatesGet());
     (*_Values_p) = my_dpdf.ProbabilitiesGet();
-    _CumPDF.insert(_CumPDF.begin(),DimensionGet()+1,0.0);
+    _CumPDF.insert(_CumPDF.begin(),NumStatesGet()+1,0.0);
     CumPDFUpdate();
 #ifdef __CONSTRUCTOR__
     cout << "DiscretePdf copy constructor\n";
@@ -58,17 +61,23 @@ namespace BFL
     // Release memory!
     delete _Values_p;
   }
+  
+  unsigned int DiscretePdf::NumStatesGet()const
+  {
+    return _num_states;
+  }
+
 
   Probability DiscretePdf::ProbabilityGet(const unsigned int& input) const
   {
-    assert((int)input >= 0 && input < DimensionGet());
+    assert((int)input >= 0 && input < NumStatesGet());
 
     return (*_Values_p)(input+1);
   }
 
   bool DiscretePdf::ProbabilitySet(unsigned int input, Probability a) 
   {
-    assert((int)input >= 0 && input < DimensionGet());
+    assert((int)input >= 0 && input < NumStatesGet());
 
     (*_Values_p)(input+1) = a;
     return CumPDFUpdate();
@@ -81,7 +90,7 @@ namespace BFL
 
   bool DiscretePdf::ProbabilitiesSet(ColumnVector & v)
   {
-    assert(v.rows() == DimensionGet());
+    assert(v.rows() == NumStatesGet());
 
     *_Values_p = v;
     return CumPDFUpdate();
@@ -116,7 +125,7 @@ namespace BFL
 
 	  // CHECK WHERE THESE SAMPLES ARE IN _CUMPDF
 	  unsigned int index = 0;
-	  unsigned int dim = DimensionGet();
+	  unsigned int num_states = NumStatesGet();
 	  vector<double>::const_iterator CumPDFit = _CumPDF.begin();
 	  vector<Sample<int> >::iterator sit = list_samples.begin();
 
@@ -125,7 +134,7 @@ namespace BFL
 	      while ( unif_samples[i] > *CumPDFit )
 	      {
 		// check for internal error
-		assert(index <= dim);
+		assert(index <= num_states);
 		index++; CumPDFit++;
 	      }
 	    *sit = index; 
@@ -154,7 +163,7 @@ namespace BFL
 	  unsigned int index = 0;
 	  while ( unif_sample > _CumPDF[index] )
 	    {
-	      assert(index <= DimensionGet());
+	      assert(index <= NumStatesGet());
 	      index++;
 	    }
 	  int a = index - 1;
@@ -171,7 +180,7 @@ namespace BFL
   bool DiscretePdf::SumWeightsUpdate()
   {
     double SumOfWeights = 0.0; 
-    for ( unsigned int row = 1; row < DimensionGet() + 1; row++) SumOfWeights += (*_Values_p)(row);
+    for ( unsigned int row = 1; row < NumStatesGet() + 1; row++) SumOfWeights += (*_Values_p)(row);
     if (SumOfWeights > 0){
       this->_SumWeights = SumOfWeights;
       return true;
@@ -193,7 +202,7 @@ namespace BFL
     *CumPDFit = 0.0;
 
     // Calculate the Cumulative PDF
-    for ( unsigned int i = 1; i < DimensionGet()+1; i++)
+    for ( unsigned int i = 1; i < NumStatesGet()+1; i++)
       {
 	CumPDFit++;
 	// Calculate the __normalised__ Cumulative sum!!!
@@ -201,10 +210,10 @@ namespace BFL
 	*CumPDFit = CumSum;
       }
     // Check if last element of valuelist is +- 1
-    assert( (_CumPDF[DimensionGet()] >= 1.0 - NUMERIC_PRECISION) &&
-	    (_CumPDF[DimensionGet()] <= 1.0 + NUMERIC_PRECISION) );
+    assert( (_CumPDF[NumStatesGet()] >= 1.0 - NUMERIC_PRECISION) &&
+	    (_CumPDF[NumStatesGet()] <= 1.0 + NUMERIC_PRECISION) );
 
-    _CumPDF[DimensionGet()]=1;
+    _CumPDF[NumStatesGet()]=1;
 
     return true;
   } 

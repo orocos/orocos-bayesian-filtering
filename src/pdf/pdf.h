@@ -56,10 +56,8 @@ namespace BFL
     public:
       /// Constructor
       /** @param dimension int representing the number of rows of the state
-	  vector for the continuous case, or the discrete number of states
-	  for the discrete case
       */
-      Pdf(unsigned int dimension=0);
+      Pdf(unsigned int dimension=0); 
   
       // Default Copy Constructor will do the job
   
@@ -141,9 +139,6 @@ namespace BFL
   
     private:
       /// Dimension of the argument x of P(x | ...).
-      /** In case of a discrete pdf, this is the number of discrete
-	  classes
-      */
       unsigned int _dimension;
 
     };

@@ -1,5 +1,12 @@
 
 2007-12-20  Tinne De Laet <first dot last at mech dot kuleuven dot be>
+	* According to bug # 471, I made the interpretation of dimension unique
+	* src/pdf/...: added a class variable _num_states to the discrete pdfs to
+	represent the number of discrete states 
+	* tests/...: adapted according to changes in pdf
+	* examples/...: adapted according to changes in pdf
+
+2007-12-20  Tinne De Laet <first dot last at mech dot kuleuven dot be>
 	* src/pdf/uniform.*/: added class for uniform distribution
 	* tests/pdf_test.*: added tests to test new class
 

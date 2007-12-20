@@ -40,7 +40,8 @@ namespace BFL
       virtual ~DiscreteSystemModel();
       /// Copy constructor
       DiscreteSystemModel(const DiscreteSystemModel &);
-
+      /// Get the number of discrete states
+      unsigned int NumStatesGet()const;
     };
 
 } // End namespace BFL

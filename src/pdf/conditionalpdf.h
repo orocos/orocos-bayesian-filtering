@@ -51,8 +51,7 @@ namespace BFL
     public:
       /// Constructor
       /** @param dimension int representing the number of rows of the state
-	  vector for the continuous case, or the discrete number of states
-	  for the discrete case
+	  vector 
 	  @param num_conditional_arguments the number of arguments behind
 	  the |
       */

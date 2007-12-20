@@ -27,7 +27,7 @@ namespace BFL
   using namespace MatrixWrapper;
 
   NonlinearSystemPdf::NonlinearSystemPdf(const Gaussian& additiveNoise)
-    : ConditionalPdf<ColumnVector,ColumnVector>(SYSMODEL_DIMENSION_MOBILE, SYSMODEL_NUMCONDARGUMENTS_MOBILE)
+    : ConditionalPdf<ColumnVector,ColumnVector>(SYSMODEL_DIMENSION_MOBILE,SYSMODEL_NUMCONDARGUMENTS_MOBILE)
   {
     _additiveNoise = additiveNoise;
   }

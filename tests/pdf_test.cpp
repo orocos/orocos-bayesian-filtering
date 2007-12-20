@@ -161,18 +161,26 @@ PdfTest::testDiscretePdf()
 {
   DiscretePdf a_discretepdf(NUM_DS);
   ColumnVector uniform_vector(NUM_DS);
-  uniform_vector = a_discretepdf.ProbabilitiesGet();
- 
+  uniform_vector = 1.0/NUM_DS;
+
   /* Check initial uniform distribution */
+  CPPUNIT_ASSERT_EQUAL( uniform_vector, a_discretepdf.ProbabilitiesGet());
   for (int i = 0; i < NUM_DS ; i++)
-    {
-       CPPUNIT_ASSERT_EQUAL( 1.0/NUM_DS, (double)a_discretepdf.ProbabilityGet(i));
-    }
+  {
+     CPPUNIT_ASSERT_EQUAL( 1.0/NUM_DS, (double)a_discretepdf.ProbabilityGet(i));
+  }
+
+  /* Check dimension */
+  CPPUNIT_ASSERT_EQUAL(1,(int)a_discretepdf.DimensionGet());
+
+  /* Check the number of states */
+  CPPUNIT_ASSERT_EQUAL(NUM_DS,(int)a_discretepdf.NumStatesGet());
 
   /* Copy constructor */
   DiscretePdf b_discretepdf(a_discretepdf);
   CPPUNIT_ASSERT_EQUAL(a_discretepdf.ProbabilitiesGet(),b_discretepdf.ProbabilitiesGet());
   CPPUNIT_ASSERT_EQUAL(a_discretepdf.DimensionGet(), b_discretepdf.DimensionGet());
+  CPPUNIT_ASSERT_EQUAL(a_discretepdf.NumStatesGet(), b_discretepdf.NumStatesGet());
 
   /* Set and Get probabilities */
   // one at a time
@@ -332,8 +340,11 @@ PdfTest::testDiscreteConditionalPdf()
   DiscreteConditionalPdf a_discretecondpdf(NUM_DS,NUM_COND_ARGS_DIS,cond_arg_dims);
 
   /* Get the dimension  */ 
-  CPPUNIT_ASSERT_EQUAL( NUM_DS, (int)a_discretecondpdf.DimensionGet());
+  CPPUNIT_ASSERT_EQUAL( 1, (int)a_discretecondpdf.DimensionGet());
   
+  /* Get the dimension  */ 
+  CPPUNIT_ASSERT_EQUAL( NUM_DS, (int)a_discretecondpdf.NumStatesGet());
+
   /* Get number of conditional arguments  */ 
   CPPUNIT_ASSERT_EQUAL( NUM_COND_ARGS_DIS, (int)a_discretecondpdf.NumConditionalArgumentsGet());
 

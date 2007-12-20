@@ -27,7 +27,7 @@ namespace BFL
   using namespace MatrixWrapper;
 
   NonlinearMeasurementPdf::NonlinearMeasurementPdf(const Gaussian& measNoise)
-    : ConditionalPdf<ColumnVector,ColumnVector>(MEASMODEL_DIMENSION_MOBILE, MEASMODEL_NUMCONDARGUMENTS_MOBILE)
+    : ConditionalPdf<ColumnVector,ColumnVector>(MEASMODEL_DIMENSION_MOBILE,MEASMODEL_NUMCONDARGUMENTS_MOBILE)
   {
     _measNoise = measNoise;
   }

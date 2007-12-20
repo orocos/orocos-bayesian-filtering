@@ -45,6 +45,8 @@ namespace BFL
   class DiscretePdf : public Pdf<int> // inherit abstract_template_class
     {
     protected:
+      /// The number of discrete state 
+      unsigned int _num_states;
       /// Pointer to the discrete PDF-values
       MatrixWrapper::ColumnVector *_Values_p;
       /// Total sum of weighs associated with the variables
@@ -67,6 +69,9 @@ namespace BFL
 
       /// Destructor
       virtual ~DiscretePdf();
+
+      /// Get the number of discrete States
+      unsigned int NumStatesGet()const;
 
       /// Implementation of virtual base class method
       Probability ProbabilityGet(const unsigned int& input) const;
