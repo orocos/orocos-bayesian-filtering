@@ -1,5 +1,5 @@
 IF (BUILD_EXAMPLES)
-  ADD_EXECUTABLE( test_discrete_filter test_discrete_filter.cpp conditionaluniformpdf.cpp ../mobile_robot.cpp)
+  ADD_EXECUTABLE( test_discrete_filter test_discrete_filter.cpp conditionalUniformMeasPdf1d.cpp ../mobile_robot.cpp)
 
   TARGET_LINK_LIBRARIES( test_discrete_filter orocos-bfl ${MATRIX_LIBS} ${RNG_LIBS}  ${GINAC_LIBS})
 

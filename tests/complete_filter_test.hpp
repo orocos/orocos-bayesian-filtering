@@ -39,7 +39,7 @@
 #include "../examples/compare_filters/mobile_robot_wall_cts.h"
 #include "../examples/compare_filters/nonlinearanalyticconditionalgaussianmobile.h"
 #include "../examples/mobile_robot.h"
-#include "../examples/discrete_filter/conditionaluniformpdf.h"
+#include "../examples/discrete_filter/conditionalUniformMeasPdf1d.h"
 
 #include <iostream>
 #include <fstream>

@@ -25,7 +25,7 @@
 #include <model/discretesystemmodel.h>
 
 #include <pdf/discretepdf.h>
-#include "conditionaluniformpdf.h"
+#include "conditionalUniformMeasPdf1d.h"
 #include "../mobile_robot.h"
 
 #include <iostream>
@@ -94,7 +94,7 @@ int main(int argc, char** argv)
   Gaussian measurement_uncertainty(measNoise_Mu, measNoise_Cov);
 
   // create the model
-  ConditionalUniformPdf meas_pdf(measurement_uncertainty);
+  ConditionalUniformMeasPdf1d meas_pdf(measurement_uncertainty);
   MeasurementModel<MatrixWrapper::ColumnVector,int> meas_model(&meas_pdf);
   std::cout << "measurement model created" << std::endl;
 

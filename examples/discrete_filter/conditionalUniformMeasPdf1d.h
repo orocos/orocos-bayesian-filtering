@@ -1,4 +1,4 @@
-// $Id: conditionaluniformpdf.h tdelaet $
+// $Id: conditionalUniformMeasPdf1d.h tdelaet $
 // Copyright (C) 2007  Tinne De Laet <first dot last at mech dot kuleuven dot be>
 //  
 // This program is free software; you can redistribute it and/or modify
@@ -16,10 +16,11 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 //  
 
-/* Class used for the measurement pdf for the 1d mobile robot localisation
+/* Specific class especially created for the measurement pdf for the 1d mobile robot localisation
  * example with a histogram filter.
- * The conditional distribution takes into account the discrete nature of the
- * state and some extra Gaussian measurement noise
+ * The measurement is direct measurement (ultrasonic sensor) of the robot's 1d
+ * position (=2*robot position).
+ * The conditional distribution takes into some extra Gaussian measurement noise
  */
 
 #ifndef __CONDITIONAL_UNIFORM_PDF__
@@ -31,18 +32,18 @@
 
 namespace BFL
 {
-  /// Conditional Uniform Pdf
-  class ConditionalUniformPdf : public ConditionalPdf<MatrixWrapper::ColumnVector, int>
+  /// Conditional Uniform Measurement Pdf for 1d mobile robot example
+  class ConditionalUniformMeasPdf1d : public ConditionalPdf<MatrixWrapper::ColumnVector, int>
     {
     public:
       /// Constructor
       /** 
 	  @param measNoise additiveNoise Pdf representing the extra additive noise
       */
-      ConditionalUniformPdf( const Gaussian& measNoise);
+      ConditionalUniformMeasPdf1d( const Gaussian& measNoise);
 
       /// Destructor
-      virtual ~ConditionalUniformPdf();
+      virtual ~ConditionalUniformMeasPdf1d();
 
       virtual Probability ProbabilityGet(const MatrixWrapper::ColumnVector& measurement) const;
 

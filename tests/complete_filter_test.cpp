@@ -252,7 +252,7 @@ Complete_FilterTest::testComplete_FilterValue_Discr()
   Gaussian measurement_uncertainty(measNoise_Mu, measNoise_Cov);
 
   // create the model
-  ConditionalUniformPdf meas_pdf(measurement_uncertainty);
+  ConditionalUniformMeasPdf1d meas_pdf(measurement_uncertainty);
   MeasurementModel<MatrixWrapper::ColumnVector,int> meas_model(&meas_pdf);
 
   /****************************
