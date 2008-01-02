@@ -27,15 +27,19 @@
 #include <filter/iteratedextendedkalmanfilter.h>
 #include <filter/asirfilter.h>
 #include <filter/EKparticlefilter.h>
+#include <filter/histogramfilter.h>
 
 #include <model/analyticsystemmodel_gaussianuncertainty.h>
 #include <model/linearanalyticmeasurementmodel_gaussianuncertainty.h>
 #include <pdf/analyticconditionalgaussian.h>
+#include <pdf/discreteconditionalpdf.h>
+#include <pdf/discretepdf.h>
 #include <pdf/gaussian.h>
 
 #include "../examples/compare_filters/mobile_robot_wall_cts.h"
 #include "../examples/compare_filters/nonlinearanalyticconditionalgaussianmobile.h"
 #include "../examples/mobile_robot.h"
+#include "../examples/discrete_filter/conditionaluniformpdf.h"
 
 #include <iostream>
 #include <fstream>
@@ -49,14 +53,16 @@ using namespace MatrixWrapper;
 class Complete_FilterTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( Complete_FilterTest );
-  CPPUNIT_TEST( testComplete_FilterValue );
+  CPPUNIT_TEST( testComplete_FilterValue_Cont );
+  CPPUNIT_TEST( testComplete_FilterValue_Discr );
   CPPUNIT_TEST_SUITE_END();
   
 public:
   void setUp();
   void tearDown();
   
-  void testComplete_FilterValue();
+  void testComplete_FilterValue_Cont();
+  void testComplete_FilterValue_Discr();
   
 };
 

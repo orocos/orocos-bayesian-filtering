@@ -41,7 +41,7 @@ Complete_FilterTest::tearDown()
 }
 
 void 
-Complete_FilterTest::testComplete_FilterValue()
+Complete_FilterTest::testComplete_FilterValue_Cont()
 {
   double epsilon       = 0.01;
   double epsilon_large = 0.5;
@@ -212,4 +212,91 @@ Complete_FilterTest::testComplete_FilterValue()
   delete my_filter_iteratedextendedkalman;
   delete my_filter_bootstrap;
   delete my_filter_ekparticle;
+}
+
+void 
+Complete_FilterTest::testComplete_FilterValue_Discr()
+{
+  int num_states = 20;
+  int num_cond_args = 1;
+  /****************************
+  * Discrete system model      *
+  ***************************/
+  int cond_arg_dims[num_cond_args];
+  cond_arg_dims[0] = num_states;
+  DiscreteConditionalPdf sys_pdf(num_states,num_cond_args,cond_arg_dims);  // no  inputs
+  std::vector<int> cond_args(num_cond_args);
+  double prob_diag = 0.9;
+  double prob_nondiag = (1-prob_diag)/(num_states-1);
+  for (int state_kMinusOne = 0 ; state_kMinusOne < num_states ;  state_kMinusOne++)
+    {
+       cond_args[0] = state_kMinusOne;
+       for (int state_k = 0 ; state_k < num_states ;  state_k++)
+         {
+           if (state_kMinusOne == state_k) sys_pdf.ProbabilitySet(prob_diag,state_k,cond_args);
+           else sys_pdf.ProbabilitySet(prob_nondiag,state_k,cond_args);
+         }
+    }
+  DiscreteSystemModel sys_model(&sys_pdf);
+
+  /*********************************
+   * Initialise measurement model *
+   ********************************/
+
+  // Construct the measurement noise (a scalar in this case)
+  ColumnVector measNoise_Mu(1);
+  measNoise_Mu(1) = 0.0;
+
+  SymmetricMatrix measNoise_Cov(1);
+  measNoise_Cov(1,1) = pow(1.0,2);
+  Gaussian measurement_uncertainty(measNoise_Mu, measNoise_Cov);
+
+  // create the model
+  ConditionalUniformPdf meas_pdf(measurement_uncertainty);
+  MeasurementModel<MatrixWrapper::ColumnVector,int> meas_model(&meas_pdf);
+
+  /****************************
+  * Uniform prior DENSITY     *
+  ***************************/
+  DiscretePdf prior(num_states); //equal probability is set for all classed
+
+  /******************************
+   * Construction of the Filter *
+   ******************************/
+  HistogramFilter filter(&prior);
+  DiscretePdf * prior_test = filter.PostGet();
+  
+  /***************************
+   * initialise MOBILE ROBOT *
+   **************************/
+  // Model of mobile robot in world with one wall
+  // The model is used to simultate the distance measurements.
+  MobileRobot mobile_robot;
+  ColumnVector input(2);
+  input(1) = 0.1;
+  input(2) = 0.0;
+
+
+  /*******************
+   * ESTIMATION LOOP *
+   *******************/
+  unsigned int time_step;
+  for (time_step = 0; time_step < 100; time_step++)
+    {
+      // DO ONE STEP WITH MOBILE ROBOT
+      mobile_robot.Move(input);
+      // DO ONE MEASUREMENT
+      ColumnVector measurement = mobile_robot.Measure();
+      // UPDATE FILTER                                      
+      filter.Update(&sys_model,&meas_model,measurement);
+    } // estimation loop
+
+  DiscretePdf *  posterior = filter.PostGet();
+  cout << "After " << time_step+1 << " timesteps " << endl;
+  cout << " Posterior probabilities = " << endl << posterior->ProbabilitiesGet() << endl;
+  for (int i=0; i< num_states; i++)
+  {
+    if (i==7) CPPUNIT_ASSERT(posterior->ProbabilityGet(i) >0.9);
+    else CPPUNIT_ASSERT(posterior->ProbabilityGet(i) <0.1);
+  }
 }
