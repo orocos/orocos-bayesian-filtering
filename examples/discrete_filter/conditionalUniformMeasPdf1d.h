@@ -16,13 +16,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 //  
 
-/* Specific class especially created for the measurement pdf for the 1d mobile robot localisation
- * example with a histogram filter.
- * The measurement is direct measurement (ultrasonic sensor) of the robot's 1d
- * position (=2*robot position).
- * The conditional distribution takes into some extra Gaussian measurement noise
- */
-
 #ifndef __CONDITIONAL_UNIFORM_PDF__
 #define __CONDITIONAL_UNIFORM_PDF__
 
@@ -32,7 +25,14 @@
 
 namespace BFL
 {
-  /// Conditional Uniform Measurement Pdf for 1d mobile robot example
+  /** Conditional Uniform Measurement Pdf for 1d mobile robot example
+   * Specific class especially created for the measurement pdf for the 1d mobile robot localisation
+   * example with a histogram filter.
+   * The measurement is direct measurement (ultrasonic sensor) of the robot's 1d
+   * position (=2*robot position).
+   * The conditional distribution takes into account some extra Gaussian
+   * measurement noise
+   */
   class ConditionalUniformMeasPdf1d : public ConditionalPdf<MatrixWrapper::ColumnVector, int>
     {
     public:
