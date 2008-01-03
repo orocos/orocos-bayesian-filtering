@@ -40,36 +40,39 @@ namespace BFL
 {
   using namespace std;
 
-  /// Virtual Baseclass representing all bayesian filters
-  /** This is the a virtual baseclass representing all similarities
-      between Bayesian filters.  All Bayesian filter are related to i) a
+  /// Abstract class representing an interface for Bayesian Filters
+  /** This is the Abstract interface class that defines the interface
+      of Bayesian filters.  These filters are all related to i) a
       System Model, ii) a Measurement Model and iii) a Prior density
       reflecting the subjective belief of the person applying the filter
       BEFORE getting sensor or any other form of information about the
-      system.  
+      modeled system.  
 
       This class is the base class for particle filters, kalman filters,
       ...
 
-      This class is also a template class with 2 templates, in this way
-      it allows for "semi-discrete" systems, eg.  a system with a fixed
-      number of states but with continuous observations, as eg needed in
-      ASR.
+      This class is a template class with 2 templates.  In this way
+      it allows filtering for "semi-discrete" models, eg. models
+      with a fixed number of states (discrete states) but with
+      continuous observations, as needed in Automatic Speech
+      Recognition.
     
       @see Pdf SystemModel MeasurementModel ConditionalPdf
       @bug For now, due to a "bug" (= non-existence of a feature :-) in
       the ConditionalPdf class, STATES AND INPUTS MUST BE OF THE SAME
       TYPE (both discrete, or both continuous!  This means that you can
-      this class for the following type of systems:
+      use this class for the following model types:
       - States, inputs and measurements continuous (most frequently
       used?)
       - States and inputs continous, Measurements discrete
-      - States and inputs discrete, Measurements continously
+      - States and inputs discrete, Measurements continous
       - States, inputs and measurements discrete
     
-      StateVar represents the form of the states and inputs
-      MeasVar represents the form of the measurements
-      BEWARE: THIS IS CONTRARY TO THE NOTATION USED IN "measurementmodel.h"
+      StateVar represents the nature of the states and inputs
+      MeasVar represents the nature of the measurements
+
+      BEWARE: The order of the template arguments is reversed with
+      respect to the notation used in "measurementmodel.h"
   */
   template <typename StateVar, typename MeasVar> class Filter
     {
@@ -212,7 +215,6 @@ namespace BFL
       /** Get the current time of the filter
 	  @return the current timestep
       */
-  
       int TimeStepGet() const;
     };
 
