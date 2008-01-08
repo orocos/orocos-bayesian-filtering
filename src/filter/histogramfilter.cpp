@@ -41,10 +41,9 @@ namespace BFL
   {
     bool without_inputs = sysmodel->SystemWithoutInputs();
     int num_states = ( (DiscretePdf*)_post )->NumStatesGet();
-    MatrixWrapper::ColumnVector old_prob = ( (DiscretePdf*)_post )->ProbabilitiesGet();
-    MatrixWrapper::ColumnVector new_prob(num_states);
+    vector<Probability> old_prob = ( (DiscretePdf*)_post )->ProbabilitiesGet();
+    vector<Probability> new_prob(num_states);
     
-    double sum = 0;
     for (int to_state = 0; to_state< num_states ; to_state++)
     { 
         double temp = 0;
@@ -52,20 +51,18 @@ namespace BFL
         {
             for (int from_state = 0; from_state< num_states ; from_state++)
             { 
-                temp = temp + (double)sysmodel->ProbabilityGet(to_state,from_state) * old_prob(from_state+1);
+                temp = temp + (double)sysmodel->ProbabilityGet(to_state,from_state) * old_prob[from_state];
             }
         } 
         else
         {
             for (int from_state = 0; from_state< num_states ; from_state++)
             { 
-                temp = temp + (double)sysmodel->ProbabilityGet(to_state,from_state,u) * old_prob(from_state+1);
+                temp = temp + (double)sysmodel->ProbabilityGet(to_state,from_state,u) * old_prob[from_state];
             }
         }
-       new_prob(to_state+1) = temp;
-       sum = sum + temp;
+       new_prob[to_state] = temp;
     }
-    new_prob = new_prob/sum;
     ( (DiscretePdf*)_post )->ProbabilitiesSet(new_prob);
   }
 
@@ -73,15 +70,13 @@ namespace BFL
   HistogramFilter::MeasUpdate(MeasurementModel<ColumnVector,int>* const measmodel, const ColumnVector& z, const int& s)
   {
       int num_states = ( (DiscretePdf*)_post )->NumStatesGet();
-      MatrixWrapper::ColumnVector prob = ( (DiscretePdf*)_post )->ProbabilitiesGet();
-      double sum = 0;
+      vector<Probability> prob = ( (DiscretePdf*)_post )->ProbabilitiesGet();
       for (int state = 0; state< num_states  ; state++)
       { 
-          if (measmodel->SystemWithoutSensorParams() == true)  prob(state+1) = prob(state+1) * measmodel->ProbabilityGet(z,state);
-          else prob(state+1) = prob(state+1) * measmodel->ProbabilityGet(z,state,s);
-          sum = sum + prob(state+1);
+          if (measmodel->SystemWithoutSensorParams() == true)  prob[state] = prob[state] * measmodel->ProbabilityGet(z,state);
+          else prob[state] = prob[state] * measmodel->ProbabilityGet(z,state,s);
+          prob[state] = (Probability)((double)( prob[state]) );
       }
-      prob = prob/sum;
       ( (DiscretePdf*)_post )->ProbabilitiesSet(prob);
   }
 
@@ -91,14 +86,8 @@ namespace BFL
 			       MeasurementModel<ColumnVector,int>* const measmodel,
 			       const ColumnVector& z, const int& s)
   {
-    if (sysmodel != NULL)
-      {
-	SysUpdate(sysmodel,u);
-      }
-    if (measmodel != NULL)
-      {
-	MeasUpdate(measmodel,z,s);
-      }
+    if (sysmodel != NULL) 	SysUpdate(sysmodel,u); 
+    if (measmodel != NULL)	MeasUpdate(measmodel,z,s);
     return true;
   }
 

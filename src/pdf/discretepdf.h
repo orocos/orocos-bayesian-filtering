@@ -1,5 +1,6 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
+//               2008 Tinne De Laet <first dot last at mech dot kuleuven dot be>
  /***************************************************************************
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU General Public                   *
@@ -47,17 +48,19 @@ namespace BFL
     protected:
       /// The number of discrete state 
       unsigned int _num_states;
-      /// Pointer to the discrete PDF-values
-      MatrixWrapper::ColumnVector *_Values_p;
-      /// Total sum of weighs associated with the variables
-      double _SumWeights;
-      /// Update the Sum of weights (eg. after setting a weight)
-      bool SumWeightsUpdate();
+
+      /// Pointer to the discrete PDF-values, the sum of the elements = 1 
+      vector<Probability> *_Values_p;
+
+      /// Normalize all the probabilities (eg. after setting a probability)
+      bool NormalizeProbs();
 
       /// STL-vector containing the Cumulative PDF (for efficient sampling)
       vector<double> _CumPDF;
-      /// After updating weights, we have to update the cumPDF
+
+      /// Updates the cumPDF
       bool CumPDFUpdate();
+
     public:
       /// Constructor (dimension = number of classes) An equal probability is set for all classes 
       /** @param num_states number of different classes or states
@@ -74,9 +77,16 @@ namespace BFL
       unsigned int NumStatesGet()const;
 
       /// Implementation of virtual base class method
-      Probability ProbabilityGet(const unsigned int& input) const;
-      /// Only relevant for discrete Pdf's
-      bool ProbabilitySet(unsigned int input, Probability a);
+      Probability ProbabilityGet(const unsigned int& state) const;
+
+      /// Function to change/set the probability of a single state
+      /** Changes the probabilities such that AFTER normalization the
+          probability of the state "state" is equal to the probability a 
+           @param state number of state of which the probability will be set
+           @param a probability value to which the probability of state "state" 
+            will be set (must be <= 1)
+      */
+      bool ProbabilitySet(unsigned int state, Probability a);
 
       bool SampleFrom (vector<Sample<int> >& list_samples,
 		       const unsigned int num_samples,
@@ -85,9 +95,14 @@ namespace BFL
       bool SampleFrom (Sample<int>& one_sample, int method = DEFAULT, void * args = NULL) const;
 
       /// Get all probabilities
-      MatrixWrapper::ColumnVector ProbabilitiesGet() const;
+      vector<Probability> ProbabilitiesGet() const;
+
       /// Set all probabilities
-      bool ProbabilitiesSet(MatrixWrapper::ColumnVector & values);
+      /**  @param values vector<Probability> containing the new probability values. 
+           The sum of the probabilities of this list is not required to be one
+           since the normalization is automatically carried out. 
+      */
+      bool ProbabilitiesSet(vector<Probability> & values);
 
     };
 

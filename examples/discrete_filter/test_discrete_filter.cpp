@@ -146,7 +146,8 @@ int main(int argc, char** argv)
 
   DiscretePdf *  posterior = filter.PostGet();
   cout << "After " << time_step+1 << " timesteps " << endl;
-  cout << " Posterior probabilities = " << endl << posterior->ProbabilitiesGet() << endl;
+  cout << " Posterior probabilities = " << endl;
+  for (int state = 0 ;  state< posterior->NumStatesGet() ; state++) cout << state << ": " << (double)(posterior->ProbabilityGet(state)) << endl;
   
 
   cout << "======================================================" << endl

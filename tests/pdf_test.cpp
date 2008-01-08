@@ -160,15 +160,12 @@ void
 PdfTest::testDiscretePdf()
 {
   DiscretePdf a_discretepdf(NUM_DS);
-  ColumnVector uniform_vector(NUM_DS);
-  uniform_vector = 1.0/NUM_DS;
+  vector<Probability> uniform_vector(NUM_DS);
+  for (int state = 0; state < NUM_DS ; state++) uniform_vector[state] = (Probability)(1.0/NUM_DS );
 
   /* Check initial uniform distribution */
-  CPPUNIT_ASSERT_EQUAL( uniform_vector, a_discretepdf.ProbabilitiesGet());
-  for (int i = 0; i < NUM_DS ; i++)
-  {
-     CPPUNIT_ASSERT_EQUAL( 1.0/NUM_DS, (double)a_discretepdf.ProbabilityGet(i));
-  }
+  vector<Probability> result_proba = a_discretepdf.ProbabilitiesGet();
+  for (int state = 0; state < NUM_DS ; state++) CPPUNIT_ASSERT_EQUAL( (double) (uniform_vector[state]), double(result_proba[state] )) ;
 
   /* Check dimension */
   CPPUNIT_ASSERT_EQUAL(1,(int)a_discretepdf.DimensionGet());
@@ -178,27 +175,77 @@ PdfTest::testDiscretePdf()
 
   /* Copy constructor */
   DiscretePdf b_discretepdf(a_discretepdf);
-  CPPUNIT_ASSERT_EQUAL(a_discretepdf.ProbabilitiesGet(),b_discretepdf.ProbabilitiesGet());
+  vector<Probability> result_probb = b_discretepdf.ProbabilitiesGet();
+  for (int state = 0; state < NUM_DS ; state++) CPPUNIT_ASSERT_EQUAL( (double) (result_proba[state]), double(result_probb[state] )) ;
   CPPUNIT_ASSERT_EQUAL(a_discretepdf.DimensionGet(), b_discretepdf.DimensionGet());
   CPPUNIT_ASSERT_EQUAL(a_discretepdf.NumStatesGet(), b_discretepdf.NumStatesGet());
 
   /* Set and Get probabilities */
-  // one at a time
+  // set one probability 
   double prob_new = 0.57;
-  for (int new_el = 0; new_el < NUM_DS; new_el++)
-    {
-       CPPUNIT_ASSERT_EQUAL(true, a_discretepdf.ProbabilitySet(new_el,prob_new));
-       CPPUNIT_ASSERT_EQUAL(prob_new, (double) a_discretepdf.ProbabilityGet(new_el));
-    }
-  ColumnVector prob_vec(NUM_DS);
-  prob_vec(1) = 0.9;
-  for (int i = 2; i < NUM_DS + 1 ; i++)
-    {
-       prob_vec(i) = (1-0.9)/(NUM_DS-1);
-    }
+  int new_el = NUM_DS-1; 
+  CPPUNIT_ASSERT_EQUAL(true, a_discretepdf.ProbabilitySet(new_el,prob_new));
+  CPPUNIT_ASSERT_EQUAL(prob_new, (double) a_discretepdf.ProbabilityGet(new_el));
+  // check if the sum of the probabilities is still one!
+  double sumProb = 0.0;
+  for (int state = 0; state < NUM_DS ; state++)
+  { 
+    sumProb = sumProb + a_discretepdf.ProbabilityGet(state);
+  }
+  CPPUNIT_ASSERT_EQUAL(1.0, sumProb);
+
+  // set all probabilities one by one
+  for (int new_el_c = 0; new_el_c < NUM_DS; new_el_c++)
+  {
+     CPPUNIT_ASSERT_EQUAL(true, a_discretepdf.ProbabilitySet(new_el_c,prob_new));
+     CPPUNIT_ASSERT_EQUAL(prob_new, (double) a_discretepdf.ProbabilityGet(new_el_c));
+  }
+  // check if the sum of the probabilities is still one!
+  sumProb = 0.0;
+  for (int state = 0; state < NUM_DS ; state++)
+  { 
+    sumProb = sumProb + a_discretepdf.ProbabilityGet(state);
+  }
+  CPPUNIT_ASSERT_EQUAL(1.0, sumProb);
+
+  // all at the same time
+  vector<Probability> prob_vec(NUM_DS);
+  prob_vec[0] = 0.9;
+  for (int state = 1; state < NUM_DS  ; state++)
+  {
+     prob_vec[state] = (Probability)( (1-0.9)/(NUM_DS-1) );
+  }
   a_discretepdf.ProbabilitiesSet(prob_vec);
-  CPPUNIT_ASSERT_EQUAL( prob_vec, a_discretepdf.ProbabilitiesGet());
- 
+  result_proba = a_discretepdf.ProbabilitiesGet();
+  for (int state = 0; state < NUM_DS ; state++) CPPUNIT_ASSERT_EQUAL( (double) (prob_vec[state]), double(result_proba[state] )) ;
+
+  // check if the sum of the probabilities is still one!
+  sumProb = 0.0;
+  for (int state = 0; state < NUM_DS ; state++)
+  { 
+    sumProb = sumProb + a_discretepdf.ProbabilityGet(state);
+  }
+  CPPUNIT_ASSERT_EQUAL(1.0, sumProb);
+
+  // special case for setting probability : set a new value for a probability
+  // which was == 1
+  DiscretePdf c_discretepdf(NUM_DS);
+  vector<Probability> prob_vecc(NUM_DS);
+  prob_vecc[0] = 1.0; 
+  for (int state = 1; state < NUM_DS  ; state++)
+  {
+    prob_vecc[state] = 0.0; 
+  }
+  c_discretepdf.ProbabilitiesSet(prob_vecc);
+  Probability new_prob0 = 0.5;
+  double new_prob_other = (1-new_prob0)/(NUM_DS-1);
+  c_discretepdf.ProbabilitySet(0,new_prob0);
+  CPPUNIT_ASSERT_EQUAL((double)new_prob0, (double)(c_discretepdf.ProbabilityGet(0)));
+  for (int state = 1; state < NUM_DS  ; state++)
+  {
+    CPPUNIT_ASSERT_EQUAL( new_prob_other, (double)(c_discretepdf.ProbabilityGet(state)));
+  }
+  
   /* Sampling */
   vector<Sample<int> > los(NUM_SAMPLES);
   vector<Sample<int> >::iterator it;

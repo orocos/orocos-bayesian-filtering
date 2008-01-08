@@ -1,4 +1,5 @@
-// Copyright (C) 2007 Wim Meeussen <wim.meeussen@mech.kuleuven.be>
+// Copyright (C) 2007 Wim Meeussen <wim DOT meeussen AT mech DOT kuleuven DOT be>
+// Copyright (C) 2008 Tinne De Laet <tinne DOT delaet AT mech DOT kuleuven DOT be>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

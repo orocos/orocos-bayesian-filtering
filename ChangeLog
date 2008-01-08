@@ -1,4 +1,14 @@
 
+2008-01-07  Tinne De Laet <first dot last at mech dot kuleuven dot be>
+	* Related to bug described in bug #475
+	* src/pdf/discrepdf.*: changed type of class variable _Values_p to
+	vector<Probability>
+	* src/filter/histogramfilter.cpp: adapted to changes of discretepdf 
+	* tests/pdf_test.cpp: adapted to changes of discretepdf
+	* tests/complete_filter_test.cpp: adapted to changes of discretepdf 
+	* examples/test_complete_filter.cpp: adapted to changes of discretepdf 
+	* examples/discrete_filter/test_discrete_filter.cpp: adapted to changes of discretepdf 
+
 2007-12-20  Tinne De Laet <first dot last at mech dot kuleuven dot be>
 	* Related to enhancement described in bug #472
 	* src/filter/histogramfilter.*/: added class for histogram filter 

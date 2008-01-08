@@ -1,4 +1,5 @@
-// Copyright (C) 2007 Wim Meeussen <wim.meeussen@mech.kuleuven.be>
+// Copyright (C) 2007 Wim Meeussen <wim DOT meeussen AT mech DOT kuleuven DOT be>
+// Copyright (C) 2008 Tinne De Laet <tinne DOT delaet AT mech DOT kuleuven DOT be>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -293,10 +294,11 @@ Complete_FilterTest::testComplete_FilterValue_Discr()
 
   DiscretePdf *  posterior = filter.PostGet();
   cout << "After " << time_step+1 << " timesteps " << endl;
-  cout << " Posterior probabilities = " << endl << posterior->ProbabilitiesGet() << endl;
-  for (int i=0; i< num_states; i++)
+  cout << " Posterior probabilities = " << endl;
+  for (int state=0; state< num_states; state++)
   {
-    if (i==7) CPPUNIT_ASSERT(posterior->ProbabilityGet(i) >0.9);
-    else CPPUNIT_ASSERT(posterior->ProbabilityGet(i) <0.1);
+    cout << state << ": " << posterior->ProbabilityGet(state) << endl;
+    if (state==7) CPPUNIT_ASSERT(posterior->ProbabilityGet(state) >0.9);
+    else CPPUNIT_ASSERT(posterior->ProbabilityGet(state) <0.1);
   }
 }

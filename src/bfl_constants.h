@@ -38,6 +38,7 @@ namespace BFL
   class Probability
     {
     public:
+      Probability(){};
       Probability(double p)
 	{
           #ifndef _MSC_VER
