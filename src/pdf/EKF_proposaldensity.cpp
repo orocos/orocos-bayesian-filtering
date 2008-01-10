@@ -29,6 +29,9 @@ namespace BFL
     _filter = new ExtendedKalmanFilter(_TmpPrior);
   }
 
-  EKFPropDens::~EKFPropDens(){}
+  EKFPropDens::~EKFPropDens()
+  {
+    delete _filter;
+  }
   
 } // End namespace BFL
