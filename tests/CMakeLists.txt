@@ -43,7 +43,7 @@ ENDIF (GINAC_SUPPORT)
 
 
   ADD_CUSTOM_TARGET(check ctest -V 
-                    DEPENDS test_pdf test_sample test_matrixwrapper test_model test_smoother
+                    DEPENDS test_pdf test_sample test_matrixwrapper test_model test_smoother test_complete_filter
                     WORKING_DIRECTORY ${PROJ_BINARY_DIR}/tests)
 
 IF (GINAC_SUPPORT)
