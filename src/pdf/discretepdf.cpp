@@ -38,6 +38,7 @@ namespace BFL
         (*_Values_p)[i] = (Probability)(1.0/NumStatesGet());
     }
     _CumPDF.insert(_CumPDF.begin(),num_states+1,0.0);
+    CumPDFUpdate();
 #ifdef __CONSTRUCTOR__
     cout << "DiscretePdf constructor\n";
 #endif // __CONSTRUCTOR__
