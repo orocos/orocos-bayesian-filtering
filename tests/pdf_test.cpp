@@ -432,18 +432,18 @@ PdfTest::testDiscreteConditionalPdf()
 void
 PdfTest::testMcpdf()
 {
-  //create mcpdf
-  unsigned int num_samples = 100;
-  unsigned int dimension = 10;
-  MCPdf<ColumnVector> a_mcpdf(num_samples,dimension);
+  // MCPDF with columnvector
+  ////create mcpdf
+  //unsigned int num_samples = 100;
+  //unsigned int dimension = 10;
+  //MCPdf<ColumnVector> a_mcpdf(num_samples,dimension);
+  //
+  ///* Get Dimension and number of samples*/
+  //CPPUNIT_ASSERT_EQUAL( dimension, a_mcpdf.DimensionGet());
+  //CPPUNIT_ASSERT_EQUAL( num_samples , a_mcpdf.NumSamplesGet());
   
-  /* Get Dimension and number of samples*/
-  CPPUNIT_ASSERT_EQUAL( dimension, a_mcpdf.DimensionGet());
-  CPPUNIT_ASSERT_EQUAL( num_samples , a_mcpdf.NumSamplesGet());
-
   /* Set and Get Dimension and number of samples*/
-  a_mcpdf.DimensionSet(DIMENSION);
-  a_mcpdf.NumSamplesSet(NUM_SAMPLES);
+  MCPdf<ColumnVector> a_mcpdf(NUM_SAMPLES,DIMENSION);
   CPPUNIT_ASSERT_EQUAL( DIMENSION, a_mcpdf.DimensionGet());
   CPPUNIT_ASSERT_EQUAL( NUM_SAMPLES , a_mcpdf.NumSamplesGet());
 
@@ -526,5 +526,108 @@ PdfTest::testMcpdf()
   }
   CPPUNIT_ASSERT_EQUAL(approxEqual(diffsum/sumWeights, (Matrix)a_mcpdf.CovarianceGet(),epsilon),true);
 
+  /* ProbabilityGet */ 
+  /**************************
+  // MCPDF with unsigned int
+  *************************/
+
+  /* Set and Get Dimension and number of samples*/
+  MCPdf<unsigned int> a_mcpdf_uint(NUM_SAMPLES,1);
+  unsigned int one = 1;
+  CPPUNIT_ASSERT_EQUAL(one, a_mcpdf_uint.DimensionGet());
+  CPPUNIT_ASSERT_EQUAL( NUM_SAMPLES , a_mcpdf_uint.NumSamplesGet());
+
+
+  // Generating (exact) Samples from a discrete pdf 
+  unsigned int num_states = 4;
+  DiscretePdf discrete(num_states);
+
+  vector<Sample<int> > samples_discrete_int(NUM_SAMPLES);
+  vector<Sample<int> >::iterator it_discrete_int;
+  discrete.SampleFrom(samples_discrete_int, NUM_SAMPLES);
+
+  vector<Sample<unsigned int> > samples_discrete(NUM_SAMPLES);
+  vector<Sample<unsigned int> >::iterator it_discrete;
+  it_discrete = samples_discrete.begin(); 
+
+  Sample<unsigned int> temp_sample;
+  for(it_discrete_int = samples_discrete_int.begin(); it_discrete_int != samples_discrete_int.end(); it_discrete_int++)
+  {
+    temp_sample.ValueSet((*it_discrete_int).ValueGet());
+    (*it_discrete)= temp_sample;
+    it_discrete++;
+}
+
+  /* Getting and setting the list of samples (non-weighted)*/
+  a_mcpdf_uint.ListOfSamplesSet(samples_discrete);
+  const vector<WeightedSample<unsigned int> > mcpdf_samples_uint = a_mcpdf_uint.ListOfSamplesGet();
+  for (unsigned int i = 0; i < NUM_SAMPLES ; i++)
+  {
+     CPPUNIT_ASSERT_EQUAL( samples_discrete[i].ValueGet(), mcpdf_samples_uint[i].ValueGet());
+     CPPUNIT_ASSERT_EQUAL( samples_discrete[i].ValueGet(), a_mcpdf_uint.SampleGet(i).ValueGet());
+     CPPUNIT_ASSERT_EQUAL( 1.0/NUM_SAMPLES, mcpdf_samples_uint[i].WeightGet());
+  }
+
+  /* List of samples update + getting and setting the list of samples (weighted)*/
+  vector<WeightedSample<unsigned int > > samples_weighted_uint = mcpdf_samples_uint;
+  for (unsigned int i = 0 ; i < NUM_SAMPLES ; i++)  
+  {
+     //set a weight
+     samples_weighted_uint[i].WeightSet(i+1);
+  }
+  double tot_weight_uint = (double)(NUM_SAMPLES+1)*((double)NUM_SAMPLES)/2.0;
+  CPPUNIT_ASSERT_EQUAL( true , a_mcpdf_uint.ListOfSamplesUpdate(samples_weighted_uint) );
+  for (unsigned int i = 0; i < NUM_SAMPLES ; i++)
+  {
+     CPPUNIT_ASSERT_EQUAL( samples_weighted_uint[i].ValueGet(), a_mcpdf_uint.SampleGet(i).ValueGet());
+     CPPUNIT_ASSERT_EQUAL( (double)(samples_weighted_uint[i].WeightGet())/tot_weight_uint, a_mcpdf_uint.SampleGet(i).WeightGet());
+  }
+
+  /* Copy Constructor etc */
+  MCPdf<unsigned int> b_mcpdf_uint(a_mcpdf_uint);
+  for (unsigned int i = 0; i < NUM_SAMPLES ; i++)
+  {
+     CPPUNIT_ASSERT_EQUAL( a_mcpdf_uint.SampleGet(i).ValueGet(), b_mcpdf_uint.SampleGet(i).ValueGet());
+     CPPUNIT_ASSERT_EQUAL( a_mcpdf_uint.SampleGet(i).WeightGet(), b_mcpdf_uint.SampleGet(i).WeightGet());
+  }
+
+  /* Sampling */
+  vector<Sample<unsigned int> > samples_test_uint(NUM_SAMPLES);
+  CPPUNIT_ASSERT_EQUAL( true, a_mcpdf.SampleFrom(samples_test,NUM_SAMPLES,DEFAULT,NULL));
+
+  /* Expected Value*/
+  vector<WeightedSample<unsigned int> > los_uint = a_mcpdf_uint.ListOfSamplesGet();
+  vector<WeightedSample<unsigned int> >::iterator it2_uint;
+  double cumSum_double;
+  cumSum_double=0.0;
+  sumWeights = 0.0;
+  for ( it2_uint = los_uint.begin() ; it2_uint!= los_uint.end() ; it2_uint++ )
+  {
+    cumSum_double += ( it2_uint->ValueGet() * it2_uint->WeightGet() );
+    sumWeights += it2_uint->WeightGet();
+  }
+  CPPUNIT_ASSERT_EQUAL( approxEqual( (unsigned int ) (cumSum_double/sumWeights + 0.5) , a_mcpdf.ExpectedValueGet(), epsilon),true);
+ 
+  /* Covariance  + cumsumPDF*/
+  unsigned int  mean_uint = a_mcpdf_uint.ExpectedValueGet();
+  unsigned int  diff_uint;
+  double diffsum_uint;
+  diffsum_uint = 0.0;
+  vector<double> cumPDF_uint = a_mcpdf_uint.CumulativePDFGet();
+  vector<double>::iterator cumPDFit_uint;
+  cumPDFit_uint = cumPDF_uint.begin(); *cumPDFit_uint = 0.0;
+  double cumSumW_uint = 0.0;
+  for (it2_uint = los_uint.begin(); it2_uint != los_uint.end(); it2_uint++)
+  {
+    diff_uint =  (it2_uint->ValueGet() - mean_uint);
+    diffsum_uint += (double)(diff_uint * diff_uint)  * it2_uint->WeightGet();
+    cumPDFit_uint++;
+    cumSumW_uint += ( it2_uint->WeightGet() / sumWeights);
+    // test cumulative sum
+    CPPUNIT_ASSERT_EQUAL(approxEqual(cumSumW_uint, *cumPDFit_uint, epsilon), true); 
+  }
+  Matrix test_diff(1,1);
+  test_diff(1,1) = diffsum_uint/sumWeights;
+  CPPUNIT_ASSERT_EQUAL(approxEqual(test_diff, (Matrix)a_mcpdf_uint.CovarianceGet(),epsilon),true);
   /* ProbabilityGet */ 
 }
