@@ -159,7 +159,8 @@ namespace BFL
 	  	assert(index <= num_states);
 	  	index++; CumPDFit++;
 	        }
-	      *sit = index; 
+          int a = index - 1;
+	      sit->ValueSet(a); 
 	      sit++;
 	      }
 	    return true;
