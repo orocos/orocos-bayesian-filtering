@@ -1,5 +1,6 @@
 // $ Id: $
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
+//               2008 Tinne De Laet <first dot last at mech dot kuleuven dot be>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -41,6 +42,19 @@ namespace BFL
 
       std::vector<SymmetricMatrix> _tmpCov;
       std::vector<SymmetricMatrix>::iterator _tmpCovit;
+      
+      // helper variables for resampleing to prevent memory allocation on the heap
+      const int _dimension;
+      const int _num_samples;
+      std::vector<WeightedSample<ColumnVector> > _old_samples;
+      std::vector<WeightedSample<ColumnVector> >::iterator _oit;
+      std::vector<WeightedSample<ColumnVector> > _result_samples;
+      std::vector<WeightedSample<ColumnVector> >::iterator _rit;
+      std::vector<double> _unif_samples;
+      std::vector<double> _CumPDF;
+      std::vector<double>::const_iterator _CumPDFit;
+      ColumnVector _x_old;
+      Sample<ColumnVector> _sample;
       
       virtual bool UpdateInternal(SystemModel<ColumnVector>* const sysmodel,
 				  const ColumnVector& u,

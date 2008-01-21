@@ -1,5 +1,5 @@
-// Copyright (C) 2003 Klaas Gadeyne <klaas dot gadeyne at mech dot
-// kuleuven dot ac dot be>
+// Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
+//               2008 Tinne De Laet <first dot last at mech dot kuleuven dot be>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -15,7 +15,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 //  
-// $Id$
 
 #include "EKparticlefilter.h"
 
@@ -32,17 +31,25 @@ namespace BFL
 						resampleperiod,
 						resamplethreshold,
 						resamplescheme)
+    , _dimension(prior->DimensionGet())
+    , _num_samples(prior->NumSamplesGet())
   {
     this->_proposal_depends_on_meas = true;
     _proposal = new EKFProposalDensity(NULL,NULL);
 
-    // Is this correct?
-    SymmetricMatrix tmp(prior->DimensionGet()); tmp = prior->CovarianceGet();
-    _sampleCov.resize(prior->NumSamplesGet(), tmp);
-    _tmpCov.resize(prior->NumSamplesGet(), tmp);
+    _sampleCov.assign(_num_samples,prior->CovarianceGet());
+    _tmpCov.assign(_num_samples,prior->CovarianceGet());
+    _old_samples.assign(_num_samples,WeightedSample<ColumnVector>(_dimension));
+    _result_samples.assign(_num_samples,WeightedSample<ColumnVector>(_dimension));
+    _unif_samples.assign(_num_samples,0.0);
+    _CumPDF.assign(_num_samples,0.0);
+    _x_old.resize(_num_samples);
+    _sample.DimensionSet(_dimension);
   }
 
-  EKParticleFilter::~EKParticleFilter(){}
+  EKParticleFilter::~EKParticleFilter(){
+    delete _proposal;
+  }
 
   // KG: 20040702:  This method will be exactly the same for.  Extra
   // class between?
@@ -71,40 +78,39 @@ namespace BFL
     // They're should be a cleaner solution then doubling the code
     // from mcpdf.h, doesn't it??
     // ONLY RIPLEY SAMPLING SUPPORTED FOR NOW!
-    vector<WeightedSample<CV> > old_samples = (dynamic_cast<MCPdf<CV> *>(this->_post))->ListOfSamplesGet();
-    int numsamples = old_samples.size();
-    vector<Sample<CV> > result(numsamples);
-    std::vector<double> unif_samples(numsamples);
-
-    for ( int i = 0; i < numsamples ; i++) unif_samples[i] = runif();
-    unif_samples[numsamples-1] = pow(unif_samples[numsamples-1], double (1.0/numsamples));
+    _old_samples = (dynamic_cast<MCPdf<CV> *>(this->_post))->ListOfSamplesGet();
+    int numsamples = _old_samples.size();
+    for ( int i = 0; i < numsamples ; i++) _unif_samples[i] = runif();
+    _unif_samples[numsamples-1] = pow(_unif_samples[numsamples-1], double (1.0/numsamples));
     for ( int i = numsamples-2; i >= 0 ; i--){
-		unif_samples[i] = pow(unif_samples[i],double (1.0/(i+1))) * unif_samples[i+1];}
+		_unif_samples[i] = pow(_unif_samples[i],double (1.0/(i+1))) * _unif_samples[i+1];}
 
     unsigned int index = 0;
-    vector<WeightedSample<CV> >::const_iterator it = old_samples.begin();
-    vector<double> CumPDF = (dynamic_cast<MCPdf<CV> *>(this->_post))->CumulativePDFGet();
-    vector<double>::const_iterator CumPDFit = CumPDF.begin();
-    vector<Sample<CV> >::iterator sit = result.begin();
+    _oit = _old_samples.begin();
+    _CumPDF = (dynamic_cast<MCPdf<CV> *>(this->_post))->CumulativePDFGet();
+    _CumPDFit = _CumPDF.begin();
+    _rit = _result_samples.begin();
     _cov_it = _sampleCov.begin(); _tmpCovit = _tmpCov.begin();
     
     for ( int i = 0; i < numsamples ; i++)
       {
-	while ( unif_samples[i] > *CumPDFit )
+	while ( _unif_samples[i] > *_CumPDFit )
 	  {
 	    assert(index <= (unsigned int)numsamples);
-	    index++; it++; CumPDFit++; _cov_it++;
+	    index++; _oit++; _CumPDFit++; _cov_it++;
+
 	  }
-	it--; _cov_it--;
-	*sit = *it; *_tmpCovit = *_cov_it;
-	it++; _cov_it++;
+	_oit--; _cov_it--;
+	*(_rit) = *(_oit);
+    *_tmpCovit = *_cov_it;
+	_oit++; _cov_it++;
 	
-	sit++; _tmpCovit++;
+	_rit++; _tmpCovit++;
       }
     
     // Update lists
     _sampleCov = _tmpCov;
-    return (dynamic_cast<MCPdf<CV> *>(this->_post))->ListOfSamplesUpdate(result);
+    return (dynamic_cast<MCPdf<CV> *>(this->_post))->ListOfSamplesUpdate(_result_samples);
   }
 
   bool
@@ -115,20 +121,18 @@ namespace BFL
 					 const CV& s)
   {
     _old_samples = (dynamic_cast<MCPdf<CV> *>(this->_post))->ListOfSamplesGet();
-    CV x_old;
-    Sample<CV> sample;
 
     _ns_it = _new_samples.begin();
     _cov_it = _sampleCov.begin();
   
     for ( _os_it=_old_samples.begin(); _os_it != _old_samples.end() ; _os_it++)
       {
-	x_old = _os_it->ValueGet();
+	_x_old = _os_it->ValueGet();
 
 	// Set sample Covariance
 	dynamic_cast<FilterProposalDensity *>(this->_proposal)->SampleCovSet(*_cov_it);
       
-	_proposal->ConditionalArgumentSet(0,x_old);
+	_proposal->ConditionalArgumentSet(0,_x_old);
 
 	if (!sysmodel->SystemWithoutInputs())
 	  {
@@ -150,9 +154,9 @@ namespace BFL
 	      }
 	  }
 	// Bug, make sampling method a parameter!
-	_proposal->SampleFrom(sample, DEFAULT,NULL);
+	_proposal->SampleFrom(_sample, DEFAULT,NULL);
 
-	_ns_it->ValueSet(sample.ValueGet());
+	_ns_it->ValueSet(_sample.ValueGet());
 	_ns_it->WeightSet(_os_it->WeightGet());
 	_ns_it++;
 
