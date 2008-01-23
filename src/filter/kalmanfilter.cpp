@@ -1,6 +1,7 @@
 // $Id$
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
-//                    Wim Meeussen  <wim dot meeussen at mech dot kuleuven dot ac dot be>
+//                    Wim Meeussen  <wim dot meeussen at mech dot kuleuven dot be>
+//                    Tinne De Laet  <tinne dot delaet at mech dot kuleuven dot be>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -26,6 +27,10 @@ namespace BFL
 
   KalmanFilter::KalmanFilter(Gaussian * prior)
     : Filter<ColumnVector,ColumnVector>(prior)
+    , _Mu_new(prior->DimensionGet())
+    , _Sigma_new(prior->DimensionGet())
+    , _Sigma_temp(prior->DimensionGet(),prior->DimensionGet())
+    , _Sigma_temp_par(prior->DimensionGet(),prior->DimensionGet())
   {
     // create posterior dencity
     _post = new Gaussian(*prior);
@@ -37,34 +42,76 @@ namespace BFL
   }
 
   void 
-  KalmanFilter::CalculateSysUpdate(ColumnVector J, Matrix F, SymmetricMatrix Q)
+  KalmanFilter::AllocateMeasModel(const vector<unsigned int>& meas_dimensions)
   {
-    Matrix temp = F * (Matrix)_post->CovarianceGet() * F.transpose() + (Matrix)Q;
-    SymmetricMatrix Sigma_new(_post->DimensionGet());
-    temp.convertToSymmetricMatrix(Sigma_new);
+    unsigned int meas_dimension;
+    for(int i = 0 ; i< meas_dimensions.size(); i++)
+    {
+        // find if variables with size meas_sizes[i] are already allocated
+        meas_dimension = meas_dimensions[i];
+        _mapMeasUpdateVariables_it =  _mapMeasUpdateVariables.find(meas_dimension);
+        if( _mapMeasUpdateVariables_it == _mapMeasUpdateVariables.end())
+        {
+            //variables with size z.rows() not allocated yet
+            _mapMeasUpdateVariables_it = (_mapMeasUpdateVariables.insert
+                (std::pair<unsigned int, MeasUpdateVariables>( meas_dimension,MeasUpdateVariables(meas_dimension,_Mu_new.rows()) ))).first;
+         }
+     }
+  }
  
-    // set new state gaussian
-    PostMuSet   ( J );    
-    PostSigmaSet( Sigma_new );
+  void
+  KalmanFilter::AllocateMeasModel(const unsigned int& meas_dimension)
+  {
+     // find if variables with size meas_sizes[i] are already allocated
+     _mapMeasUpdateVariables_it =  _mapMeasUpdateVariables.find(meas_dimension);
+     if( _mapMeasUpdateVariables_it == _mapMeasUpdateVariables.end())
+     {
+         //variables with size z.rows() not allocated yet
+         _mapMeasUpdateVariables_it = (_mapMeasUpdateVariables.insert
+             (std::pair<unsigned int, MeasUpdateVariables>( meas_dimension,MeasUpdateVariables(meas_dimension,_Mu_new.rows()) ))).first;
+      }
   }
 
   void 
-  KalmanFilter::CalculateMeasUpdate(ColumnVector z, ColumnVector Z, Matrix H, SymmetricMatrix R)
+  KalmanFilter::CalculateSysUpdate(const ColumnVector& J, const Matrix& F, const SymmetricMatrix& Q)
   {
-    // build K matrix
-    Matrix S = ( H * (Matrix)(_post->CovarianceGet()) * (H.transpose()) ) + (Matrix)R;
-    Matrix K = (Matrix)(_post->CovarianceGet()) * (H.transpose()) * (S.inverse());
+    _Sigma_temp = F * ( (Matrix)_post->CovarianceGet() * F.transpose());
+    _Sigma_temp += (Matrix)Q;
+    _Sigma_temp.convertToSymmetricMatrix(_Sigma_new);
+ 
+    // set new state gaussian
+    PostMuSet   ( J );    
+    PostSigmaSet( _Sigma_new );
+  }
+
+  void 
+  KalmanFilter::CalculateMeasUpdate(const ColumnVector& z, const ColumnVector& Z, const Matrix& H, const SymmetricMatrix& R)
+  {
+    // allocate measurement for z.rows() if needed
+    AllocateMeasModel(z.rows());
   
+    (_mapMeasUpdateVariables_it->second)._postHT =   (Matrix)(_post->CovarianceGet()) * H.transpose() ;
+    (_mapMeasUpdateVariables_it->second)._S =  H * (_mapMeasUpdateVariables_it->second)._postHT;
+    (_mapMeasUpdateVariables_it->second)._S += (Matrix)R;
+
+    // _K = covariance * H' * S(-1)
+    (_mapMeasUpdateVariables_it->second)._K =  (_mapMeasUpdateVariables_it->second)._postHT * ( (_mapMeasUpdateVariables_it->second)._S.inverse());
+    
     // calcutate new state gaussian
-    ColumnVector Mu_new  = ( _post->ExpectedValueGet() + K * (z - Z)  );  
-    Matrix Sigma_new_matrix = (Matrix)(_post->CovarianceGet()) - K * H * (Matrix)(_post->CovarianceGet());
+    // Mu = expectedValue + K*(z-Z)
+    (_mapMeasUpdateVariables_it->second)._innov = z-Z;
+     _Mu_new  =  (_mapMeasUpdateVariables_it->second)._K * (_mapMeasUpdateVariables_it->second)._innov  ;  
+     _Mu_new  +=  _post->ExpectedValueGet() ;
+    // Sigma = post - K*H*post
+    _Sigma_temp = (_post->CovarianceGet());
+    _Sigma_temp_par = (_mapMeasUpdateVariables_it->second)._K * H ;
+    _Sigma_temp -=  _Sigma_temp_par * (Matrix)(_post->CovarianceGet());
     // convert to symmetric matrix
-    SymmetricMatrix Sigma_new(_post->DimensionGet());
-    Sigma_new_matrix.convertToSymmetricMatrix(Sigma_new);
+    _Sigma_temp.convertToSymmetricMatrix(_Sigma_new);
   
     // set new state gaussian
-    PostMuSet   ( Mu_new );
-    PostSigmaSet( Sigma_new );
+    PostMuSet   ( _Mu_new );
+    PostSigmaSet( _Sigma_new );
   
     /*
       cout << "H:\n" << H << endl;

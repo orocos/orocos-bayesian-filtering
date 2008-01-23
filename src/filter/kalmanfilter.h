@@ -1,6 +1,7 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
 //                    Wim Meeussen  <wim dot meeussen at mech dot kuleuven dot ac dot be>
+//                    Tinne De Laet <tinne dot delaet at mech dot kuleuven dot be>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -24,6 +25,7 @@
 #include "../pdf/gaussian.h"
 #include "../model/analyticmeasurementmodel_gaussianuncertainty.h"
 #include "../model/analyticsystemmodel_gaussianuncertainty.h"
+# include <map>
 
 namespace BFL
 {
@@ -59,7 +61,48 @@ public:
   // implement virtual function
   virtual Gaussian* PostGet();
 
+  /// Function to allocate memory needed during the measurement update,
+  //  For realtime use, this function should be called before calling measUpdate
+  /*  @param vector containing the dimension of the measurement models which are
+      going to be used
+  */
+  void AllocateMeasModel( const vector<unsigned int>& meas_dimensions);
+
+  /// Function to allocate memory needed during the measurement update
+  //  For realtime use, this function should be called before calling measUpdate
+  /*  @param dimension of the measurement models which is
+      going to be used
+  */
+  void AllocateMeasModel( const unsigned int& meas_dimensions);
+
+private:
+  struct MeasUpdateVariables
+  {
+    Matrix _S;
+    Matrix _postHT;
+    Matrix _K;
+    ColumnVector _innov;
+    MeasUpdateVariables() {};
+    MeasUpdateVariables(unsigned int meas_dimension, unsigned int state_dimension):
+      _S(meas_dimension,meas_dimension) 
+    , _K(state_dimension,meas_dimension)
+    , _innov(meas_dimension)
+    , _postHT(state_dimension,meas_dimension)
+{};
+  }; //struct
+
 protected:
+  // variables to avoid allocation during update calls
+  ColumnVector  _Mu_new;
+  SymmetricMatrix _Sigma_new;
+  Matrix _Sigma_temp;
+  Matrix _Sigma_temp_par;
+  Matrix _S;
+  Matrix _K;
+  std::map<unsigned int, MeasUpdateVariables> _mapMeasUpdateVariables;
+  std::map<unsigned int, MeasUpdateVariables>::iterator _mapMeasUpdateVariables_it;
+  
+
   /** Very dirty hack to avoid ugly methods PostSigmaSet 
       and PostMuSet to be public!
       NonMinimalKalmanFilter should be redesigned though!
@@ -76,7 +119,7 @@ protected:
       \f[ x_k = J \f]
       \f[ P_k = F.P_{k-}.F' + Q \f]
   */
-  void CalculateSysUpdate(MatrixWrapper::ColumnVector J, MatrixWrapper::Matrix F, MatrixWrapper::SymmetricMatrix Q);
+  void CalculateSysUpdate(const MatrixWrapper::ColumnVector& J, const MatrixWrapper::Matrix& F, const MatrixWrapper::SymmetricMatrix& Q);
     
   /** Calculate Kalman filter Measurement Update
       \f[ x_k = x_{k-} + K.(z - Z) \f]
@@ -84,7 +127,7 @@ protected:
       with
       \f[ K = P_{k-}.H'.(H.P_{k-}.H'+R)^{-1} \f]
   */
-  void CalculateMeasUpdate(MatrixWrapper::ColumnVector z, MatrixWrapper::ColumnVector Z, MatrixWrapper::Matrix H, MatrixWrapper::SymmetricMatrix R);
+  void CalculateMeasUpdate(const MatrixWrapper::ColumnVector& z, const MatrixWrapper::ColumnVector& Z, const MatrixWrapper::Matrix& H, const MatrixWrapper::SymmetricMatrix& R);
 
   /// System Update
   /** Update the filter's Posterior density using the deterministic
@@ -100,6 +143,7 @@ protected:
       measurements, an input and the measurement model.  This method is
       used when the measurements depend on the inputs too (doesn't
       happen very often, does it?)
+      BEWARE: the first time the measurment update is called with a new size of measurement, new allocations are done
       @param measmodel pointer to the measurement model the filter
       should use
       @param z sensor measurement
@@ -116,9 +160,9 @@ protected:
 			      const MatrixWrapper::ColumnVector& z,
 			      const MatrixWrapper::ColumnVector& s);
 
-
-
 }; // class
+
+
 
 } // End namespace BFL
  
