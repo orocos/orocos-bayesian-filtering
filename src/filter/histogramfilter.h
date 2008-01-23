@@ -62,6 +62,11 @@ public:
   virtual DiscretePdf* PostGet();
 
 protected:
+  /// While updating store list of old probabilities
+  vector<Probability > _old_prob;
+  /// While updating store list of new probabilities
+  vector<Probability > _new_prob;
+
   /** Calculate Discrete filter System Update
     @param sysmodel pointer to the system model the filter should use
     @param u input to the system
