@@ -25,6 +25,7 @@
 #include "../pdf/conditionalpdf.h"
 #include "../pdf/gaussian.h"
 #include "innovationCheck.h"
+# include <map>
 
 namespace BFL
 {
@@ -57,9 +58,53 @@ namespace BFL
       /// Destructor
       virtual ~IteratedExtendedKalmanFilter();
 
+      /// Function to allocate memory needed during the measurement update,
+      //  For realtime use, this function should be called before calling measUpdate
+      /*  @param vector containing the dimension of the measurement models which are
+          going to be used
+      */
+      void AllocateMeasModelIExt( const vector<unsigned int>& meas_dimensions);
+
+      /// Function to allocate memory needed during the measurement update
+      //  For realtime use, this function should be called before calling measUpdate
+      /*  @param dimension of the measurement models which is
+          going to be used
+      */
+      void AllocateMeasModelIExt( const unsigned int& meas_dimensions);
+
     private:
-      unsigned int nr_iterations; // maximum number of iterations
-      InnovationCheck* innovationChecker; // pointer to InnovationCheck (to end the iterations if the innovation is too small)
+      /// number of iterations for iterated extended kalman filter
+      unsigned int _nr_iterations; 
+      /// pointer to InnovationCheck (to end the iterations if the innovation is too small)
+      InnovationCheck* _innovationChecker; 
+
+      struct MeasUpdateVariablesIExt
+      {
+        SymmetricMatrix _R_i;
+        Matrix          _K_i;
+        Matrix          _H_i;
+        ColumnVector    _Z_i;
+        MeasUpdateVariablesIExt() {};
+        MeasUpdateVariablesIExt(unsigned int meas_dimension, unsigned int state_dimension):
+          _R_i(meas_dimension) 
+        , _K_i(state_dimension,meas_dimension)
+        , _H_i(meas_dimension,state_dimension)
+        , _Z_i(meas_dimension)
+         {};
+      }; //struct
+
+      // variables to avoid allocation on the heap
+      ColumnVector _x;
+      ColumnVector _x_i;
+      ColumnVector _x_i_prev;
+      ColumnVector _J;
+      ColumnVector _innovation;
+      Matrix    _F;
+      SymmetricMatrix _Q;
+      SymmetricMatrix _P;
+      Matrix          _S_i;
+      std::map<unsigned int, MeasUpdateVariablesIExt> _mapMeasUpdateVariablesIExt;
+      std::map<unsigned int, MeasUpdateVariablesIExt>::iterator _mapMeasUpdateVariablesIExt_it;
     };  // class
 
 } // End namespace BFL

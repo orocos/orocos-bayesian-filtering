@@ -29,22 +29,61 @@ namespace BFL
 
 
   IteratedExtendedKalmanFilter::IteratedExtendedKalmanFilter(Gaussian* prior, unsigned int nr_it, InnovationCheck* I)
-    : KalmanFilter(prior),
-      nr_iterations(nr_it),
-      innovationChecker(I)
+    : KalmanFilter(prior)
+    , _nr_iterations(nr_it)
+    , _innovationChecker(I)
+    , _x(prior->DimensionGet())
+    , _x_i(prior->DimensionGet())
+    , _x_i_prev(prior->DimensionGet())
+    , _J(prior->DimensionGet())
+    , _innovation(prior->DimensionGet())
+    , _F(prior->DimensionGet(),prior->DimensionGet())
+    , _Q(prior->DimensionGet())
+    , _P(prior->DimensionGet())
   {}
 
   IteratedExtendedKalmanFilter::~IteratedExtendedKalmanFilter()
   {}
 
   void
+  IteratedExtendedKalmanFilter::AllocateMeasModelIExt(const vector<unsigned int>& meas_dimensions)
+  {
+    unsigned int meas_dimension;
+    for(int i = 0 ; i< meas_dimensions.size(); i++)
+    {
+        // find if variables with size meas_sizes[i] are already allocated
+        meas_dimension = meas_dimensions[i];
+        _mapMeasUpdateVariablesIExt_it =  _mapMeasUpdateVariablesIExt.find(meas_dimension);
+        if( _mapMeasUpdateVariablesIExt_it == _mapMeasUpdateVariablesIExt.end())
+        {
+            //variables with size z.rows() not allocated yet
+            _mapMeasUpdateVariablesIExt_it = (_mapMeasUpdateVariablesIExt.insert
+                (std::pair<unsigned int, MeasUpdateVariablesIExt>( meas_dimension,MeasUpdateVariablesIExt(meas_dimension,_x.rows()) ))).first;
+         }
+     }
+  }
+  
+  void
+  IteratedExtendedKalmanFilter::AllocateMeasModelIExt(const unsigned int& meas_dimension)
+  {
+     // find if variables with size meas_sizes[i] are already allocated
+     _mapMeasUpdateVariablesIExt_it =  _mapMeasUpdateVariablesIExt.find(meas_dimension);
+     if( _mapMeasUpdateVariablesIExt_it == _mapMeasUpdateVariablesIExt.end())
+     {
+         //variables with size z.rows() not allocated yet
+         _mapMeasUpdateVariablesIExt_it = (_mapMeasUpdateVariablesIExt.insert
+             (std::pair<unsigned int, MeasUpdateVariablesIExt>( meas_dimension,MeasUpdateVariablesIExt(meas_dimension,_x.rows()) ))).first;
+      }
+  }
+  
+  void
   IteratedExtendedKalmanFilter::SysUpdate(SystemModel<ColumnVector>* const sysmodel,
 					  const ColumnVector& u)
   {
-    ColumnVector    x = _post->ExpectedValueGet();
-    ColumnVector    J = ((AnalyticSys*)sysmodel)->PredictionGet(u,x); 
-    Matrix          F = ((AnalyticSys*)sysmodel)->df_dxGet(u,x);
-    SymmetricMatrix Q = ((AnalyticSys*)sysmodel)->CovarianceGet(u,x);
+    _x = _post->ExpectedValueGet();
+    _J = ((AnalyticSys*)sysmodel)->PredictionGet(u,_x); 
+    _F = ((AnalyticSys*)sysmodel)->df_dxGet(u,_x);
+    _Q = ((AnalyticSys*)sysmodel)->CovarianceGet(u,_x);
   
     /*
       cout << "x :\n" << x << endl;
@@ -53,7 +92,7 @@ namespace BFL
       cout << "Q:\n " << Q << endl;
     */
   
-    CalculateSysUpdate(J, F, Q);
+    CalculateSysUpdate(_J, _F, _Q);
   }
 
   void
@@ -61,34 +100,28 @@ namespace BFL
 					   const ColumnVector& z, 
 					   const ColumnVector& s)
   {
+    // allocate measurement for z.rows() if needed
+    AllocateMeasModelIExt(z.rows());
 
-    ColumnVector    x_k = _post->ExpectedValueGet();
-    SymmetricMatrix P_k = _post->CovarianceGet();
-    ColumnVector    x_i = _post->ExpectedValueGet();
+    _x = _post->ExpectedValueGet();
+    _P = _post->CovarianceGet();
+    _x_i = _post->ExpectedValueGet();
 
-    ColumnVector    x_i_prev;
-    Matrix          H_i;
-    SymmetricMatrix R_i;
-    Matrix          S_i;
-    Matrix          K_i;
-    ColumnVector    Z_i;
-    ColumnVector    innovation;
     bool            test_innovation = true;
   
-    for (unsigned int i=0; i<nr_iterations && test_innovation; i++)
+    for (unsigned int i=0; i<_nr_iterations && test_innovation; i++)
       {
-    x_i_prev = x_i;
-	H_i  = ((AnalyticMeas*)measmodel)->df_dxGet(s,x_i);
-	R_i  = ((AnalyticMeas*)measmodel)->CovarianceGet(s,x_i);
-	S_i  = ( H_i * (Matrix)P_k * (H_i.transpose()) ) + (Matrix)R_i;
-	K_i  = (Matrix)P_k * (H_i.transpose()) * (S_i.inverse());
-	Z_i  = ((AnalyticMeas*)measmodel)->PredictionGet(s,x_i) + ( H_i * (x_k - x_i) );  
-	x_i  = x_k + K_i * (z - Z_i);
-    innovation = (x_i - x_i_prev);
-    if (innovationChecker != NULL)
-        test_innovation = innovationChecker->check(innovation) ; //test if the innovation is not too small
+    _x_i_prev = _x_i;
+	(_mapMeasUpdateVariablesIExt_it->second)._H_i  = ((AnalyticMeas*)measmodel)->df_dxGet(s,_x_i);
+	(_mapMeasUpdateVariablesIExt_it->second)._R_i  = ((AnalyticMeas*)measmodel)->CovarianceGet(s,_x_i);
+	_S_i  = ( (_mapMeasUpdateVariablesIExt_it->second)._H_i * (Matrix)_P * ((_mapMeasUpdateVariablesIExt_it->second)._H_i.transpose()) ) + (Matrix)((_mapMeasUpdateVariablesIExt_it->second)._R_i);
+	(_mapMeasUpdateVariablesIExt_it->second)._K_i  = (Matrix)_P * ((_mapMeasUpdateVariablesIExt_it->second)._H_i.transpose()) * (_S_i.inverse());
+	(_mapMeasUpdateVariablesIExt_it->second)._Z_i  = ((AnalyticMeas*)measmodel)->PredictionGet(s,_x_i) + ( (_mapMeasUpdateVariablesIExt_it->second)._H_i * (_x - _x_i) );  
+	_x_i  = _x + (_mapMeasUpdateVariablesIExt_it->second)._K_i * (z - (_mapMeasUpdateVariablesIExt_it->second)._Z_i);
+    _innovation = (_x_i - _x_i_prev);
+    if (_innovationChecker != NULL)
+        test_innovation = _innovationChecker->check(_innovation) ; //test if the innovation is not too small
 
-    
 	/*
 	  cout << "H_i :\n" << H_i << endl;
 	  cout << "R_i:\n " << R_i << endl;
@@ -99,7 +132,7 @@ namespace BFL
 	*/
       }
   
-    CalculateMeasUpdate(z, Z_i, H_i, R_i);
+    CalculateMeasUpdate(z, (_mapMeasUpdateVariablesIExt_it->second)._Z_i, (_mapMeasUpdateVariablesIExt_it->second)._H_i, (_mapMeasUpdateVariablesIExt_it->second)._R_i);
   }
 
 }
