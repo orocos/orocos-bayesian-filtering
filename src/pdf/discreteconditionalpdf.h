@@ -1,5 +1,6 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
+//               2008 Tinne De Laet <first dot last at mech dot kuleuven dot be>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -67,7 +68,12 @@ namespace BFL
       int _total_dimension;
   
       /// Get the correct index in the row of doubles (double * probability)
-      int IndexGet(int input, std::vector<int> condargs) const;
+      int IndexGet(const int& input, const std::vector<int>& condargs) const;
+
+      // variables to prevent memory allocation on the heap during call of
+      //SampleFrom
+      mutable std::vector<double> _probs;
+      mutable std::vector<double> _valuelist;
 
     public:
       /// Constructor
@@ -98,7 +104,7 @@ namespace BFL
       virtual bool SampleFrom (vector<Sample<int> >& list_samples, int num_samples, int method, void * args) const;
 
       /// Set the probability (Typical for discrete Pdf's)
-      void ProbabilitySet(double prob, int input, std::vector<int> condargs) const;
+      void ProbabilitySet(const double& prob, const int& input, const std::vector<int>& condargs) const;
 
 
     };

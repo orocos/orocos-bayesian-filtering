@@ -1,5 +1,6 @@
 // $Id$
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
+//               2008 Tinne De Laet <first dot last at mech dot kuleuven dot be>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -29,6 +30,8 @@ namespace BFL
 						 int cond_arg_dimensions[])
     : ConditionalPdf<int,int>(1,num_conditional_arguments)
     , _num_states(num_states)
+    , _probs(num_states)
+    , _valuelist(num_states+1)
   {
     _cond_arg_dims_p = new int[num_conditional_arguments];
     int total_dim = 1;
@@ -56,7 +59,10 @@ namespace BFL
 
 
   DiscreteConditionalPdf::DiscreteConditionalPdf(const DiscreteConditionalPdf & pdf)
-    : ConditionalPdf<int,int>(pdf),_num_states(pdf.NumStatesGet())
+    : ConditionalPdf<int,int>(pdf)
+    ,_num_states(pdf.NumStatesGet())
+    , _probs(pdf.NumStatesGet())
+    , _valuelist(pdf.NumStatesGet()+1)
   {
     _cond_arg_dims_p = new int[pdf.NumConditionalArgumentsGet()];
     int total_dim = 1;
@@ -79,8 +85,8 @@ namespace BFL
   }
 
   // Calculate index (used by ProbabilityGet and ProbabilitySet)
-  int DiscreteConditionalPdf::IndexGet(int input, 
-				       std::vector<int> condargs) const
+  int DiscreteConditionalPdf::IndexGet(const int& input, 
+				       const std::vector<int>& condargs) const
   {
     int index = 0;
     int blocksize = 1;
@@ -110,9 +116,9 @@ namespace BFL
   }
 
   // Typical for discrete Pdf's
-  void DiscreteConditionalPdf::ProbabilitySet(double prob, 
-					      int input, 
-					      std::vector<int> condargs) const
+  void DiscreteConditionalPdf::ProbabilitySet(const double& prob, 
+					      const int& input, 
+					      const std::vector<int>& condargs) const
   {
     int index = this->IndexGet(input, condargs);
     _probability_p[index] = prob;
@@ -123,37 +129,35 @@ namespace BFL
     // Get the elements of which to sample from
     int startindex = IndexGet(0,ConditionalArgumentsGet());
     double SumWeights = 0.0; double CumSum=0.0;
-    vector<double> probs(NumStatesGet());
-    vector<double> valuelist(NumStatesGet()+1);
     unsigned int index;
   
     for ( index = 0; index < NumStatesGet() ; index++ ) 
       {
-	probs[index] = _probability_p[startindex+index];
-	CumSum += probs[index];
+	_probs[index] = _probability_p[startindex+index];
+	CumSum += _probs[index];
 #ifdef __DCPDFDEBUG__
 #define TABWIDTH 10
-	cout << setw(TABWIDTH) << probs[index];
+	cout << setw(TABWIDTH) << _probs[index];
 #endif // __DCPDFDEBUG__
       }
     SumWeights = CumSum;
-    valuelist[0] = 0.0; CumSum = 0.0;
+    _valuelist[0] = 0.0; CumSum = 0.0;
     for ( index = 1; index <= NumStatesGet() ; index++ ) 
       {
-	CumSum += probs[index-1]/SumWeights;
-	valuelist[index] = CumSum;
+	CumSum += _probs[index-1]/SumWeights;
+	_valuelist[index] = CumSum;
       }  
     // Check if last element of valuelist is +- 1
-    assert ( (valuelist[NumStatesGet()] >= 1.0 - NUMERIC_PRECISION) &&
-	     (valuelist[NumStatesGet()] <= 1.0 + NUMERIC_PRECISION) );
+    assert ( (_valuelist[NumStatesGet()] >= 1.0 - NUMERIC_PRECISION) &&
+	     (_valuelist[NumStatesGet()] <= 1.0 + NUMERIC_PRECISION) );
 
-    valuelist[NumStatesGet()]=1;
+    _valuelist[NumStatesGet()]=1;
   
     // Sample from univariate uniform rng between 0 and 1;
     double unif_sample; unif_sample = runif();
     // Compare where we should be: THIS CAN BE MADE FASTER: TODO
     index = 0;
-    while ( unif_sample > valuelist[index] )
+    while ( unif_sample > _valuelist[index] )
       {
 	assert(index <= NumStatesGet());
 	index++;
@@ -168,7 +172,7 @@ namespace BFL
 				     int num_samples, int method,
 				     void * args) const
   {
-    list_samples.resize(num_samples);
+    list_samples.resize(num_samples); // will break real-timeness if list_samples.size()!=num_samples
     return Pdf<int>::SampleFrom(list_samples, num_samples,method,args);
   }
 
