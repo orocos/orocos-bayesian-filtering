@@ -28,6 +28,7 @@ namespace BFL
 
   Uniform::Uniform (const ColumnVector& center, const ColumnVector& width) 
     : Pdf<ColumnVector> ( center.rows() )
+    , _samples(DimensionGet())
   {
     // check if inputs are consistent
     assert (center.rows() == width.rows());
@@ -42,6 +43,7 @@ namespace BFL
 
   Uniform::Uniform (int dimension)
     : Pdf<ColumnVector>(dimension)
+    , _samples(dimension)
   {
     _Lower.resize(dimension);
     _Higher.resize(dimension);
@@ -70,17 +72,16 @@ namespace BFL
   Uniform::SampleFrom (vector<Sample<ColumnVector> >& list_samples, const int num_samples, int method, void * args) const
   {
     // Perform memory allocation
-    list_samples.resize(num_samples);
+    list_samples.resize(num_samples); // will break real-timeness if list_samples.size()!=num_samples
     vector<Sample<ColumnVector> >::iterator rit = list_samples.begin();
     switch(method)
       {
          case DEFAULT: 
          {
-        	  ColumnVector samples(DimensionGet());
         	  while (rit != list_samples.end())
         	   {
-                 for (unsigned int j=1; j < DimensionGet()+1; j++) samples(j) = runif(_Lower(j) , _Higher(j) ); 
-        	     rit->ValueSet(samples);
+                 for (unsigned int j=1; j < DimensionGet()+1; j++) _samples(j) = runif(_Lower(j) , _Higher(j) ); 
+        	     rit->ValueSet(_samples);
         	     rit++;
         	   }
         	  return true;
@@ -97,9 +98,8 @@ namespace BFL
     {
       case DEFAULT: 
       {
-	     ColumnVector samples(DimensionGet()); 
-         for (unsigned int j=1; j < DimensionGet()+1; j++) samples(j) = runif(_Lower(j) , _Higher(j) ); 
-	     one_sample.ValueSet(samples);
+         for (unsigned int j=1; j < DimensionGet()+1; j++) _samples(j) = runif(_Lower(j) , _Higher(j) ); 
+	     one_sample.ValueSet(_samples);
 	     return true;
       }
       default:

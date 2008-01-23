@@ -33,6 +33,9 @@ namespace BFL
       /// Height of the uniform distribution
       double _Height; //the height of the uniform distribution 
 
+      // variables to avoid allocation on the heap during resampling
+      mutable ColumnVector _samples;
+
     public:
       /// Constructor
       /**
