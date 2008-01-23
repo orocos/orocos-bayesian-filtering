@@ -31,10 +31,11 @@ ParticleFilter<SV,MV>::ParticleFilter(MCPdf<SV> * prior,
 				      int resampleperiod,
 				      double resamplethreshold,
 				      int resamplescheme)
-  : Filter<SV,MV>(prior),
-    _proposal(proposal),
-    _resampleScheme(resamplescheme),
-    _created_post(true)
+  : Filter<SV,MV>(prior)
+  , _proposal(proposal)
+  , _resampleScheme(resamplescheme)
+  , _created_post(true)
+  , _sample(WeightedSample<SV>(prior->DimensionGet())) 
 {
   /* Initialize Post, at time = 0, post = prior
      To be more clean, this should be done in the filter base class,
@@ -149,7 +150,6 @@ ParticleFilter<SV,MV>::ProposalStepInternal(SystemModel<SV> * const sysmodel,
 {
   // Get all samples from the current post through proposal density
   _old_samples = (dynamic_cast<MCPdf<SV> *>(this->_post))->ListOfSamplesGet();
-  Sample<SV> sample;
 
   _ns_it = _new_samples.begin();
   for ( _os_it=_old_samples.begin(); _os_it != _old_samples.end() ; _os_it++)
@@ -183,8 +183,8 @@ ParticleFilter<SV,MV>::ProposalStepInternal(SystemModel<SV> * const sysmodel,
 	    }
 	}
       // Bug, make sampling method a parameter!
-      _proposal->SampleFrom(sample, DEFAULT,NULL);
-      _ns_it->ValueSet(sample.ValueGet());
+      _proposal->SampleFrom(_sample, DEFAULT,NULL);
+      _ns_it->ValueSet(_sample.ValueGet());
       _ns_it->WeightSet(_os_it->WeightGet());
       _ns_it++;
     }
@@ -345,7 +345,6 @@ template <typename SV, typename MV> bool
 ParticleFilter<SV,MV>::Resample()
 {
   int NumSamples = (dynamic_cast<MCPdf<SV> *>(this->_post))->NumSamplesGet();
-  vector<Sample<SV> > new_samples(NumSamples);
   // #define __PARTICLEFILTER_DEBUG__
 #ifdef __PARTICLEFILTER_DEBUG__
   cout << "PARTICLEFILTER: resampling now" << endl;
@@ -360,7 +359,7 @@ ParticleFilter<SV,MV>::Resample()
     {
     case MULTINOMIAL_RS:
       {
-	(dynamic_cast<MCPdf<SV> *>(this->_post))->SampleFrom(new_samples, NumSamples,RIPLEY,NULL);
+	(dynamic_cast<MCPdf<SV> *>(this->_post))->SampleFrom(_new_samples_unweighted, NumSamples,RIPLEY,NULL);
 	break;
       }
     case SYSTEMATIC_RS:{break;}
@@ -372,7 +371,7 @@ ParticleFilter<SV,MV>::Resample()
 	break;
       }
     }
-  bool result = (dynamic_cast<MCPdf<SV> *>(this->_post))->ListOfSamplesUpdate(new_samples);
+  bool result = (dynamic_cast<MCPdf<SV> *>(this->_post))->ListOfSamplesUpdate(_new_samples_unweighted);
 #ifdef __PARTICLEFILTER_DEBUG__
   cout << "PARTICLEFILTER: after resampling" << endl;
   _new_samples= (dynamic_cast<MCPdf<SV> *>(this->_post))->ListOfSamplesGet();

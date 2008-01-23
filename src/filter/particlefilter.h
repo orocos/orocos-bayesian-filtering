@@ -173,10 +173,14 @@ namespace BFL
       */
       ConditionalPdf<StateVar,StateVar> * _proposal;
   
+      /// While updating use sample<StateVar> 
+      WeightedSample<StateVar>  _sample;
       /// While updating store list of old samples
       vector<WeightedSample<StateVar> > _old_samples;
       /// While updating store list of new samples
       vector<WeightedSample<StateVar> > _new_samples;
+      /// While resampling
+      vector<Sample<StateVar> > _new_samples_unweighted;
       /// Iterator for old list of samples
       typename vector<WeightedSample<StateVar> >::iterator _os_it;
       /// Iterator for new list of samples
