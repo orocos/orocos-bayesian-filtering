@@ -70,6 +70,11 @@ protected:
 
   virtual bool UpdateInternal(SystemModel<ColumnVector>* const sysmodel, const ColumnVector& u,  Pdf<ColumnVector>* const filtered_post);
 
+private:
+    // Variables to avoid allocation during sysupdate call
+    ColumnVector _x, _xf, _xpred, _xsmooth;
+    Matrix _F, _Ppred, _Pxx, _K, _Psmooth;
+    SymmetricMatrix _Q, _Sigma_new;
 }; // class
 
 } // End namespace BFL

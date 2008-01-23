@@ -26,6 +26,17 @@ namespace BFL
 
   RauchTungStriebel::RauchTungStriebel(Gaussian * prior)
     : BackwardFilter<ColumnVector>(prior)
+    , _x(prior->DimensionGet())
+    , _xf(prior->DimensionGet())
+    , _xpred(prior->DimensionGet())
+    , _xsmooth(prior->DimensionGet())
+    , _F(prior->DimensionGet(),prior->DimensionGet())
+    , _Ppred(prior->DimensionGet(),prior->DimensionGet())
+    , _Pxx(prior->DimensionGet(),prior->DimensionGet())
+    , _K(prior->DimensionGet(),prior->DimensionGet())
+    , _Psmooth(prior->DimensionGet(),prior->DimensionGet())
+    , _Q(prior->DimensionGet())
+    , _Sigma_new(prior->DimensionGet())
   {
     // create posterior dencity
     _post = new Gaussian(*prior);
@@ -39,24 +50,23 @@ namespace BFL
   void
   RauchTungStriebel::SysUpdate(SystemModel<ColumnVector>* const sysmodel, const ColumnVector& u,  Pdf<ColumnVector>* const filtered_post)
   {
-    ColumnVector x = _post->ExpectedValueGet();
-    ColumnVector xf = filtered_post->ExpectedValueGet();
-    Matrix F = ((AnalyticSys*)sysmodel)->df_dxGet(u,x);
-    SymmetricMatrix Q = ((AnalyticSys*)sysmodel)->CovarianceGet(u,x);
+    _x = _post->ExpectedValueGet();
+    _xf = filtered_post->ExpectedValueGet();
+    _F = ((AnalyticSys*)sysmodel)->df_dxGet(u,_x);
+    _Q = ((AnalyticSys*)sysmodel)->CovarianceGet(u,_x);
   
-    Matrix Ppred = F * (Matrix)filtered_post->CovarianceGet() * F.transpose() + (Matrix)Q;
-    Matrix Pxx = (Matrix)filtered_post->CovarianceGet() * F.transpose();
-    Matrix K = Pxx * Ppred.inverse();
-    ColumnVector xpred = ((AnalyticSys*)sysmodel)->PredictionGet(u,xf);
-    ColumnVector xsmooth =  xf + K * (x - xpred);
+    _Ppred = _F * (Matrix)filtered_post->CovarianceGet() * _F.transpose() + (Matrix)_Q;
+    _Pxx = (Matrix)filtered_post->CovarianceGet() * _F.transpose();
+    _K = _Pxx * _Ppred.inverse();
+    _xpred = ((AnalyticSys*)sysmodel)->PredictionGet(u,_xf);
+    _xsmooth =  _xf + _K * (_x - _xpred);
 
-    Matrix Psmooth = (Matrix)filtered_post->CovarianceGet() - K * ( Ppred - (Matrix)_post->CovarianceGet() ) * K.transpose();
-    SymmetricMatrix Sigma_new(_post->DimensionGet());
-    Psmooth.convertToSymmetricMatrix(Sigma_new);
+    _Psmooth = (Matrix)filtered_post->CovarianceGet() - _K * ( _Ppred - (Matrix)_post->CovarianceGet() ) * _K.transpose();
+    _Psmooth.convertToSymmetricMatrix(_Sigma_new);
 
     // set new state gaussian
-    PostMuSet   ( xsmooth );    
-    PostSigmaSet( Sigma_new );
+    PostMuSet   ( _xsmooth );    
+    PostSigmaSet( _Sigma_new );
   }
 
   bool 
