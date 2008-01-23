@@ -1,5 +1,6 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
+// Copyright (C) 2008 Tinne De Laet <first dot last at mech dot kuleuven dot be>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -29,10 +30,15 @@ namespace BFL
       MatrixWrapper::ColumnVector _Mu;
       MatrixWrapper::SymmetricMatrix _Sigma;
 
-      // variables to avoid recalculation of inverse and sqrt(pow(...))
+      // variables to avoid recalculation of inverse 
       mutable bool _Sigma_changed;
       mutable MatrixWrapper::SymmetricMatrix _Sigma_inverse;
       mutable double _sqrt_pow;
+      mutable ColumnVector _diff; //needed in probabilityGet
+      // variables to avoid allocation on the heap during resampling
+      mutable ColumnVector _samples;
+      mutable ColumnVector _sampleValue;
+      mutable Matrix _Low_triangle;
 
     public:
       /// Constructor

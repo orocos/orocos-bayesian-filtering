@@ -1,5 +1,6 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
+// Copyright (C) 2008 Tinne De Laet <first dot last at mech dot kuleuven dot be>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -28,20 +29,30 @@ namespace BFL
 
   Gaussian::Gaussian (const ColumnVector& m, const SymmetricMatrix& s) 
     : Pdf<ColumnVector> ( m.rows() )
+    , _diff(DimensionGet())
+    , _samples(DimensionGet())
+    , _sampleValue(DimensionGet())
+    , _Low_triangle(DimensionGet(),DimensionGet())
   {
     // check if inputs are consistent
     assert (m.rows() == s.columns());
     _Mu = m;
     _Sigma = s;
+    _Sigma_inverse.resize(DimensionGet());
     _Sigma_changed = true;
   }
 
   Gaussian::Gaussian (int dimension)
     : Pdf<ColumnVector>(dimension)
+    , _diff(dimension)
+    , _samples(dimension)
+    , _sampleValue(dimension)
+    , _Low_triangle(dimension,dimension)
   {
     _Mu.resize(dimension);
     _Sigma.resize(dimension);
     _Sigma_inverse.resize(dimension);
+    _Sigma_changed = true;
   }
 
   Gaussian::~Gaussian(){}
@@ -62,8 +73,9 @@ namespace BFL
       _sqrt_pow = 1 / sqrt(pow(M_PI*2,(double)DimensionGet()) * _Sigma.determinant());
     }
 
-    ColumnVector diff = input - _Mu;
-    Probability temp = diff.transpose() * (_Sigma_inverse * diff);
+    _diff = input;
+    _diff -= _Mu;
+    Probability temp = _diff.transpose() * (_Sigma_inverse * _diff);
     Probability result = exp(-0.5 * temp) * _sqrt_pow;
     return result;
   }
@@ -74,22 +86,20 @@ namespace BFL
   bool
   Gaussian::SampleFrom (vector<Sample<ColumnVector> >& list_samples, const int num_samples, int method, void * args) const
   {
-    // Perform memory allocation
-    list_samples.resize(num_samples);
+    list_samples.resize(num_samples); // will break real-timeness if list_samples.size()!=num_samples
     vector<Sample<ColumnVector> >::iterator rit = list_samples.begin();
     switch(method)
       {
       case DEFAULT: // Cholesky Sampling
       case CHOLESKY: 
 	{
-	  Matrix Low_triangle;
-	  bool result = _Sigma.cholesky_semidefinite(Low_triangle);
-	  ColumnVector samples(DimensionGet()); ColumnVector SampleValue(DimensionGet());
+	  bool result = _Sigma.cholesky_semidefinite(_Low_triangle);
 	  while (rit != list_samples.end())
 	    {
-	      for (unsigned int j=1; j < DimensionGet()+1; j++) samples(j) = rnorm(0,1);
-	      SampleValue = (Low_triangle * samples) + this->_Mu;
-	      rit->ValueSet(SampleValue);
+	      for (unsigned int j=1; j < DimensionGet()+1; j++) _samples(j) = rnorm(0,1);
+	      _sampleValue = _Low_triangle * _samples ;
+	      _sampleValue +=  this->_Mu;
+	      rit->ValueSet(_sampleValue);
 	      rit++;
 	    }
 	  return result;
@@ -131,12 +141,10 @@ namespace BFL
 	  p.98
 	*/
 	{
-	  Matrix Low_triangle;
-          bool result = _Sigma.cholesky_semidefinite(Low_triangle);
+      bool result = _Sigma.cholesky_semidefinite(_Low_triangle);
 
 	  /* For now we keep it simple, and use the scythe library
 	     (although wrapped) with the uRNG that it uses itself only */
-	  ColumnVector samples(DimensionGet()); ColumnVector SampleValue(DimensionGet());
 	  /* Sample Gaussian._dimension samples from univariate
 	     gaussian This could be done using several available
 	     libraries, combined with different uniform RNG.  Both the
@@ -144,9 +152,9 @@ namespace BFL
 	     #ifdef conditions, although I'm sure there must exist a
 	     cleaner way to implement this!
 	  */
-	  for (unsigned int j=1; j < DimensionGet()+1; j++) samples(j) = rnorm(0,1);
-	  SampleValue = (Low_triangle * samples) + this->_Mu;
-	  one_sample.ValueSet(SampleValue);
+	  for (unsigned int j=1; j < DimensionGet()+1; j++) _samples(j) = rnorm(0,1);
+	  _sampleValue = (_Low_triangle * _samples) + this->_Mu;
+	  one_sample.ValueSet(_sampleValue);
 	  return result;
 	}
       case BOXMULLER: // Implement box-muller here
