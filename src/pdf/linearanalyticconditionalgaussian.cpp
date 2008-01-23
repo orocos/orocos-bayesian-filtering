@@ -1,5 +1,6 @@
 // $Id$
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
+// Copyright (C) 2008 Tinne De Laet <first dot last at mech dot kuleuven dot be>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -28,8 +29,10 @@ namespace BFL
   LinearAnalyticConditionalGaussian::LinearAnalyticConditionalGaussian(const vector<Matrix> & ratio, 
 						       const Gaussian& additiveNoise)
     : AnalyticConditionalGaussianAdditiveNoise(additiveNoise,ratio.size())
+    , _ratio(ratio)
+    , _mean_temp(DimensionGet())
+    , _arg(DimensionGet())
   {
-    _ratio = ratio;
     // Initialise ConditionalArguments to 0
     ColumnVector arg;
     for (unsigned int i=0; i < NumConditionalArgumentsGet() ; i++)
@@ -44,6 +47,8 @@ namespace BFL
   LinearAnalyticConditionalGaussian::LinearAnalyticConditionalGaussian(const Matrix& a, 
 						       const Gaussian& additiveNoise)
     : AnalyticConditionalGaussianAdditiveNoise(additiveNoise,1)
+    , _mean_temp(DimensionGet())
+    , _arg(DimensionGet())
   {
     _ratio.resize(1);
     _ratio[0] = a;
@@ -57,15 +62,14 @@ namespace BFL
   ColumnVector
   LinearAnalyticConditionalGaussian::ExpectedValueGet() const
   { 
-    ColumnVector mean(DimensionGet()); mean = 0.0;
-    ColumnVector arg;
+    _mean_temp = 0.0;
     for (unsigned int i=0; i < NumConditionalArgumentsGet() ; i++)
       {
-	arg = ConditionalArgumentGet(i);
-	mean += (ColumnVector) (MatrixGet(i) * arg);
+	_arg = ConditionalArgumentGet(i);
+	_mean_temp += (ColumnVector) (MatrixGet(i) * _arg);
       }
-    mean += AdditiveNoiseMuGet();
-    return mean;
+    _mean_temp += AdditiveNoiseMuGet();
+    return _mean_temp;
   }
 
   Matrix

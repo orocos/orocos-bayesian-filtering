@@ -1,6 +1,7 @@
 // $Id$
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
-//                    Wim Meeussen  <wim dot meeussen at mech dot kuleuven dot ac dot be>
+//                    Wim Meeussen  <wim dot meeussen at mech dot kuleuven dot be>
+//                    Tinne De Laet  <tinne dot delaet at mech dot kuleuven dot be>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -95,6 +96,9 @@ namespace BFL
     private:
    
       vector<MatrixWrapper::Matrix> _ratio;
+      // variables to avoid allocation during expectedValueGet call      
+      mutable MatrixWrapper::ColumnVector _mean_temp;
+      mutable MatrixWrapper::ColumnVector _arg;
 
     };
 
