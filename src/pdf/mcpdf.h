@@ -69,6 +69,17 @@ namespace BFL
       /// After updating weights, we have to update the cumPDF
       void CumPDFUpdate();
 
+    private:
+        // Variables to avoid allocation during call of
+        //expectedvalueget/covarianceget
+        mutable T _CumSum;
+        mutable vector<WeightedSample<T> > _los;
+        mutable T _mean;
+        mutable T _diff;
+        mutable SymmetricMatrix _covariance;
+        mutable Matrix _diffsum;
+        mutable typename vector<WeightedSample<T> >::iterator _it_los;
+
     public:
       /// Constructor
       /** @param num_samples the number of samples this pdf has
@@ -157,11 +168,19 @@ namespace BFL
   // Constructor
   template <typename T> MCPdf<T>::MCPdf(unsigned int num_samples, unsigned int dimension) : 
     Pdf<T>(dimension)
+    , _CumSum(dimension)
+    , _mean(dimension)
+    , _diff(dimension)
+    , _covariance(dimension)
+    , _diffsum(dimension,dimension)
     {
       _SumWeights = 0;
       WeightedSample<T> my_sample(dimension);
       _listOfSamples.insert(_listOfSamples.begin(),num_samples,my_sample);
       _CumPDF.insert(_CumPDF.begin(),num_samples+1,0.0);
+
+     _los.assign(num_samples,WeightedSample<T>(dimension));
+     _it_los = _los.begin();
 #ifdef __CONSTRUCTOR__
       // if (num_samples > 0)
       cout << "MCPDF Constructor: NumSamples = " << _listOfSamples.size()
@@ -182,10 +201,17 @@ namespace BFL
   // Copy constructor
   template <typename T> 
     MCPdf<T>::MCPdf(const MCPdf & pdf) : Pdf<T>(pdf)
+    , _CumSum(pdf.DimensionGet())
+    , _mean(pdf.DimensionGet())
+    , _diff(pdf.DimensionGet())
+    , _covariance(pdf.DimensionGet())
+    , _diffsum(pdf.DimensionGet(),pdf.DimensionGet())
     {
       this->_listOfSamples = pdf._listOfSamples;
       this->_CumPDF = pdf._CumPDF;
       _SumWeights = pdf._SumWeights;
+      this->_los = pdf._listOfSamples;
+     _it_los = _los.begin();
 #ifdef __CONSTRUCTOR__
       cout << "MCPDF Copy Constructor: NumSamples = " << _listOfSamples.size()
 	   << ", CumPDF Samples = " << _CumPDF.size()

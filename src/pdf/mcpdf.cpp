@@ -28,35 +28,29 @@ namespace BFL
   template <> inline
   ColumnVector MCPdf<ColumnVector>::ExpectedValueGet (  ) const
   {
-    ColumnVector CumSum(DimensionGet());
-    CumSum=0.0;
-    vector<WeightedSample<ColumnVector> > los = _listOfSamples;
-    vector<WeightedSample<ColumnVector> >::iterator it;
-    for ( it = los.begin() ; it != los.end() ; it++ )
-      CumSum += ( it->ValueGet() * it->WeightGet() );
-    return CumSum/_SumWeights;
+    _CumSum = 0.0;
+    _los = _listOfSamples;
+    for ( _it_los = _los.begin() ; _it_los != _los.end() ; _it_los++ )
+         _CumSum += ( _it_los->ValueGet() * _it_los->WeightGet() );
+    return _CumSum/_SumWeights;
   }
 
 
   template <> inline
   SymmetricMatrix MCPdf<ColumnVector>::CovarianceGet (  ) const
   {
-    ColumnVector mean(this->ExpectedValueGet());
-    ColumnVector diff(DimensionGet()); // Temporary storage
-    SymmetricMatrix covariance(DimensionGet());
-    Matrix diffsum(DimensionGet(), DimensionGet());
-    vector<WeightedSample<ColumnVector> > los = _listOfSamples;
-    diffsum = 0.0;
+    _mean = (this->ExpectedValueGet());
+    _los = _listOfSamples;
+    _diffsum = 0.0;
     // Actual calculation
-    static vector<WeightedSample<ColumnVector> >::iterator it;
-    for (it = los.begin(); it != los.end(); it++)
+    for (_it_los = _los.begin(); _it_los != _los.end(); _it_los++)
       {
-	diff = (it->ValueGet() - mean);
-	diffsum += diff * (diff.transpose() * it->WeightGet());
+	_diff = ( _it_los->ValueGet() - _mean);
+	_diffsum += _diff * (_diff.transpose() * _it_los->WeightGet());
       }
     // Biased estimator!! (unbiased possible with weighted samples??)
-    (diffsum/_SumWeights).convertToSymmetricMatrix(covariance);
-    return covariance;
+    (_diffsum/_SumWeights).convertToSymmetricMatrix(_covariance);
+    return _covariance;
   }
  
 
@@ -70,14 +64,12 @@ namespace BFL
   {
     unsigned int result;
     double CumSum = 0;
-
+    _los = _listOfSamples;
     double current_weight;
-    vector<WeightedSample<unsigned int> > los = _listOfSamples;
-    vector<WeightedSample<unsigned int> >::iterator it;
-    for ( it = los.begin() ; it != los.end() ; it++ )
+    for ( _it_los = _los.begin() ; _it_los != _los.end() ; _it_los++ )
       {
-	current_weight = it->WeightGet();
-	CumSum += ( ((double)it->ValueGet()) * current_weight );
+	current_weight = _it_los->WeightGet();
+	CumSum += ( ((double)_it_los->ValueGet()) * current_weight );
       }
     result = (unsigned int)((CumSum/_SumWeights) + 0.5);
     return result;
@@ -92,21 +84,19 @@ namespace BFL
     unsigned int mean = this->ExpectedValueGet();
     unsigned int diff;
     double diffsum, current_weight;
-    vector<WeightedSample<unsigned int> > los = _listOfSamples;
+    _los = _listOfSamples;
     diffsum = 0.0;
     // Actual calculation
-    static vector<WeightedSample<unsigned int> >::iterator it;
-    for (it = los.begin(); it != los.end(); it++)
+    for (_it_los = _los.begin(); _it_los != _los.end(); _it_los++)
       {
-	current_weight = it->WeightGet();
-	diff = (it->ValueGet() - mean);
+	current_weight = _it_los->WeightGet();
+	diff = (_it_los->ValueGet() - mean);
 	diffsum += (((double)(diff * diff)) * current_weight);
       }
 
     // Biased estimator!! (unbiased possible with weighted samples??)
-    SymmetricMatrix Covariance(1);
-    Covariance(1,1) = (diffsum / _SumWeights);
-    return Covariance;
+    _covariance(1,1) = (diffsum / _SumWeights);
+    return _covariance;
   }
 
 }
