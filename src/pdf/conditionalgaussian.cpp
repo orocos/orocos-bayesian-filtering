@@ -1,5 +1,6 @@
 // $Id$
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
+// Copyright (C) 2008 Tinne De Laet <first dot last at mech dot kuleuven dot be>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -27,6 +28,11 @@ namespace BFL
   ConditionalGaussian::ConditionalGaussian(int dim, 
 					   int num_conditional_arguments)
     : ConditionalPdf<ColumnVector,ColumnVector>(dim, num_conditional_arguments)
+    , _diff(dim)
+    , _Mu(dim)
+    , _Low_triangle(dim,dim)
+    , _samples(dim)
+    , _SampleValue(dim)
   {}
 
   /// Destructor
@@ -36,10 +42,10 @@ namespace BFL
   ConditionalGaussian::ProbabilityGet(const ColumnVector& input) const
   {
     // Update Mu
-    ColumnVector Mu = ExpectedValueGet();
-    ColumnVector diff = input - Mu;
+    _Mu = ExpectedValueGet();
+    _diff = input - _Mu;
     
-    Probability temp = diff.transpose() * (ColumnVector)(CovarianceGet().inverse() * diff);
+    Probability temp = _diff.transpose() * (ColumnVector)(CovarianceGet().inverse() * _diff);
     Probability result = exp(-0.5 * temp) / sqrt(pow(M_PI*2,(double)DimensionGet()) * CovarianceGet().determinant());
     return result;
   }
@@ -60,18 +66,16 @@ namespace BFL
     // These are both methods that don't require any arguments
   
     // Update mu
-    ColumnVector Mu = ExpectedValueGet();
+    _Mu = ExpectedValueGet();
   
     switch(method)
       {
       case DEFAULT: // Cholesky, see althere (bad implementation)
 	{
-	  Matrix Low_triangle;
-	  bool result = CovarianceGet().cholesky_semidefinite(Low_triangle);
-	  ColumnVector samples(DimensionGet()); ColumnVector SampleValue(DimensionGet());
-	  for (unsigned int j=1; j < DimensionGet()+1; j++){samples(j) = rnorm(0,1);}
-	  SampleValue = (Low_triangle * samples) + Mu;
-	  sample.ValueSet(SampleValue);
+	  bool result = CovarianceGet().cholesky_semidefinite(_Low_triangle);
+	  for (unsigned int j=1; j < DimensionGet()+1; j++){_samples(j) = rnorm(0,1);}
+	  _SampleValue = (_Low_triangle * _samples) + _Mu;
+	  sample.ValueSet(_SampleValue);
 	  return result;
 	}
       case BOXMULLER: /// @todo Implement box-muller here
@@ -81,11 +85,9 @@ namespace BFL
 	}
       case CHOLESKY: // Cholesky Sampling
 	{
-	  Matrix Low_triangle;
-	  bool result = CovarianceGet().cholesky_semidefinite(Low_triangle);
+	  bool result = CovarianceGet().cholesky_semidefinite(_Low_triangle);
 	  /* For now we keep it simple, and use the scythe library
 	     (although wrapped) with the uRNG that it uses itself only */
-	  ColumnVector samples(DimensionGet()); ColumnVector SampleValue(DimensionGet());
 	  /* Sample Gaussian._dimension samples from univariate
 	     gaussian This could be done using several available
 	     libraries, combined with different uniform RNG.  Both the
@@ -93,9 +95,9 @@ namespace BFL
 	     #ifdef conditions, although I'm sure there must exist a
 	     cleaner way to implement this!
 	  */
-	  for (unsigned int j=1; j < DimensionGet()+1; j++) samples(j) = rnorm(0,1);
-	  SampleValue = (Low_triangle * samples) + Mu;
-	  sample.ValueSet(SampleValue);
+	  for (unsigned int j=1; j < DimensionGet()+1; j++) _samples(j) = rnorm(0,1);
+	  _SampleValue = (_Low_triangle * _samples) + _Mu;
+	  sample.ValueSet(_SampleValue);
 	  return result;
 	}
       default:

@@ -1,5 +1,6 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
+// Copyright (C) 2008 Tinne De Laet <first dot last at mech dot kuleuven dot be>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -58,6 +59,13 @@ namespace BFL
       virtual bool SampleFrom (std::vector<Sample<MatrixWrapper::ColumnVector> >& samples, const int num_samples,
 			       int method=DEFAULT, void * args=NULL) const;
 
+    protected:
+      // variables to avoid allocation on the heap during sampling
+      mutable ColumnVector _diff;
+      mutable ColumnVector _Mu;
+      mutable Matrix _Low_triangle;
+      mutable ColumnVector _samples;
+      mutable ColumnVector _SampleValue;
 
     };
 
