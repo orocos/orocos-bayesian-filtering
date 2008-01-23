@@ -1,6 +1,7 @@
 // $Id$
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
-//                    Wim Meeussen  <wim dot meeussen at mech dot kuleuven dot ac dot be>
+//                    Wim Meeussen  <wim dot meeussen at mech dot kuleuven dot be>
+//                    Tinne De Laet <tinne dot delaet at mech dot kuleuven dot be>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -30,21 +31,56 @@ namespace BFL
 
 ExtendedKalmanFilter::ExtendedKalmanFilter(Gaussian* prior)
 : KalmanFilter(prior)
+, _x(prior->DimensionGet())
+, _J(prior->DimensionGet())
+, _F(prior->DimensionGet(),prior->DimensionGet())
+, _Q(prior->DimensionGet())
 {}
 
 ExtendedKalmanFilter::~ExtendedKalmanFilter()
 {}
 
 void
+ExtendedKalmanFilter::AllocateMeasModelExt(const vector<unsigned int>& meas_dimensions)
+{
+  unsigned int meas_dimension;
+  for(int i = 0 ; i< meas_dimensions.size(); i++)
+  {
+      // find if variables with size meas_sizes[i] are already allocated
+      meas_dimension = meas_dimensions[i];
+      _mapMeasUpdateVariablesExt_it =  _mapMeasUpdateVariablesExt.find(meas_dimension);
+      if( _mapMeasUpdateVariablesExt_it == _mapMeasUpdateVariablesExt.end())
+      {
+          //variables with size z.rows() not allocated yet
+          _mapMeasUpdateVariablesExt_it = (_mapMeasUpdateVariablesExt.insert
+              (std::pair<unsigned int, MeasUpdateVariablesExt>( meas_dimension,MeasUpdateVariablesExt(meas_dimension,_x.rows()) ))).first;
+       }
+   }
+}
+
+void
+ExtendedKalmanFilter::AllocateMeasModelExt(const unsigned int& meas_dimension)
+{
+   // find if variables with size meas_sizes[i] are already allocated
+   _mapMeasUpdateVariablesExt_it =  _mapMeasUpdateVariablesExt.find(meas_dimension);
+   if( _mapMeasUpdateVariablesExt_it == _mapMeasUpdateVariablesExt.end())
+   {
+       //variables with size z.rows() not allocated yet
+       _mapMeasUpdateVariablesExt_it = (_mapMeasUpdateVariablesExt.insert
+           (std::pair<unsigned int, MeasUpdateVariablesExt>( meas_dimension,MeasUpdateVariablesExt(meas_dimension,_x.rows()) ))).first;
+    }
+}
+
+void
 ExtendedKalmanFilter::SysUpdate(SystemModel<ColumnVector>* const sysmodel,
                                 const ColumnVector& u)
 {
-  ColumnVector    x = _post->ExpectedValueGet();
-  ColumnVector    J = ((AnalyticSys*)sysmodel)->PredictionGet(u,x); 
-  Matrix          F = ((AnalyticSys*)sysmodel)->df_dxGet(u,x);
-  SymmetricMatrix Q = ((AnalyticSys*)sysmodel)->CovarianceGet(u,x);
+  _x = _post->ExpectedValueGet();
+  _J = ((AnalyticSys*)sysmodel)->PredictionGet(u,_x); 
+  _F = ((AnalyticSys*)sysmodel)->df_dxGet(u,_x);
+  _Q = ((AnalyticSys*)sysmodel)->CovarianceGet(u,_x);
   
-  CalculateSysUpdate(J, F, Q);
+  CalculateSysUpdate(_J, _F, _Q);
 }
 
 void
@@ -52,12 +88,14 @@ ExtendedKalmanFilter::MeasUpdate(MeasurementModel<ColumnVector,ColumnVector>* co
                                  const ColumnVector& z, 
 			         const ColumnVector& s)
 {
-  ColumnVector    x = _post->ExpectedValueGet();
-  ColumnVector    Z = ((AnalyticMeas*)measmodel)->PredictionGet(s,x); 
-  Matrix          H = ((AnalyticMeas*)measmodel)->df_dxGet(s,x);
-  SymmetricMatrix R = ((AnalyticMeas*)measmodel)->CovarianceGet(s,x);
+  // allocate measurement for z.rows() if needed
+  AllocateMeasModelExt(z.rows());
   
-  CalculateMeasUpdate(z, Z, H, R);
+  (_mapMeasUpdateVariablesExt_it->second)._Z = ((AnalyticMeas*)measmodel)->PredictionGet(s,_x); 
+  (_mapMeasUpdateVariablesExt_it->second)._H = ((AnalyticMeas*)measmodel)->df_dxGet(s,_x);
+  (_mapMeasUpdateVariablesExt_it->second)._R = ((AnalyticMeas*)measmodel)->CovarianceGet(s,_x);
+  
+  CalculateMeasUpdate(z, (_mapMeasUpdateVariablesExt_it->second)._Z, (_mapMeasUpdateVariablesExt_it->second)._H, (_mapMeasUpdateVariablesExt_it->second)._R);
 }
 
 } // end namespace BFL

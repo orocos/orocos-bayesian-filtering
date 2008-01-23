@@ -1,6 +1,7 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
-//                    Wim Meeussen  <wim dot meeussen at mech dot kuleuven dot ac dot be>
+//                    Wim Meeussen  <wim dot meeussen at mech dot kuleuven dot be>
+//                    Tinne De Laet <tinne dot delaet at mech dot kuleuven dot be>
 //  
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -23,6 +24,7 @@
 #include "kalmanfilter.h"
 #include "../pdf/conditionalpdf.h"
 #include "../pdf/gaussian.h"
+# include <map>
 
 namespace BFL
 {
@@ -40,13 +42,6 @@ namespace BFL
 */
 class ExtendedKalmanFilter : public KalmanFilter
 {
- protected:
-  virtual void SysUpdate(SystemModel<MatrixWrapper::ColumnVector>* const sysmodel,
-                         const MatrixWrapper::ColumnVector& u);
-  virtual void MeasUpdate(MeasurementModel<MatrixWrapper::ColumnVector,MatrixWrapper::ColumnVector>* const measmodel,
-                          const MatrixWrapper::ColumnVector& z, 
-			  const MatrixWrapper::ColumnVector& s);
-
 public:
   /** Constructor
       @pre you created the prior
@@ -56,6 +51,49 @@ public:
    
   /// Destructor
   virtual ~ExtendedKalmanFilter();
+
+  /// Function to allocate memory needed during the measurement update,
+  //  For realtime use, this function should be called before calling measUpdate
+  /*  @param vector containing the dimension of the measurement models which are
+      going to be used
+  */
+  void AllocateMeasModelExt( const vector<unsigned int>& meas_dimensions);
+
+  /// Function to allocate memory needed during the measurement update
+  //  For realtime use, this function should be called before calling measUpdate
+  /*  @param dimension of the measurement models which is
+      going to be used
+  */
+  void AllocateMeasModelExt( const unsigned int& meas_dimensions);
+
+private:
+  struct MeasUpdateVariablesExt
+  {
+    SymmetricMatrix _R;
+    Matrix _H;
+    ColumnVector _Z;
+    MeasUpdateVariablesExt() {};
+    MeasUpdateVariablesExt(unsigned int meas_dimension, unsigned int state_dimension):
+      _R(meas_dimension) 
+    , _H(meas_dimension,state_dimension)
+    , _Z(meas_dimension)
+{};
+  }; //struct
+
+ protected:
+  virtual void SysUpdate(SystemModel<MatrixWrapper::ColumnVector>* const sysmodel,
+                         const MatrixWrapper::ColumnVector& u);
+  virtual void MeasUpdate(MeasurementModel<MatrixWrapper::ColumnVector,MatrixWrapper::ColumnVector>* const measmodel,
+                          const MatrixWrapper::ColumnVector& z, 
+			  const MatrixWrapper::ColumnVector& s);
+  // variables to avoid allocation on the heap
+  ColumnVector _x;
+  ColumnVector _J;
+  Matrix    _F;
+  SymmetricMatrix _Q;
+  std::map<unsigned int, MeasUpdateVariablesExt> _mapMeasUpdateVariablesExt;
+  std::map<unsigned int, MeasUpdateVariablesExt>::iterator _mapMeasUpdateVariablesExt_it;
+
 
 };  // class
 
