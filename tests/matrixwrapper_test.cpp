@@ -188,10 +188,10 @@ MatrixwrapperTest::testMatrixwrapperValue()
   SymmetricMatrix Ks_resize(r); Ks_resize = v;
   CPPUNIT_ASSERT_EQUAL(Ks.rows(), r+2);
   CPPUNIT_ASSERT_EQUAL(Ks.columns(), r+2);
-//  Ks.resize(r);
-//  CPPUNIT_ASSERT_EQUAL(Ks.rows(), r);
-//  CPPUNIT_ASSERT_EQUAL(Ks.columns(), r);
-//  CPPUNIT_ASSERT_EQUAL(Ks, Ks_resize);
+  Ks.resize(r);
+  CPPUNIT_ASSERT_EQUAL(Ks.rows(), r);
+  CPPUNIT_ASSERT_EQUAL(Ks.columns(), r);
+  CPPUNIT_ASSERT_EQUAL(Ks, Ks_resize);
   // COLUMNVECTOR
   ColumnVector Kc(r+2); Kc = v;
   ColumnVector Kc_resize(r); Kc_resize = v;
