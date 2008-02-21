@@ -279,7 +279,7 @@ MyMatrix MyMatrix::sub(int i_start, int i_end, int j_start , int j_end) const
   MyMatrix submatrix(i_end-i_start+1, j_end-j_start+1);
   for (int i=i_start; i<=i_end; i++)
     for (int j=j_start; j<=j_end; j++)
-      submatrix(i,j) = (*this)(i,j);
+      submatrix(i-i_start+1,j-j_start+1) = (*this)(i,j);
 
   return submatrix;
 }
