@@ -1,0 +1,453 @@
+\documentclass[a4paper,10pt]{article}
+
+\advance\textwidth by 6cm
+\advance\oddsidemargin by -3cm
+\advance\evensidemargin by -3cm
+
+\advance \topmargin -2cm
+\advance \textheight 4cm
+
+
+%opening
+\title{Installation Guide \\  Bayesian Filtering Library}
+\author{Tinne De Laet, Wim Meeussen, Erwin Aertbeli\"en and Klaas Gadeyne}
+
+\usepackage{amsmath}
+\usepackage{subfigure}
+\usepackage{graphicx,color,psfrag}
+\usepackage{epsfig} 
+\usepackage{fancyvrb} 
+\usepackage{fancybox} 
+\usepackage{verbatim}
+\usepackage{keyval}
+\usepackage{url}
+%\usepackage[]{tex4ht}
+
+%\graphicspath{{figures_src/}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This document contains installation instructions for the Bayesian Filtering Library.
+Section~\ref{sec:linux} contains installation instructions for Linux, while Section~\ref{sec:windows} explains installation with Visual Studio for Windows.
+\end{abstract}
+
+
+%----------------------------------
+\section{Linux installation}
+\label{sec:linux}
+%----------------------------------
+This section contains installation instructions for BFL for Linux.
+The first Section~\ref{subsec:ubuntu} explains the most easy way to install, which is through the use of precompiled Ubuntu/Debian packages.
+For non Ubuntu/Debian users, the next Section~\ref{subsec:source} contains the instructions to install BFL from source.
+
+\subsection{Precompiled Ubuntu/Debian packages}
+%----------------------------------
+\label{subsec:ubuntu}
+For Ubuntu and Debian users, the easiest way to install BFL is by
+using our precompiled packages.  The BFL package is compiled for the
+LTI matrix library and the LTI random number generator library.  The
+repository also includes a precompiled version of the LTI library
+itself.  Using these precompiled packages is very simple:
+\begin{enumerate}
+\item First add the following line to your /etc/apt/sources.list:
+\begin{verbatim}
+  deb http://people.mech.kuleuven.be/~tdelaet/bfl _mydistro_ main
+\end{verbatim}
+  where \emph{\_mydistro\_} is breezy, dapper, edgy or feisty.
+\item Then apt-get the packages:
+\begin{verbatim}
+  sudo apt-get update
+  sudo apt-get install orocos-bfl
+\end{verbatim}
+\end{enumerate}
+Now all components are installed and you are ready to start using BFL.
+
+
+
+
+%----------------------------------
+\subsection{Installation from source}
+\label{subsec:source}
+%----------------------------------
+An alternative way to get BFL is to install it from source, e.g.~if
+you are not using Ubuntu or Debian. This section gives step-by-step
+instructions to compile BFL from source. You'll not only need to
+compile BFL, but also a matrix computation library and a random number
+generator library. A few things you need to know before getting
+started:
+\begin{enumerate}
+\item BFL is developed and regularly tested for GNU Linux on
+  Debian and Ubuntu. However we've received success reports from other
+  distributions and architectures, such as Gentoo, MAC OS X and MS
+  Windows.
+\item BFL compiles without warnings with g++ 2.95.0 up to g++ 4.1.2
+  However, it is preferred to use the latest g++ version.
+\item We use cmake in the build system of BFL. You'll need cmake 2.2
+  or 2.4.
+\item To download the latest version from our subversion server, you
+  will need a subversion client.
+\end{enumerate}
+The instructions explain how to install libraries in the ~/install
+directory.
+
+\subsubsection{Install an external matrix library}
+\label{subsec:matrix}
+%----------------------------------
+BFL requires an external library for matrix computations. You can
+choose to use the LTI library, the Newmat library, or the Boost library.
+
+\paragraph{LTI matrix library}
+You can install the LTI library as a precompiled Ubuntu/Debian
+package, or compile it from source. 
+\begin{itemize}
+\item To install the precompiled LTI package, add the line in your
+  sources.list as described in Section~\ref{subsec:ubuntu}, and then run:
+\begin{verbatim}
+  sudo apt-get update
+  sudo apt-get install liblti-dev
+\end{verbatim}
+\item To install the LTI library from source:
+
+\begin{enumerate}
+\item First you'll need to install the libxt-dev package:
+\begin{verbatim}
+  sudo apt-get install libxt-dev
+\end{verbatim}
+\item Then download the latest version of the LTI library from the LTI
+  web page
+  \url{http://ltilib.sourceforge.net/doc/homepage/index.shtml}
+\item Move the downloaded file to a sources folder:
+\begin{verbatim}
+  mv ltilib.tar.gz ~/sources/
+\end{verbatim}
+\item Go to the directory \ $\mathtt{\tilde{ }}$\texttt{/sources/}
+\begin{verbatim}
+  cd ~/sources/
+\end{verbatim}
+\item Untar and unzip the file:
+\begin{verbatim}
+  tar -xzvf ltilib.tar.gz
+\end{verbatim}
+\item Build the library:
+\begin{verbatim}
+  cd ltilib/linux
+  make -f Makefile.cvs
+  ./configure --disable-debug --without-gtk --disable-gtk --prefix=~/install
+  make
+\end{verbatim}
+  If you don't want to install ltilib in \texttt{~/install}
+   pass another argument for the \texttt{--prefix} option to the configure script.
+\item Finally, install the library
+\begin{verbatim}
+  [sudo] make install
+\end{verbatim}
+\end{enumerate}
+For more details, see the LTI web page
+\url{http://ltilib.sourceforge.net/doc/homepage/index.shtml}.
+\end{itemize}
+
+
+
+
+
+
+\paragraph{Newmat matrix library}
+You can install the Newmat library as a precompiled Ubuntu/Debian
+package, or compile it from source.
+\begin{itemize}
+\item To install the precompiled Newmat package run:
+\begin{verbatim}
+  sudo apt-get install libnewmat10-dev
+\end{verbatim}
+
+
+\item To install the Newmat library from source:
+\begin{enumerate}
+\item Create a directory in which you will put the source of newmat:
+\begin{verbatim}
+ mkdir ~/sources/newmat/
+\end{verbatim}
+\item Then download the latest version (version 11) of the Newmat library from the
+  Newmat web page:
+  \url{http://www.robertnz.net/download.html}
+\item Move the downloaded file to your source folder:
+\begin{verbatim}
+  mv newmat11.tar.gz ~/sources/newmat
+\end{verbatim}
+\item Go to the directory \ $\mathtt{\tilde{ }}$\texttt{/sources/}
+\begin{verbatim}
+  cd ~/sources/newmat
+\end{verbatim}
+\item Untar and unzip the file:
+\begin{verbatim}
+  tar -xzvf newmat11.tar.gz
+\end{verbatim}
+\item Then go to \url{http://people.mech.kuleuven.be/~tdelaet/Makefile.Newmat} and save the file as Makefile in your newmat directory.
+\item Also get the adapted include.h at \url{http://people.mech.kuleuven.be/~tdelaet/include.h.newmat11} and save the file as include.h. in your newmat directory.
+\item Build the library:
+\begin{verbatim}
+  make 
+\end{verbatim}
+\item Finally, install the library.  By default newmat gets installed
+  in \texttt{/usr/local}.  So change the \emph{PREFIX} variable in \texttt{Makefile.Newmat} to \texttt{~/install} or any other installation directory before running make install.
+\begin{verbatim}
+  [sudo] make install
+\end{verbatim}
+\end{enumerate}
+\end{itemize}
+
+\paragraph{Boost matrix library}
+You can install the Boost library as a precompiled Ubuntu/Debian
+package, or install it from source.
+\begin{itemize}
+\item To install the precompiled Boost package run:
+\begin{verbatim}
+  sudo apt-get install libboost-dev
+\end{verbatim}
+\item To get the source of the Boost library from source, download it from \url{http://sourceforge.net/project/showfiles.php?group_id=7586}.
+\begin{enumerate}
+ \item Move the downloaded file to your source folder:
+	\begin{verbatim}
+	mv boost_1_34_0.tar.gz ~/sources/
+	\end{verbatim}
+ \item Untar and unzip the file?
+ 	\begin{verbatim}
+ 	 tar -xzvf boost_1_34_0.tar.gz
+ 	\end{verbatim}
+ \item Go into the created directory:
+ 	\begin{verbatim}
+ 	cd boost_1_34_o
+ 	\end{verbatim}
+ \item Configure the library:
+	\begin{verbatim}
+	 ./configure
+	\end{verbatim}
+ \item Make the package:
+	\begin{verbatim}
+	 make
+	\end{verbatim}
+\item Install boost:
+	\begin{verbatim}
+	 sudo make install
+	\end{verbatim}
+\end{enumerate}
+
+\end{itemize}
+
+
+
+
+
+
+
+
+
+\subsubsection{Install an external random number generator library}
+%----------------------------------
+BFL requires an external library for matrix computations. You can
+choose to use the LTI library, the Boost library, or the Scythe library.
+
+\paragraph{LTI rng library}
+You can install the LTI library as a precompiled Ubuntu/Debian
+package, or compile it from source (follow the same instructions as
+described in section~\ref{subsec:matrix}). If you already installed LTI
+as the matrix library, you already have everything for the rng library.
+
+\paragraph{Boost rng library}
+You can install the Boost library as a precompiled Ubuntu/Debian
+package, or install it from source (follow the same instructions as
+described in section~\ref{subsec:matrix}). If you already installed Boost
+as the matrix library, you already have everything for the rng library.
+
+\paragraph{Scythe rng library}
+To install the Scythe from source:
+\begin{enumerate}
+\item Download the Scythe from the Scythe web page:
+  \url{http://scythe.wustl.edu/}
+\item Move the downloaded file to your source folder:
+	\begin{verbatim}
+	mv scythestat-1.0.1.tar.gz ~/sources
+	\end{verbatim}
+\item Untar and unzip the file:
+	\begin{verbatim}
+	tar -xzvf scythestat-1.0.1.tar.gz
+	\end{verbatim}
+\item Configure the library:
+	\begin{verbatim}
+	./configure
+	\end{verbatim}
+\item Make the package:
+	\begin{verbatim}
+	make
+	\end{verbatim}
+\item Install scythe:
+	\begin{verbatim}
+	 sudo make install
+	\end{verbatim}
+\end{enumerate}
+
+
+
+
+
+
+\subsubsection{Install BFL itself}
+%----------------------------------
+Now we arrived to the installation of the BFL library itself. BFL is
+available from our subversion server, or as a tarbal.
+\begin{enumerate}
+\item First go to the \ $\mathtt{\tilde{ }}$\texttt{/sources/} folder:
+\begin{verbatim}
+  cd ~/sources/
+\end{verbatim}
+\item Then, to get a copy of BFL, use
+ \begin{itemize}
+ \item For subversion access:
+\begin{verbatim}
+  svn co http://svn.mech.kuleuven.be/repos/orocos/trunk/bfl
+\end{verbatim}
+ \item To extract a BFL tarbal you got from the website:
+\begin{verbatim}
+  tar xvf orocos-bfl.tar.gz
+\end{verbatim}
+\end{itemize}
+\item Now create and go to a build directory in ~/sources/bfl
+\begin{verbatim}
+  mkdir ~/sources/bfl/build
+  cd ~/sources/bfl/build
+\end{verbatim}
+\item Run ccmake:
+\begin{verbatim}
+  ccmake ..
+\end{verbatim}
+\item Then type 'c' to configure, and 'e' to exit the page that shows
+  the configure output. Now you see the cmake configuration menu. In
+  this menu you can change the following options:
+\begin{itemize}
+ \item BUILD\_EXAMPLES: ON if building the examples is desired,
+ \item BUILD\_TESTS: ON if building the cppunit tests is desired,
+ \item CMAKE\_BUILD\_TYPE: Debug or e.g. Release,
+ \item CMAKE\_INSTALL\_PREFIX: directory where to install bfl, e.g. \texttt{~/install}, 
+ \item CPPUNIT\_INSTALL: directory where the CPPUNIT is installed, e.g. \texttt{/usr},
+ \item GINAC\_INSTALL: directory where GINAC is installed, e.g. \texttt{/usr},
+ \item GINAC\_SUPPORT: OFF if you don't want to use GINAC support,
+ \item LIBRARY\_TYPE: type of library build, shared or static,
+ \item MATRIX\_INSTALL: directory where the matrix library is installed: e.g. \texttt{/usr},
+ \item MATRIX\_LIB: matrix library used: boost, lti or newmat,
+ \item RNG\_INSTALL: directory where the random number generator is installed: e.g. \texttt{/usr},
+ \item RNG\_LIB: random number generator used: boost, lti or scythe.
+\end{itemize}
+Now repeat the 'c' configure and 'e' exit cycle, until you get no more
+errors. When this is the case, you'll have the 'g' generate option
+available. Press 'g' to generate the makefiles, and then quit cmake
+with 'q' quit.
+\item Now all configuration is done, and you can build BFL:
+\begin{verbatim}
+  make 
+\end{verbatim}	
+\item To check the functionality of BFL, use
+\begin{verbatim}
+  make check
+\end{verbatim}	
+\item To install BFL use
+\begin{verbatim}
+  sudo make install
+\end{verbatim}
+\end{enumerate}
+In the \ $\mathtt{\tilde{ }}$\texttt{/sources/sources/bfl/examples} directory, you find some example BFL
+filters. A good next step is to check out the BFL tutorial on
+\url{http://www.orocos.org/bfl}, for a step-by-step introduction in building
+your own filters in BFL.
+\\\\\\
+Good luck!
+
+
+
+%----------------------------------
+\section{Windows - Visual Studio installation}
+\label{sec:windows}
+%----------------------------------
+This section offers a step-by-step guide for BFL installation with Visual Studio on Windows.
+
+\begin{enumerate}
+\item Download the BFL source code from the website: 
+\url{http://www.orocos.org/bfl/source}. Unzip this code.
+\item Create a folder $build$ and a folder $install$ where you will respectively build and install bfl (what's in a name?).
+ \item Install boost
+ 	\begin{itemize}
+ 	 \item The boost Getting Started Guide gives excellent installation instructions for windows: \url{http://www.boost.org/more/getting_started/index.html}. In accordance with these instructions we advice to use the installer provided by Boost Consulting.
+ 	 \item Change the install of boost such that the include files are located under: $ c:\backslash boost \backslash$
+ 	 Remark that the first part is arbirary, but the $include$ part not; this will make the bfl installation easier.
+ 	\end{itemize}
+\item Install CMake:
+	\begin{itemize}
+	\item You can find cmake at  \url{www.cmake.org}. Install it for windows.
+	\end{itemize}
+\item Run CMake:
+	\begin{itemize}
+	 \item Go to the start menu to start the CMake-GUI.
+	 \item Fill in the location of the source code e.g.:
+	 	\begin{verbatim}
+	 	c:\Users\username\Desktop\orocos-bfl-0.6.0-pre1-src
+	 	\end{verbatim}
+	\item Fill in the location of the build directory (which you previously created), e.g.:
+		\begin{verbatim}
+	 	c:\Users\username\Desktop\orocos-bfl-0.6.0-pre1-src\build
+		\end{verbatim}
+	\item Press the Configure botton. Select `Visual Studio 8, 2005' as a generator.
+	 You well get a lot of `errors' (remark this are actually not errors but messages). You can press the `OK' botton to check all messages or just press the `Cancel' botton to supress all further messages. Also mind the CPP-Unit error, which will prevent you from running the CPP-unit tests, but won't bother the examples nor any of your applications.
+	 \item Fill in:
+		\begin{itemize}
+		\item CMAKE\_BUILD\_TYPE: release
+		\item CMAKE\_INSTALL\_PREFIX: $ c:\backslash Users \backslash username \backslash Desktop \backslash orocos-bfl-0.6.0-pre1-src \backslash build$
+		\item LIBRARY\_TYPE: static
+		\item MATRIX\_INSTALL: $ c:\backslash boost \backslash$
+		\item MATRIX\_LIB: boost
+		\item RNG\_INSTALL: $ c:\backslash boost \backslash$
+		\item RNG\_LIB: boost
+		\end{itemize}
+	\item Press the Configure botton until you can press OK.
+	\item Press OK. CMake will shut down now, and BFL is ready to build. (If you get unexpected errors check the common problems section \ref{subsec:problems}).
+	\end{itemize}
+\item Build BFL with Visual Studio
+	\begin{itemize}
+	\item Start Visual Studio through the Start botton.
+	\item Open the project `ALL\_BUILD' located in the build directory.
+	\item Build the project (right mouse botton, build). (If you get unexpected errors check the common problems section).
+	\item Build the INSTALL project to install everything.
+	\end{itemize}
+\end{enumerate}
+
+In the \ $\mathtt{\tilde{ }}$\texttt{/sources/sources/bfl/examples} directory, you find some example BFL
+filters. A good next step is to check out the BFL tutorial on
+\url{http://www.orocos.org/bfl}, for a step-by-step introduction in building
+your own filters in BFL.
+\\\\\\
+Good luck!
+
+\subsection{Common problems}
+\label{subsec:problems}
+
+\subsubsection{Why does CMakeSetup with the message \emph{LINK : fatal error LNK1104: cannot open 
+file 'user32.lib'} while configuring a project?}
+The path to the SDK libs (user32.lib) must be added by the IDE when the 
+project generator "Visual Studio 8 2005" is used, because cmake uses 
+VCExpress.exe and on the fly generated project files to check for compiling 
+(VCExpress.exe reads some config files for the compiler/linker options) 
+
+So add the sdk lib path  at Tools$\rightarrow$Options$\rightarrow$Projects and Solutions$\rightarrow$VC++ Directories$\rightarrow$Library files
+So you have to install the platform SDK, (available on the Microsoft website \url{http://www.microsoft.com/downloads/details.aspx?FamilyId=A55B6B43-E24F-4EA3-A93E-40C0EC4F68E5&displaylang=en}) but 
+normally you will already have done this.  The installation will take some 
+time.
+
+\subsubsection{CPP UNIT error}
+The CPPunit tests will not compile on windows due to the lack of the libcppunit  library.   (this will give an error message, you can ignore this message), the examples should work however.
+If you would like to get the cpp unit tests, you can check the platform specific build instructions on \url{http://cppunit.sourceforge.net/cppunit-wiki/}. Building the library is possible for e.g. Microsoft Visual Studio 2005 but not for Visual Studio 2005 Express.
+
+
+\end{document}
+
+% LocalWords:  doxygen svn

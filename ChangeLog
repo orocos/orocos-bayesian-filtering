@@ -1,0 +1,515 @@
+
+2008-01-07  Tinne De Laet <first dot last at mech dot kuleuven dot be>
+	* Related to bug described in bug #475
+	* src/pdf/discrepdf.*: changed type of class variable _Values_p to
+	vector<Probability>
+	* src/filter/histogramfilter.cpp: adapted to changes of discretepdf 
+	* tests/pdf_test.cpp: adapted to changes of discretepdf
+	* tests/complete_filter_test.cpp: adapted to changes of discretepdf 
+	* examples/test_complete_filter.cpp: adapted to changes of discretepdf 
+	* examples/discrete_filter/test_discrete_filter.cpp: adapted to changes of discretepdf 
+
+2007-12-20  Tinne De Laet <first dot last at mech dot kuleuven dot be>
+	* Related to enhancement described in bug #472
+	* src/filter/histogramfilter.*/: added class for histogram filter 
+	* tests/complete_filter_test.*: added tests to test new class
+	* examples/discrete_filter/*: added example of histogram filter
+
+2007-12-20  Tinne De Laet <first dot last at mech dot kuleuven dot be>
+	* According to bug # 471, I made the interpretation of dimension unique
+	* src/pdf/...: added a class variable _num_states to the discrete pdfs to
+	represent the number of discrete states 
+	* tests/...: adapted according to changes in pdf
+	* examples/...: adapted according to changes in pdf
+
+2007-12-20  Tinne De Laet <first dot last at mech dot kuleuven dot be>
+	* src/pdf/uniform.*/: added class for uniform distribution
+	* tests/pdf_test.*: added tests to test new class
+
+2007-12-20  Tinne De Laet <first dot last at mech dot kuleuven dot be>
+	* src/rng/rng.*/: added method to sample from uniform distribution with
+	lower and upper border given
+
+2007-08-10  Tinne De Laet <first dot last at mech dot kuleuven dot be>
+	* tests/matrixwrapper_test.cpp: some extra tests added according to bug#441
+	and existing test made more thoroughly
+
+2007-05-25  Tinne De Laet <first dot last at mech dot kuleuven dot be>
+	* Singular value decomposition and pseudoinverse added to the matrix wrapper
+	(revision 28197)
+
+2007-05-21  Tinne De Laet <first dot last at mech dot kuleuven dot be>
+	* Smoother example included (and thoroughly tested ofcourse)
+
+2007-05-11  Wim Meeussen <first dot last at mech dot kuleuven dot be>
+	* Scythe support re-activated
+
+2007-05-10  Wim Meeussen <first dot last at mech dot kuleuven dot be>
+	* add extensive testing for matrix/vector wrapper
+
+2007-05-10  Wim Meeussen <first dot last at mech dot kuleuven dot be>
+	* add first support for boost matrix/vector library
+
+2007-05-03  Wim Meeussen <first dot last at mech dot kuleuven dot be>
+	* move experimental branch to new trunk location in orocos repository
+
+2007-05-03  Wim Meeussen <first dot last at mech dot kuleuven dot be>
+	* update documentation for new build system. see bfl/docs/installation_guide.tex
+
+2007-05-03  Wim Meeussen <first dot last at mech dot kuleuven dot be>
+	* Finished porting BFL to cmake build system
+
+2007-05-03  Wim Meeussen <first dot last at mech dot kuleuven dot be>
+	* Replace the tests in the src folder with the cppunit tests in
+	the bfl/tests folder
+	* Replace the tests in the src folder with the examples in the
+	bfl/examples folder
+
+2007-05-03  Wim Meeussen <first dot last at mech dot kuleuven dot be>
+	* Add the examples of the getting started guide to the BFL trunk
+	(Klaas should be happy now :-)
+
+2007-05-03  Wim Meeussen <first dot last at mech dot kuleuven dot be>
+	* Moved the matrixWrapper into the BFL build system. The namespace
+	MatrixWrapper was kept however for backwards compatibility
+
+2007-05-03  Wim Meeussen <first dot last at mech dot kuleuven dot be>
+	* replace all checks and cerr messages by assert
+	info, see <https://www.fmtc.be/orocos-bugzilla/show_bug.cgi?id=331>
+
+2007-05-03  Klaas Gadeyne  <first dot last at fmtc dot be>
+
+	* README and INSTALL: Remove references to scythe and update boost
+	info, see <https://www.fmtc.be/orocos-bugzilla/show_bug.cgi?id=297>
+
+2007-05-02  Tinne De Laet  <first dot last at mech dot kuleuven dot be>
+
+	* tests/model_test.*: added testLinearAnalytic MeasurementModelGaussianUncertainty 
+	* src/model/linearanalyticmeasurementmodel_gaussianuncertainty.h: removed
+	typo from comment
+
+2007-05-01  Tinne De Laet  <first dot last at mech dot kuleuven dot be>
+
+	* tests/model_test.*: removed typo from cpp and added
+	testLinearSystemModelGaussianUncertainty to test suite
+
+2007-04-30  Tinne De Laet  <first dot last at mech dot kuleuven dot be>
+
+	* src/pdf/discreteconditionalpdf.cpp: removed TODO from indexGet, function
+	checked 
+
+2007-04-30  Tinne De Laet  <first dot last at mech dot kuleuven dot be>
+
+	* tests/model_test.* : included linearSystemModelGaussianUncertainty test in
+	model_test
+
+2007-04-30  Tinne De Laet  <first dot last at mech dot kuleuven dot be>
+
+	* tests/model_test.* and tests/pdf_test.*: included mcpdf test in pdf_test
+	and discreteSytemModel test im model_test
+
+2007-04-30  Tinne De Laet  <first dot last at mech dot kuleuven dot be>
+
+	* tests/pdf_test.* and tests/sample_test.cpp: removed operator [] out of
+	test files and replaces by () to prevent problems with newmat
+
+2007-04-30  Tinne De Laet  <first dot last at mech dot kuleuven dot be>
+
+	* tests/pdf_test.* and tests/sample_test.cpp: moved latest version of tests
+	files to experimental branch and small changes to work in experimental
+	branch 
+
+2007-04-30  Tinne De Laet  <first dot last at mech dot kuleuven dot be>
+
+	* src/pdf/discretepdf.*: applied path proposed by Klaas Gadeyne proposed on
+	the mailinglist on the day of the commit regarding BUG #298. Replaced return
+	type of ProbabilitySet by bool (originally void). 
+
+2007-04-30  Tinne De Laet  <first dot last at mech dot kuleuven dot be>
+
+	* src/filter/innovationCheck*:  solved source of warning noticed by Klaas
+	Gadeyne and reported on the mailingslist on 2007-04-27.
+
+2007-04-19  Tinne De Laet  <first dot last at mech dot kuleuven dot be>
+
+	* test/sample_test.*: inserted I adapted the test program a
+	little bit in two points:(i) all values are set in the setup phase and not later on (was the case for
+	the Sample<int>, (ii) I added tests for Sample<double>
+
+2007-04-18  Tinne De Laet  <first dot last at mech dot kuleuven dot be>
+
+	* iteratedextendedkalmanfilter*: add convergence test for iterated extended
+	kalman filter correction iteration.
+
+2007-02-25  Klaas Gadeyne  <first dot last at gmail dot com>
+
+	* configure.ac, acinclude.m4, doxyfile.in: Add m4 macro that
+	checks subversion revision number and uses that for doxygen
+	generated docu
+
+2007-02-06  Klaas Gadeyne  <first dot last at gmail dot com>
+
+	* Add CPPUNIT unit tests to allow regression testing
+
+
+2006-03-15  Tinne De Laet  <first dot last at mech dot kuleuven dot be>
+
+	* New test files included (replaces the previous ones (except GINAC):
+	The goal of this test file (test_compare_filters.cpp) is to some filters for
+	the mobile robot localisation example. A nonlinear system model designed for
+	this example is added (nonlinearsystemmodel_gaussianuncertainty_mobile)
+	
+2005-11-19  Klaas Gadeyne  <first dot last at gmail dot com>
+
+	* Add m4 macro's to allow enabling/disabling of the ginac code
+	* Wrap lti RNG generator classes: this reduces the dependency of
+	BFL to 1 lib and should avoid too much installation problems for
+	non-programmers.
+
+	* Add m4 macro's to allow enabling/disabling of the ginac code
+	* Wrap lti RNG generator classes: this reduces the dependency of
+	BFL to 1 lib and should avoid too much installation problems for
+	non-programmers.
+
+2005-06-02  Wim Meeussen  <first dot last at mech dot kuleuven dot ac dot be>
+
+	Lots of changes to improve performance of particle filters and to
+	allow the use of hybrid states:
+	* Replace std::list<> by std::vector<> to increase performance of
+	particle filters.
+	* Pass various arguments as reference to eliminate unnecessary
+	copies (especially of std::vector<> types containling long lists
+	of samples).
+	* C++-ify the Sample class.
+	* Remove template code that was specifically written for
+	ColumnVector type, and replace by template specialization where
+	necessary.
+	* Fix in Probability class to allow probability of zero.
+	
+2005-05-19  Klaas Gadeyne  <first dot last at gmail dot com>
+
+	* Bring Ginac classes for symbolic derivation back in sync with
+	current API.  Thx to Bart Demarsin for extensive testing and
+	providing example code.
+	* C++-ify some of the code.
+
+2005-05-06  Klaas Gadeyne  <first dot last at gmail dot com>
+
+	* Change license from GPL into LGPL everywhere, add a COPYING file
+	with test version of the licence and change email address in
+	source code copyright.
+
+2005-05-03  Klaas Gadeyne  <first dot last at gmail dot com>
+
+	* Remove if(ptr) before delete ptr in src tree.  See 
+	<http://www.parashift.com/c++-faq-lite/freestore-mgmt.html#faq-16.8>
+
+2005-03-10  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* src/filter/test/test_compare_filters.cpp (main): fix small typo
+	DEFAULT_ROT_SPEED should ofcourse be DEFAULT_NUM_SAMPLES
+	* Add documentation in the src/filter/test/ subdirectory about the
+	system and measurement model
+
+2005-01-28  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* cvs tag rel-0_4_2
+	
+2005-01-12  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Add Square Root iterated extended Kalman Filter, provided by
+	Peter Slaets <peter dot slaets at hogelimb be>
+
+2005-01-05 Wim Meeussen  <wim dot meeussen at mech dot kuleuven dot ac dot be>
+
+	* Update Use new config file generated by matrix wrapper. Now you
+	only need to specify--with-matrix_wrapper=/path and not
+	--with-newmat=/path or --with-lti=/path 
+
+2004-12-09  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Fix yet another bug by Wim Meeussen in acinclude.m4 for use with
+	matrix wrapper
+	* Update installation instructions and Makefile for Scythe03
+	
+2004-11-15  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* src/filter/particlefilter.cpp: Add some checks.  Not completely
+	general, but general enough for now I guess.
+
+2004-11-12  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Fix bug in design.  No class representing Non-Analytical
+	Gaussian PDF.
+
+2004-11-10  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* INSTALL (Note): Add notice about how to run the whole testsuite
+	at once
+	* Various:  Fix and improve lots of stuff in the test
+	subdirectories after rechecking everything.
+	* src/sample/test/test_weightedsample.cpp: Add new wrapper stuff
+	and fix build system file Makefile.am
+	* Fixed bug in EKF code when no system model was present
+
+2004-11-05  Wim Meeussen  <wim dot meeussen at mech dot kuleuven dot ac dot be>
+
+	* src/wrapper/matrix replaced by external matrix library. For
+	installation instructions see INSTALL.
+	
+2004-07-05  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* src/filter/EKparticlefilter.cpp (Resample): added resampling for
+	EK particle filter.
+	* API change resize -> ReSize()
+	* Fix stuff with mcpdf template stuff
+	* cvs tag rel-0_4_1-rc1
+
+2004-07-02  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* First attempt to implement Extended Kalman Particle Filter.
+	Resampling not implemented yet.
+
+2004-06-29  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Add extra level between ConditionalGaussian and
+	linearconditionalGaussian.  ConditionalGaussian is now more
+	general and does not require additive noise anymore.
+	* src/pdf/mcpdf.cpp (ListOfSamplesSet): bugfix, forgot to update
+	CumPdf
+	* src/pdf/mcpdf.cpp (SampleFrom): Performance improvement in
+	Ripley sampling
+
+2004-06-21  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* src/filter/particlefilter.cpp (ResampleStep): Add dynamic
+	resampling algorithm.
+
+2004-06-16  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* src/filter/asirfilter.cpp (UpdateInternal): Sampling from
+	discrete index has to happen _every_ time.  Therefor also split up
+	Resample() and ResampleStep in particlefilter class.  + add some
+	"static" to params.
+	* src/filter/particlefilter.cpp (ProposalStepInternal): Important
+	bugfix in proposalstep method.  Forgot to propagate weight! 
+	* src/wrappers/matrix.cpp (Pseudoinverse): Fix to make this work
+	for non-square matrices (fix by Wim Meeussen).
+	* cvs tag rel-0_4_1-pre2
+
+2004-06-09  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* src/filter/particlefilter.cpp (ProposalStepInternal): Use O(N)
+	sampling here instead of O(N log(N))
+	* Put prereq autoconf version > 2.50 in
+	* Since libtool generates problems, only build static libs for now
+	by default.
+	
+2004-06-08  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* src/filter/asirfilter.cpp (UpdateInternal): Hey hey, I can use
+	this add-changelog-Entry function from the buffer I'm working in
+	:).  Added code for the Auxiliary filter, seems to work fine.  No
+	performancetests yet.
+	* cvs tag rel-0_4_1-pre1
+
+	* Reworked filter polymorphism implementation.  Should be far more
+	clear now.
+	* Added IEKF test to test_switch_kf_bootstrapfilter.cpp and
+	consequently renamed to test_compare_filters.cpp
+	* Preparation for ASIR filter algorithm
+
+2004-06-07  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Removed old build system Makefiles
+	* changed some references to pointers to avoid const problems and
+	dirty implementation
+
+2004-??-??  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+        * Changes:  BFL now compiles with g++-3.4 (tested with version
+	from Debian experimental)
+	
+2004-03-27  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Heavily tested with all libraries and compilers
+	* cvs tag rel-0_4_0
+
+2004-03-26  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Incorporate Support for automake and autoconf
+	* Several Minor bugfixes, most due to template specialization
+	* Small changes for compiling with gcc-3.4.  This version is ever
+	more strict when it comes to C++ standard.  You _need_ a modified
+	version of newmat and scythe for this.
+	* Rename ORO stuff (oroerr.h etc) into BFL
+	* Give constant.h bfl_ prefix
+	* cvs tag rel-0_4_0-rc2
+	
+2004-03-04  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Minor fixes to LTI matrix/vector bindings.  Seems to work now,
+	at least all of the tests run fine with both LTI CVS code and
+	Newmat 11.
+	* Minor modifications to some of the PDF test programs 
+	* Remove complete ginac dependency (I guess)
+	* cvs tag rel-0_4_0-rc1
+
+2004-03-02  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Add matrix/vector bindings for ltilib
+	<http://ltilib.sourceforge.net/doc/homepage/index.shtml>
+	Thanks to Jean Bernard Hayet for providing these wrappers
+	* Some further elimination of Ginac dependency
+	* Adapted INSTALL, README etc with information on ltilib
+	
+
+2004-02-??  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Minor Bug fixes and clearer comments
+	* cvs tag rel-0_4_0-pre2
+
+	
+2004-02-10  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Solved mean bugs in new code for particle filters.  They seem to
+	be working now.
+	* Minor Bug fixes and clearer comments
+	* cvs tag rel-0_4_0-pre1
+	* move Non-Linear* models to non-linear*_ginac to avoid explicit
+	ginac dependency
+
+2004-01-09  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Implemented faster sampling algorithm for MCPdf (O(N)) -> makes
+	a big performance difference for particle filters.
+
+2003-12-13  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Implement a lot of filtering improvements to make stuff even
+	more general
+	* All code is fully templated now, still some bugs in the discrete
+	version though.
+	* cvs tag rel-0_4_0-pre1
+
+2003-11-27  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Make some modifications to filter implementations (particularly
+	to particle filter to make stuff more general.  Still should
+	implement some stuff though :-)
+
+2003-10-07  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Some bugfixes in gaussian.cpp
+	* Small changes in conditionalpdf to ease debugging
+	* Adapt Makefile.Newmat to latest newmat code
+	* cvs tag rel-0_2_7
+
+2003-09-01  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* 1 Uniform namespace across all code : BFL
+	* cvs tag rel-0_2_6
+
+2003-08-19  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Bugfix in templates for MeasModel code
+	* Changed a lot of template class names S and T into something
+	more meaningful
+	* cvs tag rel-0_2_5
+
+2003-07-29  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Jan Callewaert added some preliminary files for making
+	distributed visualization easier with opendx.  See the HOWTO.
+	Some updates to the INSTALL file and small bugfixes too.
+	* cvs tag rel-0_2_4
+
+2003-07-18  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Some bugfixes in src/filter/test, and some improvements in the
+	Makefile
+	* cvs tag rel-0_2_3
+
+2003-05-20  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Serious bugfix: order of variables in systemmodel was fixed
+	x = 0, u = 1.  Maybe we should completely rewrite the model
+	classes as a particular implementation of pdf.
+	* cvs tag rel-0_2_2
+
+2003-05-16  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Redesign of model classes (Wim Meeussen)
+	* cvs tag rel-0_2_1-improved-model-class
+
+2003-04-30  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Full support for Non-minimal state KF of TL (Wim Meeussen)
+	* release 0.2.1
+
+2003-04-16  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Improved Kalman Classes (Wim Meeussen)
+	* Improved Documentation
+	* release 0.2.0 contains a fully working version of a particle
+	filter and both an extended kalman filter and IEKF.
+
+2003-04-03  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Corrected severe bug in SVD in the matrix wrapper
+	* Improved API to allow multiple measurementmodels, updated
+	asynchronously.  Testprograms should keep running without any
+	changes
+	* Kalman Filter code is now pretty stable (Wim Meeussen and Johan
+	Rutgeerts)
+
+2003-03-13  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Extended Kalman Filter should now be working, together with the
+	non-linear analytical System and Measurement models with additive
+	Gaussian uncertainty.  Ginac remains a problem in Debian unstable
+	* g++-3.2 transition succesfully survived, release 0.2.0 should be
+	arriving pretty soon now :-)
+
+2003-03-04  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* release 0.1.0 contains support for symbolic manipulation of
+	non-linear system and measurements (dependency on ginac library
+	for symbolic manipulation) 
+
+2003-02-17   Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* release 0.0.4 contains a more efficient implementation
+	of the samplefrom calls of the mcpdf classes and some bugfixes.
+
+2002-12-13  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+	
+	* Release 0.0.3 contains a significant improvement of the build
+	system
+	
+2002-11-27  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* release 0.0.1-pre4
+	* Reworked the build system to ease the future automake/autoconf
+	transition 
+	* Added libdir with libbayes.a
+	
+2002-11-18  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* release 0.0.1-pre3
+	* Redesigned conditionalgaussian class (bad design, introduced
+	coupling)
+	* Eliminated some classes that had become superfluous due to the
+	template classes (eg. analyticpdf, linearanalyticpdf, etc)
+	* Fully rewrote systemmodel and measurementmodel to eliminate
+	coupling (this coupling was due to bad design of
+	conditionalgaussian class)
+	
+2002-10-22  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* Converted all base-classes into template ones, allowing for more
+	flexibility (discrete systems, hybrid systems)
+	
+2002-09-15  Klaas Gadeyne  <klaas dot gadeyne at mech dot kuleuven dot ac dot be>
+
+	* First release (0.0.1_pre1) that does what it must do, without
+	Segfaults 

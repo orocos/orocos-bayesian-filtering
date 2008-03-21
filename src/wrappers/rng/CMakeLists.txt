@@ -1,0 +1,6 @@
+GLOBAL_ADD_INCLUDE_DIR( ${CMAKE_SOURCE_DIR}/src/wrappers/rng )
+GLOBAL_ADD_INCLUDE_DIR( ${CMAKE_BINARY_DIR}/src/wrappers/rng )
+GLOBAL_ADD_INCLUDE_DIR( ${RNG_INCLUDE} )
+GLOBAL_ADD_INCLUDE( bfl/wrappers/ ${CMAKE_BINARY_DIR}/src/wrappers/config.h)
+GLOBAL_ADD_INCLUDE( bfl/wrappers/rng rng.h )
+GLOBAL_ADD_SRC ( wrappers/rng/rng.cpp )

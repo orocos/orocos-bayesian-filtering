@@ -1,0 +1,4 @@
+Time-stamp: <2002-08-14 16:52:03 klaas>
+
+TARGET should be passed to subdirectories
+This doesn't work yet!!

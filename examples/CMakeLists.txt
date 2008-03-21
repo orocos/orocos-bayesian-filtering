@@ -1,0 +1,6 @@
+ADD_SUBDIRECTORY( compare_filters )
+ADD_SUBDIRECTORY( linear_kalman )
+ADD_SUBDIRECTORY( nonlinear_kalman )
+ADD_SUBDIRECTORY( nonlinear_particle )
+ADD_SUBDIRECTORY( smoother )
+ADD_SUBDIRECTORY( discrete_filter )
