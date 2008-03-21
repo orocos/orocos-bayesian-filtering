@@ -46,7 +46,7 @@ namespace BFL
     class. 
 */
 
-class HistogramFilter : public Filter<int,MatrixWrapper::ColumnVector>
+template <typename MeasVar> class HistogramFilter : public Filter<int,MeasVar>
 {
 public:
   /// Constructor
@@ -83,16 +83,19 @@ protected:
       @param s input to the system (must be of the same type as u
       for now, since this was not yet implemented in ConditionalPdf
   */
-  void MeasUpdate(MeasurementModel<MatrixWrapper::ColumnVector,int>* const measmodel,
-			  const MatrixWrapper::ColumnVector& z, 
+  void MeasUpdate(MeasurementModel<MeasVar,int>* const measmodel,
+			  const MeasVar& z, 
 			  const int& s);
 
   bool UpdateInternal(SystemModel<int>* const sysmodel,
 			      const int& u,
-			      MeasurementModel<MatrixWrapper::ColumnVector,int>* const measmodel,
-			      const MatrixWrapper::ColumnVector& z,
+			      MeasurementModel<MeasVar,int>* const measmodel,
+			      const MeasVar& z,
 			      const int& s);
 }; // class
+
+
+#include "histogramfilter.cpp"
 
 } // End namespace BFL
  

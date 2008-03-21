@@ -107,7 +107,7 @@ int main(int argc, char** argv)
   /******************************
    * Construction of the Filter *
    ******************************/
-  HistogramFilter filter(&prior);
+  HistogramFilter<ColumnVector> filter(&prior);
   DiscretePdf * prior_test = filter.PostGet();
   std::cout << "filter created" << std::endl;
   

@@ -264,7 +264,7 @@ Complete_FilterTest::testComplete_FilterValue_Discr()
   /******************************
    * Construction of the Filter *
    ******************************/
-  HistogramFilter filter(&prior);
+  HistogramFilter<ColumnVector> filter(&prior);
   DiscretePdf * prior_test = filter.PostGet();
   
   /***************************
