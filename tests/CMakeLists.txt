@@ -33,6 +33,12 @@ IF (BUILD_TESTS)
   TARGET_LINK_LIBRARIES( test_complete_filter orocos-bfl ${MATRIX_LIBS} ${RNG_LIBS} ${GINAC_LIBS} cppunit )
   ADD_TEST( test_complete_filter test_complete_filter )
 
+  ADD_EXECUTABLE( test_dataAssociationFilter ${DO_EXCLUDE} test-runner.cpp approxEqual.cpp dataAssociationFilterTest.cpp dataAssociationFilterTest.hpp
+                  ${PROJ_SOURCE_DIR}/examples/mobile_robot.cpp ${PROJ_SOURCE_DIR}/examples/compare_filters/nonlinearanalyticconditionalgaussianmobile.cpp
+                  ${PROJ_SOURCE_DIR}/examples/discrete_filter/conditionalUniformMeasPdf1d.cpp )
+  TARGET_LINK_LIBRARIES( test_dataAssociationFilter orocos-bfl ${MATRIX_LIBS} ${RNG_LIBS} ${GINAC_LIBS} cppunit )
+  ADD_TEST( test_dataAssociationFilter test_dataAssociationFilter )
+
 IF (GINAC_SUPPORT)
   ADD_EXECUTABLE( test_model_ginac ${DO_EXCLUDE} test-runner.cpp approxEqual.cpp model_test_ginac.cpp model_test_ginac.hpp)
   TARGET_LINK_LIBRARIES( test_model_ginac orocos-bfl ${MATRIX_LIBS} ${RNG_LIBS} ${GINAC_LIBS} cppunit )
