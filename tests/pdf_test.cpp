@@ -64,6 +64,12 @@ PdfTest::tearDown()
 void 
 PdfTest::testGaussian()
 {
+  Gaussian first_gaussian(DIMENSION);
+  first_gaussian.ExpectedValueSet(_mu);
+  first_gaussian.CovarianceSet(_sigma);
+  Sample<ColumnVector> test_sample ;
+    CPPUNIT_ASSERT_EQUAL( true, first_gaussian.SampleFrom(test_sample,DEFAULT,NULL));
+
   Gaussian a_gaussian(_mu,_sigma);
 
   /* Sampling */
@@ -313,12 +319,17 @@ PdfTest::testDiscretePdf()
   vector<Probability> prob_vecd(NUM_DS);
   prob_vecd[0] = 0.1; 
   prob_vecd[1] = 0.2; 
-  prob_vecd[2] = 0.3; 
+  prob_vecd[2] = 0.35; 
   prob_vecd[3] = 0.05; 
-  prob_vecd[4] = 0.35; 
+  prob_vecd[4] = 0.3; 
   d_discretepdf.ProbabilitiesSet(prob_vecd);
   vector<Sample<int> > los(NUM_SAMPLES);
   vector<Sample<int> >::iterator it;
+
+  //cout << "most probable state" << d_discretepdf.MostProbableStateGet()<< endl;
+  // check most probable state
+  CPPUNIT_ASSERT_EQUAL( 2, d_discretepdf.MostProbableStateGet());
+
   CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(los,NUM_SAMPLES,DEFAULT,NULL));
   // test if samples are distributed according to probabilities
   // remark that this test occasionally fails  
@@ -352,6 +363,7 @@ PdfTest::testDiscretePdf()
   CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(a_sample,DEFAULT,NULL));
   // Ripley not implemented for one sample
   CPPUNIT_ASSERT_EQUAL( false, d_discretepdf.SampleFrom(a_sample,RIPLEY,NULL));
+
 }
 
 void

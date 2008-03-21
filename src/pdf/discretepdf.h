@@ -92,6 +92,9 @@ namespace BFL
       */
       bool ProbabilitiesSet(vector<Probability> & values);
 
+      /// Get the index of the most probable state
+      int MostProbableStateGet();
+
     };
 
 } // End namespace

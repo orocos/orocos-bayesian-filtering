@@ -242,5 +242,20 @@ namespace BFL
     return true;
   } 
 
+  int DiscretePdf::MostProbableStateGet()
+  {
+    int index_mostProbableState = -1;
+    Probability prob_mostProbableState = 0.0;
+    for (int state = 0 ; state < NumStatesGet() ; state++)
+    {
+       if ( (*_Values_p)[state] >= prob_mostProbableState)
+       {
+            index_mostProbableState = state;
+            prob_mostProbableState = (*_Values_p)[state];
+       }
+    }
+    return index_mostProbableState;
+  } 
+
   
 } // End namespace
