@@ -479,6 +479,13 @@ MyColumnVector MySymmetricMatrix::operator* (const MyColumnVector &b) const
   return (MyColumnVector) (op1 * op2);
 }
 
+void MySymmetricMatrix::multiply (const MyColumnVector &b, MyColumnVector &result) const
+{
+  const NewMatSymmetricMatrix& op1 = *this;
+  const NewMatColumnVector& op2 = b;
+  result = (MyColumnVector) (op1 * op2);
+}
+
 MyMatrix MySymmetricMatrix::sub(int i_start, int i_end, 
 				int j_start , int j_end) const
 {

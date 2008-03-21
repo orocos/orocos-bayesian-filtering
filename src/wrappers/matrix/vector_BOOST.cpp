@@ -218,7 +218,7 @@ MyColumnVector MyColumnVector::sub(int j_start , int j_end) const
 {
   MyColumnVector subvector(j_end-j_start+1);
   for (int j=j_start; j<=j_end; j++)
-    subvector(j) = (*this)(j);
+    subvector(j-j_start+1) = (*this)(j);
 
   return subvector;
 }
@@ -411,7 +411,7 @@ MyRowVector MyRowVector::sub(int j_start , int j_end) const
 {
   MyRowVector subvector(j_end-j_start+1);
   for (int j=j_start; j<=j_end; j++)
-    subvector(j) = (*this)(j);
+    subvector(j-j_start+1) = (*this)(j);
 
   return subvector;
 }
