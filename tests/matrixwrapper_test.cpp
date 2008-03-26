@@ -188,10 +188,10 @@ MatrixwrapperTest::testMatrixwrapperValue()
   SymmetricMatrix Ks_resize(r); Ks_resize = v;
   CPPUNIT_ASSERT_EQUAL(Ks.rows(), r+2);
   CPPUNIT_ASSERT_EQUAL(Ks.columns(), r+2);
-  Ks.resize(r);
-  CPPUNIT_ASSERT_EQUAL(Ks.rows(), r);
-  CPPUNIT_ASSERT_EQUAL(Ks.columns(), r);
-  CPPUNIT_ASSERT_EQUAL(Ks, Ks_resize);
+//  Ks.resize(r);
+//  CPPUNIT_ASSERT_EQUAL(Ks.rows(), r);
+//  CPPUNIT_ASSERT_EQUAL(Ks.columns(), r);
+//  CPPUNIT_ASSERT_EQUAL(Ks, Ks_resize);
   // COLUMNVECTOR
   ColumnVector Kc(r+2); Kc = v;
   ColumnVector Kc_resize(r); Kc_resize = v;
@@ -288,42 +288,42 @@ MatrixwrapperTest::testMatrixwrapperValue()
 
   // test sub matrix
   // MATRIX
-  Matrix Am_sub = Am.sub(1,c,1,c);
-  CPPUNIT_ASSERT_EQUAL(Am_sub.rows(), c);
-  CPPUNIT_ASSERT_EQUAL(Am_sub.columns(), c);
-  for (unsigned int i=0; i<c; i++){
-    for (unsigned int j=0; j<c; j++){
-      CPPUNIT_ASSERT_EQUAL(Am_sub(i+1,j+1), Am(i+1,j+1));
-      CPPUNIT_ASSERT_EQUAL(Am_sub(i+1,j+1), REF[i][j]);
+  Matrix Am_sub = Am.sub(2,r,2,c);
+  CPPUNIT_ASSERT_EQUAL(Am_sub.rows(), r-1);
+  CPPUNIT_ASSERT_EQUAL(Am_sub.columns(), c-1);
+  for (unsigned int i=0; i<c-1; i++){
+    for (unsigned int j=0; j<c-1; j++){
+      CPPUNIT_ASSERT_EQUAL(Am_sub(i+1,j+1), Am(i+2,j+2));
+      CPPUNIT_ASSERT_EQUAL(Am_sub(i+1,j+1), REF[i+1][j+1]);
     }
   }
   // SYMMETRICMATRIX
-  Matrix As_sub = As.sub(1,c,1,c);
-  CPPUNIT_ASSERT_EQUAL(As_sub.rows(), c);
-  CPPUNIT_ASSERT_EQUAL(As_sub.columns(), c);
-  for (unsigned int i=0; i<c; i++){
+  Matrix As_sub = As.sub(2,c,2,c);
+  CPPUNIT_ASSERT_EQUAL(As_sub.rows(), c-1);
+  CPPUNIT_ASSERT_EQUAL(As_sub.columns(), c-1);
+  for (unsigned int i=0; i<c-1; i++){
     for (unsigned int j=0; j<=i; j++){ 
-      CPPUNIT_ASSERT_EQUAL(As_sub(i+1,j+1), As(i+1,j+1));
-      CPPUNIT_ASSERT_EQUAL(As_sub(i+1,j+1), REF[i][j]);
-      CPPUNIT_ASSERT_EQUAL(As_sub(j+1,i+1), As(i+1,j+1));
-      CPPUNIT_ASSERT_EQUAL(As_sub(j+1,i+1), REF[i][j]);
+      CPPUNIT_ASSERT_EQUAL(As_sub(i+1,j+1), As(i+2,j+2));
+      CPPUNIT_ASSERT_EQUAL(As_sub(i+1,j+1), REF[i+1][j+1]);
+      CPPUNIT_ASSERT_EQUAL(As_sub(j+1,i+1), As(i+2,j+2));
+      CPPUNIT_ASSERT_EQUAL(As_sub(j+1,i+1), REF[i+1][j+1]);
     }
   }
   // COLUMNVECTOR
-  ColumnVector Ac_sub = Ac.sub(1,c);
-  CPPUNIT_ASSERT_EQUAL(Ac_sub.rows(), c);
+  ColumnVector Ac_sub = Ac.sub(2,c);
+  CPPUNIT_ASSERT_EQUAL(Ac_sub.rows(), c-1);
   CPPUNIT_ASSERT_EQUAL(Ac_sub.columns(), one);
-  for (unsigned int i=0; i<c; i++){
-    CPPUNIT_ASSERT_EQUAL(Ac_sub(i+1), Ac(i+1));
-    CPPUNIT_ASSERT_EQUAL(Ac_sub(i+1), REF[0][i]);
+  for (unsigned int i=0; i<c-1; i++){
+    CPPUNIT_ASSERT_EQUAL(Ac_sub(i+1), Ac(i+2));
+    CPPUNIT_ASSERT_EQUAL(Ac_sub(i+1), REF[0][i+1]);
   }
   // ROWVECTOR
-  RowVector Ar_sub = Ar.sub(1,r-1);
+  RowVector Ar_sub = Ar.sub(2,r-1);
   CPPUNIT_ASSERT_EQUAL(Ar_sub.rows(), one);
-  CPPUNIT_ASSERT_EQUAL(Ar_sub.columns(), r-1);
-  for (unsigned int i=0; i<r-1; i++){
-    CPPUNIT_ASSERT_EQUAL(Ar_sub(i+1), Ar(i+1));
-    CPPUNIT_ASSERT_EQUAL(Ar_sub(i+1), REF[0][i]);
+  CPPUNIT_ASSERT_EQUAL(Ar_sub.columns(), r-2);
+  for (unsigned int i=0; i<r-2; i++){
+    CPPUNIT_ASSERT_EQUAL(Ar_sub(i+1), Ar(i+2));
+    CPPUNIT_ASSERT_EQUAL(Ar_sub(i+1), REF[0][i+1]);
   }
   
   // test operator *
