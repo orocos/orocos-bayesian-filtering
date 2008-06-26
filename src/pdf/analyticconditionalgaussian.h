@@ -32,9 +32,6 @@ namespace BFL
 
       \f[ A = N(\mu_A, \Sigma_A) \f]
 
-      @bug Nevertheless the current API-name is biased
-      towards system model pdfs (eg. the method df_dxGet() is not
-      general enough.
   */
   class AnalyticConditionalGaussian : public ConditionalGaussian
     {
