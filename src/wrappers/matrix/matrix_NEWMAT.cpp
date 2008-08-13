@@ -1,21 +1,21 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
 
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #include "../config.h"
 #ifdef __MATRIXWRAPPER_NEWMAT__
@@ -104,7 +104,7 @@ MyMatrix MyMatrix::operator/ (double a) const
   return (MyMatrix&) op1;
 }
 
-MyMatrix& 
+MyMatrix&
 MyMatrix::operator =(const MySymmetricMatrix& a)
 {
   *this =(MyMatrix) a;
@@ -213,19 +213,19 @@ MyMatrix MyMatrix::inverse() const
 }
 
 
-int 
+int
 MyMatrix::convertToSymmetricMatrix(MySymmetricMatrix& sym)
 {
   // test if matrix is square matrix
   assert( this->rows() == this->columns() );
-  
+
   // if necessairy, resize sym
   // only check cols or rows. Symmetric matrix is square.
   if ( sym.rows() != this->rows() )
     sym.ReSize(this->rows());
-  
-  
-  // copy elements 
+
+
+  // copy elements
   for ( unsigned int i=0; i<this->rows(); i++ )
     for ( unsigned int j=0; j<=i; j++ )
       sym(i+1,j+1) = (*this)(i+1,j+1);
@@ -291,7 +291,7 @@ double MySymmetricMatrix::determinant() const
 }
 
 
-double& MyMatrix::operator()(unsigned int a, unsigned int b) 
+double& MyMatrix::operator()(unsigned int a, unsigned int b)
 {
   NewMatMatrix & op1(*this);
   return op1(a,b);
@@ -342,7 +342,7 @@ MySymmetricMatrix& MySymmetricMatrix::operator *=(double b)
   op1 *= b;
   return (MySymmetricMatrix&) op1;
 }
-  
+
 MySymmetricMatrix& MySymmetricMatrix::operator /=(double b)
 {
   NewMatSymmetricMatrix & op1 = (*this);
@@ -373,7 +373,7 @@ MySymmetricMatrix MySymmetricMatrix::operator *(double b) const
   op1 *= b;
   return (MySymmetricMatrix) op1;
 }
-  
+
 MySymmetricMatrix MySymmetricMatrix::operator /(double b) const
 {
   // make copy
@@ -479,7 +479,7 @@ MyColumnVector MySymmetricMatrix::operator* (const MyColumnVector &b) const
   return (MyColumnVector) (op1 * op2);
 }
 
-MyMatrix MySymmetricMatrix::sub(int i_start, int i_end, 
+MyMatrix MySymmetricMatrix::sub(int i_start, int i_end,
 				int j_start , int j_end) const
 {
   return (MyMatrix)(this->SubMatrix(i_start, i_end, j_start, j_end));
@@ -495,7 +495,7 @@ MySymmetricMatrix::resize(unsigned int i, bool copy, bool initialize)
 
 
 
-double& MySymmetricMatrix::operator()(unsigned int a, unsigned int b) 
+double& MySymmetricMatrix::operator()(unsigned int a, unsigned int b)
 {
   NewMatSymmetricMatrix & op1 = (*this);
   return op1(a,b);

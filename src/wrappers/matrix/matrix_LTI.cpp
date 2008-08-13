@@ -1,20 +1,20 @@
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
 
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #include "../config.h"
 #ifdef __MATRIXWRAPPER_LTI__
@@ -63,7 +63,7 @@ MyColumnVector MyMatrix::columnCopy(unsigned int c) const
   return (MyColumnVector) temp.getColumnCopy(c-1);
 }
 
-double& MyMatrix::operator()(unsigned int a, unsigned int b) 
+double& MyMatrix::operator()(unsigned int a, unsigned int b)
 {
   //ltiMatrix & op1 = (*this);
   return this->at(a-1,b-1);
@@ -225,18 +225,18 @@ MyMatrix MyMatrix::inverse() const
 }
 
 
-int 
+int
 MyMatrix::convertToSymmetricMatrix(MySymmetricMatrix& sym)
 {
   // test if matrix is square matrix
   assert(this->rows() == this->columns() );
-  
+
   // if necessairy, resize sym
   // only check cols or rows. Symmetric matrix is square.
   if ( sym.rows() != this->rows() )
     sym.resize(this->rows());
-  
-  // copy elements 
+
+  // copy elements
   for ( unsigned int i=0; i<this->rows(); i++ )
     for ( unsigned int j=0; j<=i; j++ )
     {
@@ -279,7 +279,7 @@ MySymmetricMatrix::~SymmetricMatrix(){}
 unsigned int MySymmetricMatrix::rows() const { return (((ltiSymmetricMatrix)(*this)).rows());}
 unsigned int MySymmetricMatrix::columns() const { return (((ltiSymmetricMatrix)(*this)).rows());}
 
-MySymmetricMatrix MySymmetricMatrix::transpose() const 
+MySymmetricMatrix MySymmetricMatrix::transpose() const
 {return (*this);}
 
 MySymmetricMatrix MySymmetricMatrix::inverse() const
@@ -304,7 +304,7 @@ double MySymmetricMatrix::determinant() const
 }
 
 
-double& MySymmetricMatrix::operator()(unsigned int a, unsigned int b) 
+double& MySymmetricMatrix::operator()(unsigned int a, unsigned int b)
 {
   ltiSymmetricMatrix & op1 = (*this);
   // only fill in lower triangle
@@ -342,7 +342,7 @@ MySymmetricMatrix& MySymmetricMatrix::operator=(const double a)
 }
 
 // MATRIX - SCALAR operators
-MySymmetricMatrix& 
+MySymmetricMatrix&
 MySymmetricMatrix::operator +=(double a)
 {
   ltiSymmetricMatrix & op1 = (*this);
@@ -350,7 +350,7 @@ MySymmetricMatrix::operator +=(double a)
   return (MySymmetricMatrix&) op1;
 }
 
-MySymmetricMatrix& 
+MySymmetricMatrix&
 MySymmetricMatrix::operator -=(double a)
 {
   ltiSymmetricMatrix & op1 = (*this);
@@ -358,15 +358,15 @@ MySymmetricMatrix::operator -=(double a)
   return (MySymmetricMatrix&) op1;
 }
 
-MySymmetricMatrix& 
+MySymmetricMatrix&
 MySymmetricMatrix::operator *=(double b)
 {
   ltiSymmetricMatrix & op1 = (*this);
   op1 *= b;
   return (MySymmetricMatrix&) op1;
 }
- 
-MySymmetricMatrix& 
+
+MySymmetricMatrix&
 MySymmetricMatrix::operator /=(double b)
 {
   ltiSymmetricMatrix & op1 = (*this);
@@ -374,7 +374,7 @@ MySymmetricMatrix::operator /=(double b)
   return (MySymmetricMatrix&) op1;
 }
 
-MySymmetricMatrix 
+MySymmetricMatrix
 MySymmetricMatrix::operator+ (double a) const
 {
   ltiSymmetricMatrix op1(*this);
@@ -382,7 +382,7 @@ MySymmetricMatrix::operator+ (double a) const
   return (MySymmetricMatrix) op1;
 }
 
-MySymmetricMatrix 
+MySymmetricMatrix
 MySymmetricMatrix::operator- (double a) const
 {
   ltiSymmetricMatrix op1(*this);
@@ -417,7 +417,7 @@ MyMatrix& MySymmetricMatrix::operator +=(const MyMatrix& a)
   return (MyMatrix &) op1;
 }
 
-MyMatrix& 
+MyMatrix&
 MySymmetricMatrix::operator -=(const MyMatrix& a)
 {
   ltiSymmetricMatrix & op1 = (*this);
@@ -427,14 +427,14 @@ MySymmetricMatrix::operator -=(const MyMatrix& a)
 }
 
 
-MyMatrix 
+MyMatrix
 MySymmetricMatrix::operator+ (const MyMatrix &a) const
 {
   ltiMatrix op1(*this);
   return (MyMatrix) (op1.add(a));
 }
 
-MyMatrix 
+MyMatrix
 MySymmetricMatrix::operator- (const MyMatrix &a) const
 {
 
@@ -442,14 +442,14 @@ MySymmetricMatrix::operator- (const MyMatrix &a) const
   return (MyMatrix) (op1.subtract(a));
 }
 
-MyMatrix 
+MyMatrix
 MySymmetricMatrix::operator* (const MyMatrix &a) const
 {
   ltiMatrix op1(*this);
   return (MyMatrix) (op1.multiply(a));
 }
 
-MyMatrix& 
+MyMatrix&
 MyMatrix::operator =(const MySymmetricMatrix& a)
 {
   *this =(MyMatrix) a;
@@ -457,7 +457,7 @@ MyMatrix::operator =(const MySymmetricMatrix& a)
   return *this;
 }
 
-MySymmetricMatrix& 
+MySymmetricMatrix&
 MySymmetricMatrix::operator +=(const MySymmetricMatrix& a)
 {
   ltiSymmetricMatrix & op1 = (*this);
@@ -466,7 +466,7 @@ MySymmetricMatrix::operator +=(const MySymmetricMatrix& a)
   return (MySymmetricMatrix &) op1;
 }
 
-MySymmetricMatrix& 
+MySymmetricMatrix&
 MySymmetricMatrix::operator -=(const MySymmetricMatrix& a)
 {
   ltiSymmetricMatrix & op1 = (*this);
@@ -492,7 +492,7 @@ MySymmetricMatrix::operator- (const MySymmetricMatrix &a) const
   return (MySymmetricMatrix &) op1;
 }
 
-MyMatrix 
+MyMatrix
 MySymmetricMatrix::operator* (const MySymmetricMatrix &a) const
 {
   ltiSymmetricMatrix op1 = (*this);
@@ -511,7 +511,7 @@ MyColumnVector MySymmetricMatrix::operator* (const MyColumnVector &b) const
   return (MyColumnVector) op1.multiply(op2);
 }
 
-MyMatrix MySymmetricMatrix::sub(int i_start, int i_end, 
+MyMatrix MySymmetricMatrix::sub(int i_start, int i_end,
 				int j_start , int j_end) const
 {
   // first copy all elements from lower triangle to upper triangle

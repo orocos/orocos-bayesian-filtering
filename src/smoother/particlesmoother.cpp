@@ -1,19 +1,19 @@
 // Copyright (C) 2006 Tinne De Laet <first dot last at mech dot kuleuven dot be>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #include "particlesmoother.h"
 #include "../pdf/mcpdf.h"
@@ -21,7 +21,7 @@
 #define SV StateVar
 #define MV MeasVar
 
-template <typename SV> 
+template <typename SV>
 ParticleSmoother<SV>::ParticleSmoother(MCPdf<SV> * prior)
   : BackwardFilter<SV>(prior)
 {
@@ -35,7 +35,7 @@ ParticleSmoother<SV>::ParticleSmoother(MCPdf<SV> * prior)
 }
 
 
-template <typename SV> 
+template <typename SV>
 ParticleSmoother<SV>::~ParticleSmoother()
 {
     delete this->_post;
@@ -61,7 +61,7 @@ ParticleSmoother<SV>::SysUpdate(SystemModel<StateVar>* const sysmodel, const Sta
     int M = (dynamic_cast<MCPdf<SV> *>(this->_post))->NumSamplesGet();
 
     vector<double> gamma(M);
-    Matrix prob(M,N); 
+    Matrix prob(M,N);
     int i = 1;
     for (_os_it = _old_samples.begin(); _os_it !=_old_samples.end() ; _os_it++)
       {
@@ -71,7 +71,7 @@ ParticleSmoother<SV>::SysUpdate(SystemModel<StateVar>* const sysmodel, const Sta
           for ( _fs_it=_filtered_samples.begin(); _fs_it != _filtered_samples.end() ; _fs_it++)
           {
               const SV& x_fil = _fs_it->ValueGet();
-              // calculate prediction probabilities  
+              // calculate prediction probabilities
               if (!sysmodel->SystemWithoutInputs()){
                 prob(i,j) = sysmodel->ProbabilityGet(x_smo,x_fil,u);
               }
@@ -117,7 +117,7 @@ ParticleSmoother<SV>::SysUpdate(SystemModel<StateVar>* const sysmodel, const Sta
           _ns_it->WeightSet(weight[i-1]/tot_weight);
           i++;
         }
-     
+
     // Update the list of samples
     (dynamic_cast<MCPdf<SV> *>(this->_post))->ListOfSamplesSet(_new_samples);
 

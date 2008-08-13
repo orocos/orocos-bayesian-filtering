@@ -1,20 +1,20 @@
 // $Id$
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #include "optimal_importance_density.h"
 #include "../wrappers/rng/rng.h" // Wrapper around several rng
@@ -33,7 +33,7 @@ namespace BFL
       _MeasPdf(MeasPdf)
   {
     Matrix tmp((SystemPdf->DimensionGet()),(SystemPdf->DimensionGet()));
-    tmp = (SystemPdf->AdditiveNoiseSigmaGet().inverse() 
+    tmp = (SystemPdf->AdditiveNoiseSigmaGet().inverse()
 	   + ( MeasPdf->MatrixGet(0).transpose() * (Matrix) (MeasPdf->AdditiveNoiseSigmaGet().inverse()) * MeasPdf->MatrixGet(0) )).inverse();
     tmp.convertToSymmetricMatrix(this->_additiveNoise_Sigma);
     this->_additiveNoise_Mu = 0.0;
@@ -43,7 +43,7 @@ namespace BFL
 
   ColumnVector
   OptImpDensity::ExpectedValueGet() const
-  { 
+  {
     ColumnVector mean(DimensionGet()); mean = 0.0;
     ColumnVector arg;
     for (int i=0; i < NumConditionalArgumentsGet() ; i++)
@@ -68,13 +68,13 @@ namespace BFL
     return _ratio[i];
   }
 
-  void 
+  void
   OptImpDensity::NumConditionalArgumentsSet(int numconditionalarguments)
   {
     cerr << "You probably don't want to use this one, do you?" << endl;
   }
-  
-  void 
+
+  void
   OptImpDensity::MatrixSet(int i, const Matrix & m)
   {
     assert(i < NumConditionalArgumentsGet());

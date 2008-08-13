@@ -1,21 +1,21 @@
 // $Id: matrix_BOOST.cpp 27906 2007-04-27 11:50:53Z wmeeusse $
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
 
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #include "../config.h"
 #ifdef __MATRIXWRAPPER_BOOST__
@@ -93,7 +93,7 @@ MyMatrix MyMatrix::operator/ (double a) const
   return (MyMatrix) (op1 /  a);
 }
 
-MyMatrix& 
+MyMatrix&
 MyMatrix::operator =(const MySymmetricMatrix& a)
 {
   *this =(MyMatrix) a;
@@ -106,7 +106,7 @@ MyMatrix MyMatrix::operator- (const MyMatrix& a) const
 {
   const BoostMatrix& op1 = *this;
   const BoostMatrix& op2 = a;
-  
+
   return (MyMatrix)(op1 - op2);
 }
 
@@ -114,7 +114,7 @@ MyMatrix MyMatrix::operator+ (const MyMatrix& a) const
 {
   const BoostMatrix& op1 = *this;
   const BoostMatrix& op2 = a;
-  
+
   return (MyMatrix)(op1 + op2);
 }
 
@@ -122,7 +122,7 @@ MyMatrix MyMatrix::operator* (const MyMatrix& a) const
 {
   const BoostMatrix& op1 = *this;
   const BoostMatrix& op2 = a;
-  
+
   return (MyMatrix) prod(op1,op2);
 }
 
@@ -152,7 +152,7 @@ MyColumnVector MyMatrix::operator* (const MyColumnVector &b) const
 
 
 
-double& MyMatrix::operator()(unsigned int a, unsigned int b) 
+double& MyMatrix::operator()(unsigned int a, unsigned int b)
 {
   BoostMatrix & op1 = (*this);
   return op1(a-1,b-1);
@@ -248,18 +248,18 @@ MyMatrix MyMatrix::inverse() const
 }
 
 
-int 
+int
 MyMatrix::convertToSymmetricMatrix(MySymmetricMatrix& sym)
 {
   // test if matrix is square matrix
   assert(this->rows() == this->columns());
-  
+
   // if necessairy, resize sym
   // only check cols or rows. Symmetric matrix is square.
   if ( sym.rows() != this->rows() )
     sym = MySymmetricMatrix(this->rows());
-  
-  // copy elements 
+
+  // copy elements
   for ( unsigned int i=0; i<this->rows(); i++ )
     for ( unsigned int j=0; j<=i; j++ )
       sym(i+1,j+1) = (*this)(i+1,j+1);
@@ -373,7 +373,7 @@ MySymmetricMatrix& MySymmetricMatrix::operator *=(double b)
   op1 *= b;
   return (MySymmetricMatrix&) op1;
 }
-  
+
 MySymmetricMatrix& MySymmetricMatrix::operator /=(double b)
 {
   BoostSymmetricMatrix & op1 = (*this);
@@ -396,7 +396,7 @@ MySymmetricMatrix MySymmetricMatrix::operator *(double b) const
  const BoostSymmetricMatrix& op1 = (*this);
   return (MySymmetricMatrix) (op1 *  b);
 }
-  
+
 MySymmetricMatrix MySymmetricMatrix::operator /(double b) const
 {
   const BoostSymmetricMatrix& op1 = (*this);
@@ -426,7 +426,7 @@ MyMatrix MySymmetricMatrix::operator+ (const MyMatrix &a) const
 {
   const BoostSymmetricMatrix& op1 = *this;
   const BoostMatrix& op2 = a;
-  
+
   return (MyMatrix) (op1 + op2);
 }
 
@@ -434,7 +434,7 @@ MyMatrix MySymmetricMatrix::operator- (const MyMatrix &a) const
 {
   const BoostSymmetricMatrix& op1 = *this;
   const BoostMatrix& op2 = a;
-  
+
   return (MyMatrix) (op1 - op2);
 }
 
@@ -442,7 +442,7 @@ MyMatrix MySymmetricMatrix::operator* (const MyMatrix &a) const
 {
   const BoostSymmetricMatrix& op1 = *this;
   const BoostMatrix& op2 = a;
-  
+
   return (MyMatrix) prod(op1, op2);
 }
 
@@ -469,7 +469,7 @@ MySymmetricMatrix MySymmetricMatrix::operator+ (const MySymmetricMatrix &a) cons
 {
   const BoostSymmetricMatrix& op1 = *this;
   const BoostSymmetricMatrix& op2 = a;
-  
+
   return (MySymmetricMatrix) (op1 + op2);
 }
 
@@ -477,7 +477,7 @@ MySymmetricMatrix MySymmetricMatrix::operator- (const MySymmetricMatrix &a) cons
 {
   const BoostSymmetricMatrix& op1 = *this;
   const BoostSymmetricMatrix& op2 = a;
-  
+
   return (MySymmetricMatrix) (op1 - op2);
 }
 
@@ -485,7 +485,7 @@ MyMatrix MySymmetricMatrix::operator* (const MySymmetricMatrix &a) const
 {
   const BoostSymmetricMatrix& op1 = *this;
   const BoostSymmetricMatrix& op2 = a;
-  
+
   return (MyMatrix) prod(op1, op2);
 }
 
@@ -498,7 +498,7 @@ MyColumnVector MySymmetricMatrix::operator* (const MyColumnVector &b) const
   return (MyColumnVector) prod(op1, ((const BoostColumnVector&)b));
 }
 
-MyMatrix MySymmetricMatrix::sub(int i_start, int i_end, 
+MyMatrix MySymmetricMatrix::sub(int i_start, int i_end,
 				int j_start , int j_end) const
 {
   MyMatrix submatrix(i_end-i_start+1, j_end-j_start+1);
@@ -511,7 +511,7 @@ MyMatrix MySymmetricMatrix::sub(int i_start, int i_end,
 
 
 
-double& MySymmetricMatrix::operator()(unsigned int a, unsigned int b) 
+double& MySymmetricMatrix::operator()(unsigned int a, unsigned int b)
 {
   BoostSymmetricMatrix & op1 = (*this);
   return op1(a-1,b-1);

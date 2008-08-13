@@ -1,19 +1,19 @@
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 // $Id$
 
 #include "particlefilter.h"
@@ -25,9 +25,9 @@
 
 #define STATE_AND_MEAS_VAR_DIFFERENT
 
-template <typename SV, typename MV> 
-ParticleFilter<SV,MV>::ParticleFilter(MCPdf<SV> * prior, 
-				      ConditionalPdf<SV,SV> * proposal, 
+template <typename SV, typename MV>
+ParticleFilter<SV,MV>::ParticleFilter(MCPdf<SV> * prior,
+				      ConditionalPdf<SV,SV> * proposal,
 				      int resampleperiod,
 				      double resamplethreshold,
 				      int resamplescheme)
@@ -35,16 +35,16 @@ ParticleFilter<SV,MV>::ParticleFilter(MCPdf<SV> * prior,
   , _proposal(proposal)
   , _resampleScheme(resamplescheme)
   , _created_post(true)
-  , _sample(WeightedSample<SV>(prior->DimensionGet())) 
+  , _sample(WeightedSample<SV>(prior->DimensionGet()))
 {
   /* Initialize Post, at time = 0, post = prior
      To be more clean, this should be done in the filter base class,
      but this is impossible because of the pure virtuals...
   */
   this->_post = new MCPdf<SV>(prior->NumSamplesGet(),prior->DimensionGet());
-  // Post is equal to prior at timetep 1 
+  // Post is equal to prior at timetep 1
   /* Note: Dirty cast should be avoided by not demanding an MCPdf as
-     prior and just sample from the prior instead  :-( 
+     prior and just sample from the prior instead  :-(
   */
   bool ret = (dynamic_cast<MCPdf<SV> *>(this->_post))->ListOfSamplesSet(prior->ListOfSamplesGet());
   assert(ret);
@@ -52,14 +52,14 @@ ParticleFilter<SV,MV>::ParticleFilter(MCPdf<SV> * prior,
   // Initialise lists of samples
   _old_samples = (prior->ListOfSamplesGet());
   _new_samples = _old_samples;
-  
+
 
   // You have to choose for dynamic resampling by specifying a threshold != 0 OR give me a fixed resample period != 0
   assert(!(resampleperiod == 0 && resamplethreshold == 0));
   assert(!(resampleperiod != 0 && resamplethreshold != 0));
 
   // dynamic resampling
-  if (resampleperiod == 0)  
+  if (resampleperiod == 0)
    _dynamicResampling = true;
   // fixed period resampling
   else
@@ -70,10 +70,10 @@ ParticleFilter<SV,MV>::ParticleFilter(MCPdf<SV> * prior,
 
 
 
-template <typename SV, typename MV> 
-ParticleFilter<SV,MV>::ParticleFilter(MCPdf<SV> * prior, 
+template <typename SV, typename MV>
+ParticleFilter<SV,MV>::ParticleFilter(MCPdf<SV> * prior,
 				      MCPdf<SV> * post,
-				      ConditionalPdf<SV,SV> * proposal, 
+				      ConditionalPdf<SV,SV> * proposal,
 				      int resampleperiod,
 				      double resamplethreshold,
 				      int resamplescheme)
@@ -83,9 +83,9 @@ ParticleFilter<SV,MV>::ParticleFilter(MCPdf<SV> * prior,
     _created_post(false)
 {
   this->_post = post;
-  // Post is equal to prior at timestep 1 
+  // Post is equal to prior at timestep 1
   /* Note: Dirty cast should be avoided by not demanding an MCPdf as
-     prior and just sample from the prior instead  :-( 
+     prior and just sample from the prior instead  :-(
   */
   bool ret = (dynamic_cast<MCPdf<SV> *>(this->_post))->ListOfSamplesSet(prior->ListOfSamplesGet());
   assert(ret);
@@ -93,13 +93,13 @@ ParticleFilter<SV,MV>::ParticleFilter(MCPdf<SV> * prior,
   // Initialise lists of samples
   _old_samples = (prior->ListOfSamplesGet());
   _new_samples = _old_samples;
-  
+
   // You have to choose for dynamic resampling by specifying a threshold != 0 OR give me a fixed resample period != 0
   assert(!(resampleperiod == 0 && resamplethreshold == 0));
   assert(!(resampleperiod != 0 && resamplethreshold != 0));
 
   // dynamic resampling
-  if (resampleperiod == 0)  
+  if (resampleperiod == 0)
    _dynamicResampling = true;
   // fixed period resampling
   else
@@ -112,14 +112,14 @@ ParticleFilter<SV,MV>::ParticleFilter(MCPdf<SV> * prior,
 
 
 
-template <typename SV, typename MV> 
+template <typename SV, typename MV>
 ParticleFilter<SV,MV>::~ParticleFilter()
 {
   if (_created_post)
     delete this->_post;
 }
 
-template <typename SV, typename MV> 
+template <typename SV, typename MV>
 ParticleFilter<SV,MV>::ParticleFilter(const ParticleFilter<SV,MV> & filter)
   : Filter<SV,MV>(filter),
     _created_post(true)
@@ -128,7 +128,7 @@ ParticleFilter<SV,MV>::ParticleFilter(const ParticleFilter<SV,MV> & filter)
   // Probably a bug...
   this->_post = new MCPdf<SV>(dynamic_cast<MCPdf<SV> *>(filter._post));
 }
-  
+
 template <typename SV, typename MV> void
 ParticleFilter<SV,MV>::ProposalSet(ConditionalPdf<SV,SV> * const cpdf)
 {
@@ -168,7 +168,7 @@ ParticleFilter<SV,MV>::ProposalStepInternal(SystemModel<SV> * const sysmodel,
 		_proposal->ConditionalArgumentSet(3,s);
               #endif
 	    }
- 
+
 	}
       else // System without inputs
 	{
@@ -188,7 +188,7 @@ ParticleFilter<SV,MV>::ProposalStepInternal(SystemModel<SV> * const sysmodel,
       _ns_it->WeightSet(_os_it->WeightGet());
       _ns_it++;
     }
-  
+
   (this->_timestep)++;
 
   // Update the list of samples
@@ -201,11 +201,11 @@ template <typename SV, typename MV> bool
 ParticleFilter<SV,MV>::UpdateWeightsInternal(SystemModel<SV> * const sysmodel,
 					     const SV & u,
 					     MeasurementModel<MV,SV> * const measmodel,
-					     const MV & z, 
+					     const MV & z,
 					     const SV & s)
 {
   Probability weightfactor = 1;
-  
+
   // Update the weights
   // Same remarks as for the system update!
   _new_samples = (dynamic_cast<MCPdf<SV> *>(this->_post))->ListOfSamplesGet();
@@ -215,7 +215,7 @@ ParticleFilter<SV,MV>::UpdateWeightsInternal(SystemModel<SV> * const sysmodel,
     {
       const SV& x_new = _ns_it->ValueGet();
       const SV& x_old = _os_it->ValueGet();
-      
+
       if (sysmodel == NULL)
 	{
 	  if (measmodel->SystemWithoutSensorParams() == true)
@@ -277,7 +277,7 @@ ParticleFilter<SV,MV>::DynamicResampleStep()
 
   // Resampling if necessary
   if ( this->_dynamicResampling)
-    { 
+    {
       // Check if sum of 1 / \sum{(wi_normalised)^2} < threshold
       // This is the criterion proposed by Liu
       // BUG  foresee other methods of approximation/calculating
@@ -291,7 +291,7 @@ ParticleFilter<SV,MV>::DynamicResampleStep()
 	{
 	  // #define __RESAMPLE_DEBUG__
 #ifdef __RESAMPLE_DEBUG__
-	  cout << "resampling now: " << this->_timestep 
+	  cout << "resampling now: " << this->_timestep
 	       << "\tN_eff: " << (1.0 / sum_sq_weigths) << endl;
 #endif // __RESAMPLE_DEBUG__
 	  resampling = true;

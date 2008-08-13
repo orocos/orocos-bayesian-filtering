@@ -1,21 +1,21 @@
 // Copyright (C) 2007 Wim Meeussen <wim.meeussen@mech.kuleuven.be>
 //                    Tinne De Laet<first DOT last AT mech.kuleuven.be>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
- 
+//
+
 
 #include "matrixwrapper_test.hpp"
 #include "approxEqual.hpp"
@@ -27,18 +27,18 @@ CPPUNIT_TEST_SUITE_REGISTRATION( MatrixwrapperTest );
 using namespace MatrixWrapper;
 
 
-void 
+void
 MatrixwrapperTest::setUp()
 {
 }
 
 
-void 
+void
 MatrixwrapperTest::tearDown()
 {
 }
 
-void 
+void
 MatrixwrapperTest::testMatrixwrapperValue()
 {
   double epsilon = 0.00001;
@@ -111,7 +111,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
     }
   }
   // SYMMETRICMATRIX
-  SymmetricMatrix Bs(r); 
+  SymmetricMatrix Bs(r);
   for (unsigned int i=0; i<r; i++){ // fill in upper triangle
     for (unsigned int j=0; j<=i; j++){
       Bs(j+1,i+1) = REF[i][j];
@@ -139,7 +139,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
     CPPUNIT_ASSERT_EQUAL(Br(i+1), REF[0][i]);
   }
 
-  // test operator = 
+  // test operator =
   // MATRIX
   Am = Bm;
   for (unsigned int i=0; i<r; i++){
@@ -302,7 +302,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
   CPPUNIT_ASSERT_EQUAL(As_sub.rows(), c-1);
   CPPUNIT_ASSERT_EQUAL(As_sub.columns(), c-1);
   for (unsigned int i=0; i<c-1; i++){
-    for (unsigned int j=0; j<=i; j++){ 
+    for (unsigned int j=0; j<=i; j++){
       CPPUNIT_ASSERT_EQUAL(As_sub(i+1,j+1), As(i+2,j+2));
       CPPUNIT_ASSERT_EQUAL(As_sub(i+1,j+1), REF[i+1][j+1]);
       CPPUNIT_ASSERT_EQUAL(As_sub(j+1,i+1), As(i+2,j+2));
@@ -325,7 +325,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
     CPPUNIT_ASSERT_EQUAL(Ar_sub(i+1), Ar(i+2));
     CPPUNIT_ASSERT_EQUAL(Ar_sub(i+1), REF[0][i+1]);
   }
-  
+
   // test operator *
   // MATRIX * MATRIX
   Matrix Cm = Am * Am_trans;
@@ -392,7 +392,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
 
   // MATRIX * SYMMETRICMATRIX
   // TODO: not implemented?
-  
+
   // SYMMETRICMATRIX * MATRIX
   Matrix Csm_check(r,c);
   Matrix Csm = As * Am;
@@ -445,7 +445,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
       CPPUNIT_ASSERT_EQUAL(Ccr(i+1,j+1),  Ccr_check(i+1,j+1));
     }
   }
-  
+
   // ROWVECTOR * COLUMNVECTOR
   double rc = Ac_trans * Ac;
   double rc_check;
@@ -459,7 +459,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
   }
   rc_check = sum;
   CPPUNIT_ASSERT_EQUAL(rc,  rc_check);
-  
+
   // ROWVECTOR * MATRIX
   // TODO: only implemented for lti
   //RowVector Cr2= Ar * Am;
@@ -481,7 +481,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
   //  Cr2_check(i+1) = sum;
   //  CPPUNIT_ASSERT_EQUAL(Cr2(i+1),  Cr2_check(i+1));
   //}
-  
+
   // MATRIX * COLUMNVECTOR
   ColumnVector Cc2= Am_trans * Ac;
   ColumnVector Cc2_check(c);
@@ -564,7 +564,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
   CHs_check(2,1) = 1.15470;   CHs_check(2,2) = 0.81650;    CHs_check(2,3) = 0.00000;
   CHs_check(3,1) = 0.57735;   CHs_check(3,2) = 0.40825;    CHs_check(3,3) = 0.70711;
   Ps.cholesky_semidefinite(CHs);
-  CPPUNIT_ASSERT_EQUAL(approxEqual(CHs, CHs_check, epsilon),true);  
+  CPPUNIT_ASSERT_EQUAL(approxEqual(CHs, CHs_check, epsilon),true);
 
   // test operator - -=
   Matrix Rm_bak; Rm_bak = Rm;
@@ -597,14 +597,14 @@ MatrixwrapperTest::testMatrixwrapperValue()
   Matrix W_svd(cols,cols);
   Matrix U_svd,V_svd;
   W_svd = 0.0;
-    
+
   ColumnVector w_svd;
-  A_svd(1,1)=1; A_svd(2,2)=2; A_svd(3,3)=3; 
+  A_svd(1,1)=1; A_svd(2,2)=2; A_svd(3,3)=3;
   A_svd(1,2)=-0.5; A_svd(1,3)=-0.8;
   A_svd(2,1)=-1.5; A_svd(2,3)=-2.8;
-  A_svd(3,1)=2.5;  A_svd(3,2)=0.8; 
+  A_svd(3,1)=2.5;  A_svd(3,2)=0.8;
   A_svd(4,1)=0.5;  A_svd(4,2)=1.8; A_svd(4,3)=1.6 ;
-  
+
   A_svd.SVD(w_svd,U_svd,V_svd);
   for (int i=1; i<=A_svd.columns() ; i++)  W_svd(i,i) = w_svd(i);
   CPPUNIT_ASSERT_EQUAL(approxEqual(A_svd, U_svd * W_svd * V_svd.transpose(), epsilon),true);
@@ -612,10 +612,10 @@ MatrixwrapperTest::testMatrixwrapperValue()
   int rows2 = 3;
   int cols2 = 4;
   Matrix A2_svd(rows2,cols2);
-  Matrix W2_svd(cols2,cols2); 
+  Matrix W2_svd(cols2,cols2);
   Matrix U2_svd,V2_svd;
   W2_svd = 0.0;
-    
+
   ColumnVector w2_svd;
   A2_svd(1,1)=1; A2_svd(2,2)=2; A2_svd(3,3)=3; //A(4,4)=4;
   A2_svd(1,2)=-0.5; A2_svd(1,3)=-0.8; A2_svd(1,4)=-0.1 ;

@@ -1,20 +1,20 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 #include "systemmodel.h"
 
 // Constructor
@@ -27,7 +27,7 @@ template<typename T> SystemModel<T>::SystemModel(ConditionalPdf<T,T>* systempdf)
     {
       switch(systempdf->NumConditionalArgumentsGet())
 	{
-	case 1: 
+	case 1:
 	  {
 	    _systemWithoutInputs = true;
 	    _SystemPdf  = systempdf;
@@ -49,7 +49,7 @@ template<typename T> SystemModel<T>::SystemModel(ConditionalPdf<T,T>* systempdf)
 }
 
 // Destructor
-template<typename T> 
+template<typename T>
 SystemModel<T>::~SystemModel()
 {
 #ifdef __DESTRUCTOR__
@@ -66,7 +66,7 @@ SystemModel<T>::~SystemModel()
 
 // Copy constructor
 /*
-template<typename T> 
+template<typename T>
 SystemModel<T>::SystemModel(const SystemModel<T>& model)
 {
   SystemPdf  = &(model.SystemPdfGet());
@@ -74,33 +74,33 @@ SystemModel<T>::SystemModel(const SystemModel<T>& model)
 */
 
 // Get State Size
-template<typename T> int 
-SystemModel<T>::StateSizeGet() const 
-{ 
+template<typename T> int
+SystemModel<T>::StateSizeGet() const
+{
   return _SystemPdf->DimensionGet();
 }
 
-template<typename T> bool 
-SystemModel<T>::SystemWithoutInputs() const 
-{ 
+template<typename T> bool
+SystemModel<T>::SystemWithoutInputs() const
+{
   return _systemWithoutInputs;
 }
 
 // Get SystemPdf
 template<typename T> ConditionalPdf<T,T>*
 SystemModel<T>::SystemPdfGet()
-{ 
+{
   return _SystemPdf;
 }
 
 // Set SystemPdf
-template<typename T> void 
+template<typename T> void
 SystemModel<T>::SystemPdfSet(ConditionalPdf<T,T>* pdf)
-{ 
+{
   assert(pdf != NULL);
   switch(pdf->NumConditionalArgumentsGet())
     {
-    case 1: 
+    case 1:
       {
 	_systemWithoutInputs = true;
 	_SystemPdf  = pdf;
@@ -121,8 +121,8 @@ SystemModel<T>::SystemPdfSet(ConditionalPdf<T,T>* pdf)
 }
 
 // Simulate from the system model
-template<typename T> T 
-SystemModel<T>::Simulate (const T& x, const T& u, int sampling_method, 
+template<typename T> T
+SystemModel<T>::Simulate (const T& x, const T& u, int sampling_method,
 		          void * sampling_args)
 {
   assert(_systemWithoutInputs == false);
@@ -134,8 +134,8 @@ SystemModel<T>::Simulate (const T& x, const T& u, int sampling_method,
   return result;
 }
 
-template<typename T> T 
-SystemModel<T>::Simulate (const T& x, int sampling_method, 
+template<typename T> T
+SystemModel<T>::Simulate (const T& x, int sampling_method,
 			  void * sampling_args)
 {
   assert(_systemWithoutInputs == true);
@@ -146,7 +146,7 @@ SystemModel<T>::Simulate (const T& x, int sampling_method,
   return result;
 }
 
-template <typename T> Probability 
+template <typename T> Probability
 SystemModel<T>::ProbabilityGet (const T& x_k, const T& x_kminusone,
                                 const T& u)
 {
@@ -156,7 +156,7 @@ SystemModel<T>::ProbabilityGet (const T& x_k, const T& x_kminusone,
   return _SystemPdf->ProbabilityGet(x_k);
 }
 
-template <typename T> Probability 
+template <typename T> Probability
 SystemModel<T>::ProbabilityGet (const T& x_k, const T& x_kminusone)
 {
   assert(_systemWithoutInputs == true);

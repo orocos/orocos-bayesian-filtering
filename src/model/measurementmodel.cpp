@@ -1,20 +1,20 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #include "measurementmodel.h"
 #include <iostream>
@@ -22,7 +22,7 @@
 using namespace std;
 
 // Constructor
-template<typename MeasVar, typename StateVar> 
+template<typename MeasVar, typename StateVar>
 MeasurementModel<MeasVar,StateVar>::MeasurementModel(ConditionalPdf<MeasVar,StateVar>* measurementpdf)
 {
 #ifdef __CONSTRUCTOR__
@@ -32,7 +32,7 @@ MeasurementModel<MeasVar,StateVar>::MeasurementModel(ConditionalPdf<MeasVar,Stat
     {
       switch(measurementpdf->NumConditionalArgumentsGet())
 	{
-	case 1: 
+	case 1:
 	  {
 	    _systemWithoutSensorParams = true;
 	    _MeasurementPdf  = measurementpdf;
@@ -71,33 +71,33 @@ template<typename MeasVar, typename StateVar>
 // BUG: Should have copy constructor here?
 
 // Get Measurement Size
-template<typename MeasVar, typename StateVar> int 
-MeasurementModel<MeasVar,StateVar>::MeasurementSizeGet() const 
-{ 
+template<typename MeasVar, typename StateVar> int
+MeasurementModel<MeasVar,StateVar>::MeasurementSizeGet() const
+{
   return _MeasurementPdf->DimensionGet();
 }
 
-template<typename MeasVar, typename StateVar> bool 
-MeasurementModel<MeasVar,StateVar>::SystemWithoutSensorParams() const 
-{ 
+template<typename MeasVar, typename StateVar> bool
+MeasurementModel<MeasVar,StateVar>::SystemWithoutSensorParams() const
+{
   return _systemWithoutSensorParams;
 }
 
 // Get MeasurementPdf
 template<typename MeasVar, typename StateVar> ConditionalPdf<MeasVar,StateVar>*
 MeasurementModel<MeasVar,StateVar>::MeasurementPdfGet()
-{ 
+{
   return _MeasurementPdf;
 }
 
 // Set MeasurementPdf
-template<typename MeasVar, typename StateVar> void 
+template<typename MeasVar, typename StateVar> void
 MeasurementModel<MeasVar,StateVar>::MeasurementPdfSet(ConditionalPdf<MeasVar,StateVar> * pdf)
-{ 
+{
   assert(pdf != NULL);
   switch(pdf->NumConditionalArgumentsGet())
     {
-    case 1: 
+    case 1:
       {
 	_systemWithoutSensorParams = true;
 	_MeasurementPdf  = pdf;
@@ -118,9 +118,9 @@ MeasurementModel<MeasVar,StateVar>::MeasurementPdfSet(ConditionalPdf<MeasVar,Sta
 }
 
 template<typename MeasVar, typename StateVar> MeasVar
-MeasurementModel<MeasVar,StateVar>::Simulate (const StateVar& x, 
-					      const StateVar& s, 
-					      int sampling_method, 
+MeasurementModel<MeasVar,StateVar>::Simulate (const StateVar& x,
+					      const StateVar& s,
+					      int sampling_method,
 					      void * sampling_args)
 {
   assert(_systemWithoutSensorParams == false);
@@ -134,8 +134,8 @@ MeasurementModel<MeasVar,StateVar>::Simulate (const StateVar& x,
 
 
 template<typename MeasVar, typename StateVar> MeasVar
-MeasurementModel<MeasVar,StateVar>::Simulate(const StateVar& x, 
-					     int sampling_method, 
+MeasurementModel<MeasVar,StateVar>::Simulate(const StateVar& x,
+					     int sampling_method,
 					     void * sampling_args)
 {
   assert(_systemWithoutSensorParams == true);
@@ -146,9 +146,9 @@ MeasurementModel<MeasVar,StateVar>::Simulate(const StateVar& x,
   return result;
 }
 
-template <typename MeasVar, typename StateVar> Probability 
-MeasurementModel<MeasVar,StateVar>::ProbabilityGet (const MeasVar& z, 
-						    const StateVar& x, 
+template <typename MeasVar, typename StateVar> Probability
+MeasurementModel<MeasVar,StateVar>::ProbabilityGet (const MeasVar& z,
+						    const StateVar& x,
 						    const StateVar& s)
 {
   assert(_systemWithoutSensorParams == false);
@@ -158,7 +158,7 @@ MeasurementModel<MeasVar,StateVar>::ProbabilityGet (const MeasVar& z,
 }
 
 template <typename MeasVar, typename StateVar> Probability
-MeasurementModel<MeasVar,StateVar>::ProbabilityGet (const MeasVar& z, 
+MeasurementModel<MeasVar,StateVar>::ProbabilityGet (const MeasVar& z,
 						    const StateVar& x)
 {
   assert(_systemWithoutSensorParams == true);

@@ -1,21 +1,21 @@
 // Copyright (C) 2007 Klaas Gadeyne <first dot last at gmail dot com>
 // Copyright (C) 2007 Tinne De Laet <first dot last at mech dot kuleuven dot be>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
- 
+//
+
 #include "pdf_test.hpp"
 #include "approxEqual.hpp"
 
@@ -41,7 +41,7 @@ const unsigned int NUM_SAMPLES = 500;
 //discrete conditional pdf
 #define NUM_COND_ARGS_DIS 1
 
-void 
+void
 PdfTest::setUp()
 {
   epsilon = 0.0001;
@@ -56,12 +56,12 @@ PdfTest::setUp()
   _width(2) = WIDTH_1 ;
 }
 
-void 
+void
 PdfTest::tearDown()
 {
 }
 
-void 
+void
 PdfTest::testGaussian()
 {
   Gaussian first_gaussian(DIMENSION);
@@ -78,7 +78,7 @@ PdfTest::testGaussian()
     CPPUNIT_ASSERT_EQUAL( true, a_gaussian.SampleFrom(a_sample,DEFAULT,NULL));
   // 4 sigma test : REMARK: this test WILL occasionaly fail with probability
   // erf(4/sqrt(2)) for each sample
-  for(int j = 1 ; j <= DIMENSION; j++)  
+  for(int j = 1 ; j <= DIMENSION; j++)
   {
     CPPUNIT_ASSERT( (a_sample.ValueGet())(j) > _mu(j) - 4.0 * sqrt(_sigma(j,j) ) );
     CPPUNIT_ASSERT( (a_sample.ValueGet())(j) < _mu(j) + 4.0 * sqrt(_sigma(j,j) ) );
@@ -88,7 +88,7 @@ PdfTest::testGaussian()
   CPPUNIT_ASSERT_EQUAL( true, a_gaussian.SampleFrom(a_sample,CHOLESKY,NULL));
   // 4 sigma test : REMARK: this test WILL occasionaly fail with probability
   // erf(4/sqrt(2)) for each sample
-  for(int j = 1 ; j <= DIMENSION; j++)  
+  for(int j = 1 ; j <= DIMENSION; j++)
   {
     CPPUNIT_ASSERT( (a_sample.ValueGet())(j) > _mu(j) - 4.0 * sqrt(_sigma(j,j) ) );
     CPPUNIT_ASSERT( (a_sample.ValueGet())(j) < _mu(j) + 4.0 * sqrt(_sigma(j,j) ) );
@@ -101,11 +101,11 @@ PdfTest::testGaussian()
   // erf(4/sqrt(2)) for each sample
   ColumnVector sample_mean(DIMENSION);
   sample_mean = 0.0;
-  for(int i = 0 ; i < NUM_SAMPLES; i++)  
+  for(int i = 0 ; i < NUM_SAMPLES; i++)
   {
     a_sample = los[i];
     sample_mean += a_sample.ValueGet();
-    for(int j = 1 ; j <= DIMENSION; j++)  
+    for(int j = 1 ; j <= DIMENSION; j++)
     {
         CPPUNIT_ASSERT( (a_sample.ValueGet())(j) > _mu(j) - 4.0 * sqrt(_sigma(j,j) ) );
         CPPUNIT_ASSERT( (a_sample.ValueGet())(j) < _mu(j) + 4.0 * sqrt(_sigma(j,j) ) );
@@ -115,7 +115,7 @@ PdfTest::testGaussian()
   // 3 sigma test : REMARK: this test WILL occasionaly fail with probability
   // erf(3/sqrt(2)) for each sample
   sample_mean = sample_mean / (double)NUM_SAMPLES;
-  for(int j = 1 ; j <= DIMENSION; j++)  
+  for(int j = 1 ; j <= DIMENSION; j++)
   {
     CPPUNIT_ASSERT( sample_mean(j) <= _mu(j) + 3.0 * 1/sqrt(NUM_SAMPLES) * sqrt(_sigma(j,j)) );
     CPPUNIT_ASSERT( sample_mean(j) >= _mu(j) - 3.0 * 1/sqrt(NUM_SAMPLES) * sqrt(_sigma(j,j)) );
@@ -126,11 +126,11 @@ PdfTest::testGaussian()
   // 4 sigma test : REMARK: this test WILL occasionaly fail with probability
   // erf(4/sqrt(2)) for each sample
   sample_mean = 0.0;
-  for(int i = 0 ; i < NUM_SAMPLES; i++)  
+  for(int i = 0 ; i < NUM_SAMPLES; i++)
   {
     a_sample = los[i];
     sample_mean += a_sample.ValueGet();
-    for(int j = 1 ; j <= DIMENSION; j++)  
+    for(int j = 1 ; j <= DIMENSION; j++)
     {
         CPPUNIT_ASSERT( (a_sample.ValueGet())(j) > _mu(j) - 4.0 * sqrt(_sigma(j,j) ) );
         CPPUNIT_ASSERT( (a_sample.ValueGet())(j) < _mu(j) + 4.0 * sqrt(_sigma(j,j) ) );
@@ -140,12 +140,12 @@ PdfTest::testGaussian()
   // 3 sigma test : REMARK: this test WILL occasionaly fail with probability
   // erf(3/sqrt(2)) for each sample
   sample_mean = sample_mean / (double)NUM_SAMPLES;
-  for(int j = 1 ; j <= DIMENSION; j++)  
+  for(int j = 1 ; j <= DIMENSION; j++)
   {
     CPPUNIT_ASSERT( sample_mean(j) <= _mu(j) + 3.0 * 1/sqrt(NUM_SAMPLES) * sqrt(_sigma(j,j)) );
     CPPUNIT_ASSERT( sample_mean(j) >= _mu(j) - 3.0 * 1/sqrt(NUM_SAMPLES) * sqrt(_sigma(j,j)) );
   }
-  
+
   /* Setting and Getting mean/covariance */
   CPPUNIT_ASSERT_EQUAL( _mu, a_gaussian.ExpectedValueGet());
   CPPUNIT_ASSERT_EQUAL( _sigma, a_gaussian.CovarianceGet());
@@ -161,9 +161,9 @@ PdfTest::testGaussian()
   CPPUNIT_ASSERT_EQUAL( _mu, c_gaussian.ExpectedValueGet());
   c_gaussian.CovarianceSet(_sigma);
   CPPUNIT_ASSERT_EQUAL( _sigma, c_gaussian.CovarianceGet());
-}  
+}
 
-void 
+void
 PdfTest::testUniform()
 {
   Uniform a_uniform(_mu,_width);
@@ -178,7 +178,7 @@ PdfTest::testUniform()
   // test if samples are located in the area
   vector<Sample<ColumnVector > >::iterator los_it;
   for (los_it = los.begin(); los_it!=los.end(); los_it++)
-  { 
+  {
        ColumnVector current_sample = los_it->ValueGet();
        for (int i = 1; i < _mu.rows()+1 ; i++)
        {
@@ -195,7 +195,7 @@ PdfTest::testUniform()
 
   /* Getting the probability */
   double area = 1;
-  for (int i =1 ; i < DIMENSION + 1 ; i++) area = area * _width(i); 
+  for (int i =1 ; i < DIMENSION + 1 ; i++) area = area * _width(i);
   CPPUNIT_ASSERT_EQUAL(1/area, (double)a_uniform.ProbabilityGet(_mu));
   CPPUNIT_ASSERT_EQUAL(0.0, (double)a_uniform.ProbabilityGet(_mu + _width));
   CPPUNIT_ASSERT_EQUAL(0.0, (double)a_uniform.ProbabilityGet(_mu - _width));
@@ -203,7 +203,7 @@ PdfTest::testUniform()
   test_prob = _mu;
   test_prob(DIMENSION) = _mu(DIMENSION) + _width(DIMENSION)*2/3;
   CPPUNIT_ASSERT_EQUAL(0.0, (double)a_uniform.ProbabilityGet(test_prob));
-  
+
   /* Copy Constructor etc */
   Uniform b_uniform(a_uniform);
   CPPUNIT_ASSERT_EQUAL(approxEqual( _mu, b_uniform.CenterGet(),epsilon),true);
@@ -216,14 +216,14 @@ PdfTest::testUniform()
   CPPUNIT_ASSERT_EQUAL(approxEqual( _width, c_uniform.WidthGet(),epsilon),true);
   /* Getting the probability */
   area = 1;
-  for (int i =1 ; i < DIMENSION + 1 ; i++) area = area * _width(i); 
+  for (int i =1 ; i < DIMENSION + 1 ; i++) area = area * _width(i);
   CPPUNIT_ASSERT_EQUAL(1/area, (double)c_uniform.ProbabilityGet(_mu));
   CPPUNIT_ASSERT_EQUAL(0.0, (double)c_uniform.ProbabilityGet(_mu + _width));
   CPPUNIT_ASSERT_EQUAL(0.0, (double)c_uniform.ProbabilityGet(_mu - _width));
   test_prob = _mu;
   test_prob(DIMENSION) = _mu(DIMENSION) + _width(DIMENSION)*2/3;
   CPPUNIT_ASSERT_EQUAL(0.0, (double)c_uniform.ProbabilityGet(test_prob));
-}  
+}
 void
 PdfTest::testDiscretePdf()
 {
@@ -249,15 +249,15 @@ PdfTest::testDiscretePdf()
   CPPUNIT_ASSERT_EQUAL(a_discretepdf.NumStatesGet(), b_discretepdf.NumStatesGet());
 
   /* Set and Get probabilities */
-  // set one probability 
+  // set one probability
   double prob_new = 0.57;
-  int new_el = NUM_DS-1; 
+  int new_el = NUM_DS-1;
   CPPUNIT_ASSERT_EQUAL(true, a_discretepdf.ProbabilitySet(new_el,prob_new));
   CPPUNIT_ASSERT_EQUAL(prob_new, (double) a_discretepdf.ProbabilityGet(new_el));
   // check if the sum of the probabilities is still one!
   double sumProb = 0.0;
   for (int state = 0; state < NUM_DS ; state++)
-  { 
+  {
     sumProb = sumProb + a_discretepdf.ProbabilityGet(state);
   }
   CPPUNIT_ASSERT_EQUAL(1.0, sumProb);
@@ -271,7 +271,7 @@ PdfTest::testDiscretePdf()
   // check if the sum of the probabilities is still one!
   sumProb = 0.0;
   for (int state = 0; state < NUM_DS ; state++)
-  { 
+  {
     sumProb = sumProb + a_discretepdf.ProbabilityGet(state);
   }
   CPPUNIT_ASSERT_EQUAL(1.0, sumProb);
@@ -290,7 +290,7 @@ PdfTest::testDiscretePdf()
   // check if the sum of the probabilities is still one!
   sumProb = 0.0;
   for (int state = 0; state < NUM_DS ; state++)
-  { 
+  {
     sumProb = sumProb + a_discretepdf.ProbabilityGet(state);
   }
   CPPUNIT_ASSERT_EQUAL(1.0, sumProb);
@@ -299,10 +299,10 @@ PdfTest::testDiscretePdf()
   // which was == 1
   DiscretePdf c_discretepdf(NUM_DS);
   vector<Probability> prob_vecc(NUM_DS);
-  prob_vecc[0] = 1.0; 
+  prob_vecc[0] = 1.0;
   for (int state = 1; state < NUM_DS  ; state++)
   {
-    prob_vecc[state] = 0.0; 
+    prob_vecc[state] = 0.0;
   }
   c_discretepdf.ProbabilitiesSet(prob_vecc);
   Probability new_prob0 = 0.5;
@@ -313,15 +313,15 @@ PdfTest::testDiscretePdf()
   {
     CPPUNIT_ASSERT_EQUAL( new_prob_other, (double)(c_discretepdf.ProbabilityGet(state)));
   }
-  
+
   /* Sampling */
   DiscretePdf d_discretepdf(NUM_DS);
   vector<Probability> prob_vecd(NUM_DS);
-  prob_vecd[0] = 0.1; 
-  prob_vecd[1] = 0.2; 
-  prob_vecd[2] = 0.35; 
-  prob_vecd[3] = 0.05; 
-  prob_vecd[4] = 0.3; 
+  prob_vecd[0] = 0.1;
+  prob_vecd[1] = 0.2;
+  prob_vecd[2] = 0.35;
+  prob_vecd[3] = 0.05;
+  prob_vecd[4] = 0.3;
   d_discretepdf.ProbabilitiesSet(prob_vecd);
   vector<Sample<int> > los(NUM_SAMPLES);
   vector<Sample<int> >::iterator it;
@@ -332,29 +332,29 @@ PdfTest::testDiscretePdf()
 
   CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(los,NUM_SAMPLES,DEFAULT,NULL));
   // test if samples are distributed according to probabilities
-  // remark that this test occasionally fails  
+  // remark that this test occasionally fails
   vector<unsigned int> num_samples(NUM_DS);
   for (it = los.begin(); it!=los.end();it++)
   {
     num_samples[it->ValueGet()] +=1;
   }
   for (int i = 0 ; i< NUM_DS ; i++)
-  { 
+  {
     //TODO: find some theoretical limits depending on the number of samples
     CPPUNIT_ASSERT( approxEqual( prob_vecd[i] , (double)num_samples[i] / NUM_SAMPLES, 0.05 ) );
   }
-  
+
   // Ripley
   CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(los,NUM_SAMPLES,RIPLEY,NULL));
   // test if samples are distributed according to probabilities
-  // remark that this test occasionally fails  
+  // remark that this test occasionally fails
   vector<unsigned int> num_samples2(NUM_DS);
   for (it = los.begin(); it!=los.end();it++)
   {
     num_samples2[it->ValueGet()] +=1;
   }
   for (int i = 0 ; i< NUM_DS ; i++)
-  { 
+  {
     //TODO: find some theoretical limits depending on the number of samples
    CPPUNIT_ASSERT( approxEqual( prob_vecd[i] , (double)num_samples2[i] / NUM_SAMPLES, 0.05 ) );
   }
@@ -377,7 +377,7 @@ PdfTest::testLinearAnalyticConditionalGaussian()
   Matrix a(DIMENSION,DIMENSION); a = 1.0;
   Matrix b(DIMENSION,DIMENSION); b = 1.0;
   vector<Matrix> v(2); v[0] = a; v[1] = b;
-  
+
   LinearAnalyticConditionalGaussian a_condgaussian(v, noise);
 
   /* Dimension check*/
@@ -403,14 +403,14 @@ PdfTest::testLinearAnalyticConditionalGaussian()
   CPPUNIT_ASSERT_EQUAL( DIMENSION, a_condgaussian.DimensionGet());
   CPPUNIT_ASSERT_EQUAL( x2, a_condgaussian.ConditionalArgumentGet(0));
   CPPUNIT_ASSERT_EQUAL( u2, a_condgaussian.ConditionalArgumentGet(1));
-  
+
 
   /* Setting and getting the conditional args; all together */
   ColumnVector x(DIMENSION); x(1) = 1.0; x(DIMENSION) = 0.5;
   ColumnVector u(DIMENSION_INPUT); u(1) = 1.0; u(DIMENSION_INPUT) = 0.5;
 
   std::vector<ColumnVector> cond_args(NUM_COND_ARGS);
-  cond_args[0] = x; 
+  cond_args[0] = x;
   cond_args[NUM_COND_ARGS-1] = u;
 
   a_condgaussian.ConditionalArgumentsSet(cond_args);
@@ -438,7 +438,7 @@ PdfTest::testLinearAnalyticConditionalGaussian()
   {
     CPPUNIT_ASSERT_EQUAL( v[i], a_condgaussian.dfGet(i));
   }
-  
+
   /* Setting and Getting mean/covariance */
   // calculate expected value
   ColumnVector exp(DIMENSION); exp = 0.0;
@@ -458,7 +458,7 @@ PdfTest::testLinearAnalyticConditionalGaussian()
   /* Setting and getting matrices */
   Matrix a2(DIMENSION,DIMENSION); a2 = 2.1;
   Matrix b2(DIMENSION,DIMENSION); b2 = 1.5;
-  
+
   a_condgaussian.MatrixSet(0,a2);
   a_condgaussian.MatrixSet(1,b2);
 
@@ -472,7 +472,7 @@ PdfTest::testLinearAnalyticConditionalGaussian()
   mu2(1) = MU_1; mu2(2) = MU_0;
   sigma2.resize(DIMENSION);
   sigma2 = 0.0;
-  double sig2 = 0.05; 
+  double sig2 = 0.05;
   for (unsigned int rows=1; rows < DIMENSION + 1; rows++){ sigma2(rows,rows)=sig2; }
 
   a_condgaussian.AdditiveNoiseMuSet(mu2);
@@ -490,16 +490,16 @@ PdfTest::testDiscreteConditionalPdf()
 {
   int cond_arg_dims[NUM_COND_ARGS_DIS] = { NUM_DS };
   int state_k;int state_kMinusOne;
-  
+
   DiscreteConditionalPdf a_discretecondpdf(NUM_DS,NUM_COND_ARGS_DIS,cond_arg_dims);
 
-  /* Get the dimension  */ 
+  /* Get the dimension  */
   CPPUNIT_ASSERT_EQUAL( 1, (int)a_discretecondpdf.DimensionGet());
-  
-  /* Get the dimension  */ 
+
+  /* Get the dimension  */
   CPPUNIT_ASSERT_EQUAL( NUM_DS, (int)a_discretecondpdf.NumStatesGet());
 
-  /* Get number of conditional arguments  */ 
+  /* Get number of conditional arguments  */
   CPPUNIT_ASSERT_EQUAL( NUM_COND_ARGS_DIS, (int)a_discretecondpdf.NumConditionalArgumentsGet());
 
   std::vector<int> cond_args(NUM_COND_ARGS_DIS);
@@ -520,7 +520,7 @@ PdfTest::testDiscreteConditionalPdf()
   int cond_arg = NUM_DS - 1;
   a_discretecondpdf.ConditionalArgumentSet(0, cond_arg);
   CPPUNIT_ASSERT_EQUAL( cond_arg, a_discretecondpdf.ConditionalArgumentGet(0));
-  
+
   /* Get the probability for the states given the conditional argument set */
   for (state_k = 0 ; state_k < NUM_DS ;  state_k++)
     {
@@ -544,7 +544,7 @@ PdfTest::testMcpdf()
   CPPUNIT_ASSERT_EQUAL( DIMENSION, a_mcpdf.DimensionGet());
   CPPUNIT_ASSERT_EQUAL( NUM_SAMPLES , a_mcpdf.NumSamplesGet());
 
-  // Generating (exact) Samples from a Gaussian density with 
+  // Generating (exact) Samples from a Gaussian density with
   // cholesky sampling
   Gaussian gaussian(_mu,_sigma);
 
@@ -564,7 +564,7 @@ PdfTest::testMcpdf()
 
   /* List of samples update + getting and setting the list of samples (weighted)*/
   vector<WeightedSample<ColumnVector> > samples_weighted = mcpdf_samples;
-  for (unsigned int i = 0 ; i < NUM_SAMPLES ; i++)  
+  for (unsigned int i = 0 ; i < NUM_SAMPLES ; i++)
   {
      //set a weight
      samples_weighted[i].WeightSet(i+1);
@@ -602,7 +602,7 @@ PdfTest::testMcpdf()
     sumWeights += it2->WeightGet();
   }
   CPPUNIT_ASSERT_EQUAL( approxEqual(cumSum/sumWeights, a_mcpdf.ExpectedValueGet(), epsilon),true);
- 
+
   /* Covariance  + cumsumPDF*/
   ColumnVector mean(a_mcpdf.ExpectedValueGet());
   ColumnVector diff(DIMENSION); // Temporary storage
@@ -619,11 +619,11 @@ PdfTest::testMcpdf()
     cumPDFit++;
     cumSumW += ( it2->WeightGet() / sumWeights);
     // test cumulative sum
-    CPPUNIT_ASSERT_EQUAL(approxEqual(cumSumW, *cumPDFit, epsilon), true); 
+    CPPUNIT_ASSERT_EQUAL(approxEqual(cumSumW, *cumPDFit, epsilon), true);
   }
   CPPUNIT_ASSERT_EQUAL(approxEqual(diffsum/sumWeights, (Matrix)a_mcpdf.CovarianceGet(),epsilon),true);
 
-  /* ProbabilityGet */ 
+  /* ProbabilityGet */
 
   /**************************
   // MCPDF with unsigned int
@@ -636,7 +636,7 @@ PdfTest::testMcpdf()
   CPPUNIT_ASSERT_EQUAL( NUM_SAMPLES , a_mcpdf_uint.NumSamplesGet());
 
 
-  // Generating (exact) Samples from a discrete pdf 
+  // Generating (exact) Samples from a discrete pdf
   unsigned int num_states = 10;
   DiscretePdf discrete(num_states);
 
@@ -646,7 +646,7 @@ PdfTest::testMcpdf()
 
   vector<Sample<unsigned int> > samples_discrete(NUM_SAMPLES);
   vector<Sample<unsigned int> >::iterator it_discrete;
-  it_discrete = samples_discrete.begin(); 
+  it_discrete = samples_discrete.begin();
 
   Sample<unsigned int> temp_sample;
   for(it_discrete_int = samples_discrete_int.begin(); it_discrete_int != samples_discrete_int.end(); it_discrete_int++)
@@ -668,7 +668,7 @@ PdfTest::testMcpdf()
 
   /* List of samples update + getting and setting the list of samples (weighted)*/
   vector<WeightedSample<unsigned int > > samples_weighted_uint = mcpdf_samples_uint;
-  for (unsigned int i = 0 ; i < NUM_SAMPLES ; i++)  
+  for (unsigned int i = 0 ; i < NUM_SAMPLES ; i++)
   {
      //set a weight
      samples_weighted_uint[i].WeightSet(i+1);
@@ -705,7 +705,7 @@ PdfTest::testMcpdf()
     sumWeights += it2_uint->WeightGet();
   }
   CPPUNIT_ASSERT_EQUAL( approxEqual( (unsigned int ) (cumSum_double/sumWeights + 0.5) , a_mcpdf_uint.ExpectedValueGet(), epsilon),true);
- 
+
   /* Covariance  + cumsumPDF*/
   unsigned int  mean_uint = a_mcpdf_uint.ExpectedValueGet();
   unsigned int  diff_uint;
@@ -722,10 +722,10 @@ PdfTest::testMcpdf()
     cumPDFit_uint++;
     cumSumW_uint += ( it2_uint->WeightGet() / sumWeights);
     // test cumulative sum
-    CPPUNIT_ASSERT_EQUAL(approxEqual(cumSumW_uint, *cumPDFit_uint, epsilon), true); 
+    CPPUNIT_ASSERT_EQUAL(approxEqual(cumSumW_uint, *cumPDFit_uint, epsilon), true);
   }
   Matrix test_diff(1,1);
   test_diff(1,1) = diffsum_uint/sumWeights;
   CPPUNIT_ASSERT_EQUAL(approxEqual(test_diff, (Matrix)a_mcpdf_uint.CovarianceGet(),epsilon),true);
-  /* ProbabilityGet */ 
+  /* ProbabilityGet */
 }

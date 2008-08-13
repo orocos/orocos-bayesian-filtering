@@ -1,21 +1,21 @@
 // $Id: vector_BOOST.cpp 27906 2007-04-27 11:50:53Z wmeeusse $
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
 
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #include "../config.h"
 #ifdef __MATRIXWRAPPER_BOOST__
@@ -26,12 +26,12 @@
 // Constructors
 MyColumnVector::ColumnVector() : BoostColumnVector() {}
 MyColumnVector::ColumnVector(int num_rows) : BoostColumnVector(num_rows){}
-MyColumnVector::ColumnVector(const MyColumnVector& a, const MyColumnVector& b) : BoostColumnVector(a.rows() + b.rows()) 
+MyColumnVector::ColumnVector(const MyColumnVector& a, const MyColumnVector& b) : BoostColumnVector(a.rows() + b.rows())
 {
   BoostColumnVector& opl = (*this);
-  
+
   unsigned int i;
-  
+
   // copy elements of a to opl
   for (i=0; i< a.rows(); i++)
     opl(i) = a(i+1);
@@ -45,9 +45,9 @@ MyColumnVector::ColumnVector(const MyColumnVector& a, const MyColumnVector& b) :
 MyColumnVector::~ColumnVector(){}
 
 // Copy constructor
-MyColumnVector::ColumnVector(const MyColumnVector& a) : 
+MyColumnVector::ColumnVector(const MyColumnVector& a) :
   BoostColumnVector(a){}
-MyColumnVector::ColumnVector(const BoostColumnVector & a) : 
+MyColumnVector::ColumnVector(const BoostColumnVector & a) :
   BoostColumnVector(a){}
 
 // Resizing
@@ -61,18 +61,18 @@ void MyColumnVector::resize(int num_rows)
 unsigned int MyColumnVector::rows() const { return this->size();}
 unsigned int MyColumnVector::columns() const { return 1;}
 
-MyColumnVector 
+MyColumnVector
 MyColumnVector::vectorAdd(const MyColumnVector& v2) const
 {
   const MyColumnVector& v1 = *this;
   MyColumnVector res(v1.rows() + v2.rows());
-  
+
   for (unsigned int i=0; i<v1.rows(); i++)
     res(i+1) = v1(i+1);
 
   for (unsigned int i=0; i<v2.rows(); i++)
     res(v1.rows()+i+1) = v2(i+1);
- 
+
   return res;
 }
 
@@ -82,7 +82,7 @@ double& MyColumnVector::operator()(unsigned int i)
   return op1(i-1);
 }
 
-const double MyColumnVector::operator()(unsigned int i) const 
+const double MyColumnVector::operator()(unsigned int i) const
 {
   const BoostColumnVector op1 = (*this);
   return op1(i-1);
@@ -190,7 +190,7 @@ MyMatrix MyColumnVector::operator* (const MyRowVector &a) const
 {
   unsigned int r = this->rows();
   unsigned int c = a.columns();
-  
+
   MyMatrix result(r,c);
   for (unsigned int i=0; i<r; i++)
     for (unsigned int j=0; j<c; j++)
@@ -238,9 +238,9 @@ MyRowVector::RowVector(int num_cols) : BoostRowVector(num_cols){}
 MyRowVector::~RowVector(){}
 
 // Copy constructor
-MyRowVector::RowVector(const MyRowVector& a) : 
+MyRowVector::RowVector(const MyRowVector& a) :
   BoostRowVector(a){}
-MyRowVector::RowVector(const BoostRowVector & a) : 
+MyRowVector::RowVector(const BoostRowVector & a) :
   BoostRowVector(a){}
 
 // Resizing
@@ -254,18 +254,18 @@ void MyRowVector::resize(int num_columns)
 unsigned int MyRowVector::rows() const { return 1;}
 unsigned int MyRowVector::columns() const { return this->size();}
 
-MyRowVector 
+MyRowVector
 MyRowVector::vectorAdd(const MyRowVector& v2) const
 {
   const MyRowVector& v1 = *this;
   MyRowVector res(v1.columns() + v2.columns());
-  
+
   for (unsigned int i=0; i<v1.columns(); i++)
     res(i+1) = v1(i+1);
 
   for (unsigned int i=0; i<v2.columns(); i++)
     res(v1.columns()+i+1) = v2(i+1);
- 
+
   return res;
 }
 
@@ -275,7 +275,7 @@ double& MyRowVector::operator()(unsigned int i)
   return op1(i-1);
 }
 
-const double MyRowVector::operator()(unsigned int i) const 
+const double MyRowVector::operator()(unsigned int i) const
 {
   BoostRowVector op1 = (*this);
   return op1(i-1);
@@ -384,7 +384,7 @@ double MyRowVector::operator* (const MyColumnVector &a) const
   unsigned int c = this->columns();
 
   assert(c == r);
-  
+
   double result = 0;
   for (unsigned int i=0; i<r; i++)
       result += (*this)(i+1) * a(i+1);

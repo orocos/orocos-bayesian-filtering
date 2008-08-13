@@ -1,16 +1,16 @@
 // $Id: test_discrete_filter.cpp tdelaet $
 // Copyright (C) 2007 Tinne De Laet <first dot last at mech dot kuleuven dot be>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
@@ -38,15 +38,15 @@ using namespace std;
 
 
 /* The purpose of this program is to construct a histogram filter for a very
-   simple example, which is a 1d mobile robot localisation. 
+   simple example, which is a 1d mobile robot localisation.
    Furthermore the mobile robot is equipped with an ultrasonic sensor which
    directly measures the robot's position.
-  
+
   The necessary SYSTEM MODEL is discrete.
-  
+
   The MEASUREMENT MODEL is a home made one which takes into account the discrete nature
   of the state under consideration and some extra gaussian measurement noise
-  
+
 */
 
 
@@ -110,7 +110,7 @@ int main(int argc, char** argv)
   HistogramFilter<ColumnVector> filter(&prior);
   DiscretePdf * prior_test = filter.PostGet();
   std::cout << "filter created" << std::endl;
-  
+
   /***************************
    * Initialise MOBILE ROBOT *
    **************************/
@@ -134,21 +134,21 @@ int main(int argc, char** argv)
 
       // DO ONE MEASUREMENT
       ColumnVector measurement = mobile_robot.Measure();
-     
-      // UPDATE FILTER                                      
+
+      // UPDATE FILTER
       filter.Update(&sys_model,&meas_model,measurement);
       //filter.Update(&sys_model);
       //filter.Update(&meas_model,measurement);
 
     } // estimation loop
 
-  
+
 
   DiscretePdf *  posterior = filter.PostGet();
   cout << "After " << time_step+1 << " timesteps " << endl;
   cout << " Posterior probabilities = " << endl;
   for (int state = 0 ;  state< posterior->NumStatesGet() ; state++) cout << state << ": " << (double)(posterior->ProbabilityGet(state)) << endl;
-  
+
 
   cout << "======================================================" << endl
        << "End of the Histogram filter for 1D mobile robot localisation" << endl

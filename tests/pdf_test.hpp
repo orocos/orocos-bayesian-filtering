@@ -1,20 +1,20 @@
 // Copyright (C) 2007 Klaas Gadeyne <first dot last at gmail dot com>
 // Copyright (C) 2007 Tinne De Laet <first dot last at mech dot kuleuven dot be>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #ifndef PDF_TEST_HPP
 #define PDF_TEST_HPP
@@ -51,7 +51,7 @@ class PdfTest : public CppUnit::TestFixture
 public:
   void setUp();
   void tearDown();
-  
+
   void testGaussian();
   void testUniform();
   void testDiscretePdf();
@@ -61,7 +61,7 @@ public:
 
 private:
   double epsilon;
-  
+
 };
 
 #endif  // PDF_TEST_HPP

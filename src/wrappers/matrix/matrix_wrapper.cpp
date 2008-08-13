@@ -14,12 +14,12 @@ namespace MatrixWrapper
         // put result in a
         // result is lower triangular matrix
         a = (*(MySymmetricMatrix*)this);
-        int sz = a.rows(); 
+        int sz = a.rows();
           for (int k=1; k<sz+1; ++k) {
            if (a(k,k) < std::numeric_limits<double>::epsilon()) {
                  std::cout<< "Warning: matrix of which cholesky decomposition is asked, is negative definite!: returning zero matrix" << std::endl;
                  a = 0.0; return false;//matrix is negative definite
-           } 
+           }
            else  a(k,k)=sqrt(a(k,k));
            for (int i=k+1; i<sz+1; ++i) {
                if (a(k,k)< std::numeric_limits<double>::epsilon()){
@@ -39,17 +39,17 @@ namespace MatrixWrapper
     }
 
     bool
-    Matrix_Wrapper::SVD(MyColumnVector& w, MyMatrix& U, MyMatrix& V) const 
-    {  
+    Matrix_Wrapper::SVD(MyColumnVector& w, MyMatrix& U, MyMatrix& V) const
+    {
         //get the rows of the matrix
         const int rows=this->rows();
         //get the columns of the matrix
         const int cols=this->columns();
 
-        U = *((MyMatrix*)(this)); 
-        
+        U = *((MyMatrix*)(this));
+
         static const int maxIter=150;
-    
+
         w.resize(cols);
         V.resize(cols,cols,false,true);
         int i(-1),its(-1),j(-1),jj(-1),k(-1),nm(0);
@@ -57,16 +57,16 @@ namespace MatrixWrapper
         bool flag;
 		double maxarg1, maxarg2;
         double  anorm(0),c(0),f(0),g(0),h(0),s(0),scale(0),x(0),y(0),z(0);
-    
+
         // Householder reduction to bidiagonal form
         std::vector<double> rv1(cols,0.0);
-    
-        g=scale=anorm=0.0; 
-        
+
+        g=scale=anorm=0.0;
+
         for (i=1; i <= cols; i++){
           ppi=i+1;
           rv1.at(i-1)=scale*g;
-          g=s=scale=0.0; 
+          g=s=scale=0.0;
           if (i <= rows ) {
             // compute the sum of the i-th column, starting from the i-th row
             for(k=i;k<=rows;k++) scale += fabs(U(k,i));
@@ -81,7 +81,7 @@ namespace MatrixWrapper
               g=-SIGN(sqrt(s),f);
               h=f*g-s;
               U(i,i)=f-g;
-              for (j=ppi; j <= cols; j++) { 
+              for (j=ppi; j <= cols; j++) {
                 // dot product of columns i and j, starting from the i-th row
                 for (s=0.0,k=i;k<=rows;k++) s += U(k,i) * U(k,j);
                 f=s/h;
@@ -100,7 +100,7 @@ namespace MatrixWrapper
             if (scale) {
               for(k=ppi;k<=cols;k++){
                 U(i,k) /= scale;
-                s += U(i,k)*U(i,k); 
+                s += U(i,k)*U(i,k);
               }
               f=U(i,ppi);
               g=-SIGN(sqrt(s),f); //<---- do something
@@ -119,7 +119,7 @@ namespace MatrixWrapper
           anorm = maxarg1 > maxarg2 ? maxarg1 : maxarg2;
 
         }
-    
+
         // Accumulation of right-hand transformation
         for (i= cols ; i>=1; i--) {
           if ( i < cols ) {
@@ -134,11 +134,11 @@ namespace MatrixWrapper
           }
           V(i,i)=1.0;
           g=rv1.at(i-1);
-          ppi=i; 
+          ppi=i;
         }
-    
+
         // Accumulation of left-hand transformation
-        for (i= cols < rows ? cols: rows; i>=1; i--) { 
+        for (i= cols < rows ? cols: rows; i>=1; i--) {
           ppi=i+1;
           g=w(i);
           for( j=ppi; j<=cols ; j++) U(i,j)=0.0;
@@ -155,7 +155,7 @@ namespace MatrixWrapper
           }
           ++U(i,i);
         }
-    
+
         // Diagonalization of the bidiagonal form:
         // Loop over singular values,and over allowed iterations
         for ( k=cols; k >= 1; k--) {
@@ -197,7 +197,7 @@ namespace MatrixWrapper
               }
             }
             z=w(k);
-    
+
             // Convergence. Singular value is made nonnegative.
             if (ppi == k) {
               if (z < 0.0) {
@@ -206,12 +206,12 @@ namespace MatrixWrapper
               }
               break;
             }
-    
+
             if (its == maxIter) {
               //char x[80];
               std::cout << "SVD did not converge after " <<  maxIter << " iterations!" << std::endl;
               // make all singular values zero -> rank 0
-              w = 0.0; 
+              w = 0.0;
               return false;
             }
             // shift from bottom 2-by-2 minor
@@ -221,10 +221,10 @@ namespace MatrixWrapper
             g=rv1.at(nm-1);
             h=rv1.at(k-1);
             f=((y-z)*(y+z)+(g-h)*(g+h))/(2.0*h*y);
-    
+
             g = PYTHAG(f,1.0);
             f = ((x-z)*(x+z)+h*((y/(f+SIGN(g,f)))-h))/x;
-    
+
             //Next QR transformation
             c=s=1.0;
             for ( j=ppi; j<=nm ;j++){
@@ -249,7 +249,7 @@ namespace MatrixWrapper
               }
               z=PYTHAG(f,h);
               w(j)=z;
-    
+
               if (z) {
                 z=1.0/z;
                 c=f*z;
@@ -267,7 +267,7 @@ namespace MatrixWrapper
             rv1.at(ppi-1)=0.0;
             rv1.at(k-1)=f;
             w(k)=x;
-    
+
           }
         }
         return true;
@@ -292,14 +292,14 @@ namespace MatrixWrapper
          }
      }
  }
- 
- 
+
+
  double
  Matrix_Wrapper::SIGN(double a,double b) const
  {
      return ((b) >= 0.0 ? fabs(a) : -fabs(a));
  }
- 
+
  // See <http://dsp.ee.sun.ac.za/~schwardt/dsp813/lecture10/node7.html>
  MyMatrix
  Matrix_Wrapper::pseudoinverse(double epsilon) const
@@ -310,11 +310,11 @@ namespace MatrixWrapper
    // calculate SVD decomposition
    MyMatrix U,V;
    MyColumnVector D;
-   
+
    bool res;
    res = SVD(D,U,V);  // U=mxn  D=n  V=nxn
    assert(res);
-   
+
    Matrix Dinv(cols,cols);
    Dinv = 0;
    for (unsigned int i=0; i<D.rows(); i++)
@@ -322,12 +322,12 @@ namespace MatrixWrapper
        Dinv(i+1,i+1) = 0;
      else
        Dinv(i+1,i+1) = 1/D(i+1);
- 
+
    #ifdef __DEBUG__
      std::cout << "MATRIX::pseudoinverse() Dinv =\n" << Dinv << std::endl;
    #endif //__DEBUG__
- 
+
    return V * Dinv * U.transpose();
  }
- 
+
 } //namespace

@@ -1,27 +1,27 @@
 // Copyright (C) 2007 Klaas Gadeyne <first dot last at gmail dot com>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
- 
+//
+
 #include "sample_test.hpp"
 
 // Registers the fixture into the 'registry'
 CPPUNIT_TEST_SUITE_REGISTRATION( SampleTest );
 using namespace BFL;
 
-void 
+void
 SampleTest::setUp()
 {
   a = ColumnVector(3);
@@ -35,12 +35,12 @@ SampleTest::setUp()
 }
 
 
-void 
+void
 SampleTest::tearDown()
 {
 }
 
-void 
+void
 SampleTest::testSampleValue()
 {
     // Test one way
@@ -75,11 +75,11 @@ SampleTest::testWeightedSample()
   CPPUNIT_ASSERT_EQUAL( a_weighted_sample_cv.WeightGet(), b_weighted_sample_cv.WeightGet());
 }
 
-// void 
+// void
 // SampleTest::testTimeProgress()
 // {
 //     CPPUNIT_ASSERT( t !=  hbg->getTicks() );
 // }
 
-    
+
 

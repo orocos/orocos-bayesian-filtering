@@ -1,20 +1,20 @@
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
 //               2008 Tinne De Laet <first dot last at mech dot kuleuven dot be>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #include "EKparticlefilter.h"
 
@@ -22,8 +22,8 @@
 #define CV ColumnVector
 namespace BFL
 {
-  
-  EKParticleFilter::EKParticleFilter(MCPdf<CV> * prior, 
+
+  EKParticleFilter::EKParticleFilter(MCPdf<CV> * prior,
 				     int resampleperiod,
 				     double resamplethreshold,
 				     int resamplescheme)
@@ -91,7 +91,7 @@ namespace BFL
     _CumPDFit = _CumPDF.begin();
     _rit = _result_samples.begin();
     _cov_it = _sampleCov.begin(); _tmpCovit = _tmpCov.begin();
-    
+
     for ( int i = 0; i < numsamples ; i++)
       {
 	while ( _unif_samples[i] > *_CumPDFit )
@@ -104,10 +104,10 @@ namespace BFL
 	*(_rit) = *(_oit);
     *_tmpCovit = *_cov_it;
 	_oit++; _cov_it++;
-	
+
 	_rit++; _tmpCovit++;
       }
-    
+
     // Update lists
     _sampleCov = _tmpCov;
     return (dynamic_cast<MCPdf<CV> *>(this->_post))->ListOfSamplesUpdate(_result_samples);
@@ -124,14 +124,14 @@ namespace BFL
 
     _ns_it = _new_samples.begin();
     _cov_it = _sampleCov.begin();
-  
+
     for ( _os_it=_old_samples.begin(); _os_it != _old_samples.end() ; _os_it++)
       {
 	_x_old = _os_it->ValueGet();
 
 	// Set sample Covariance
 	dynamic_cast<FilterProposalDensity *>(this->_proposal)->SampleCovSet(*_cov_it);
-      
+
 	_proposal->ConditionalArgumentSet(0,_x_old);
 
 	if (!sysmodel->SystemWithoutInputs())
@@ -163,9 +163,9 @@ namespace BFL
 	// Update Covariances here
 	*_cov_it = _proposal->CovarianceGet();
 	_cov_it++;
-      
+
       }
-  
+
     (this->_timestep)++;
     // Update the list of samples
     return (dynamic_cast<MCPdf<CV> *>(this->_post))->ListOfSamplesUpdate(_new_samples);

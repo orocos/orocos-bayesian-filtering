@@ -1,21 +1,21 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
 
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #include "../config.h"
 #ifdef __MATRIXWRAPPER_NEWMAT__
@@ -25,12 +25,12 @@
 // Constructors
 MyColumnVector::ColumnVector() : NewMatColumnVector() {}
 MyColumnVector::ColumnVector(int num_rows) : NewMatColumnVector(num_rows){}
-MyColumnVector::ColumnVector(const MyColumnVector& a, const MyColumnVector& b) : NewMatColumnVector(a.rows() + b.rows()) 
+MyColumnVector::ColumnVector(const MyColumnVector& a, const MyColumnVector& b) : NewMatColumnVector(a.rows() + b.rows())
 {
   NewMatColumnVector& opl = (*this);
-  
+
   unsigned int i;
-  
+
   // copy elements of a to opl
   for (i=0; i< a.rows(); i++)
     opl(i+1) = a(i+1);
@@ -44,9 +44,9 @@ MyColumnVector::ColumnVector(const MyColumnVector& a, const MyColumnVector& b) :
 MyColumnVector::~ColumnVector(){}
 
 // Copy constructor
-MyColumnVector::ColumnVector(const MyColumnVector& a) : 
+MyColumnVector::ColumnVector(const MyColumnVector& a) :
   NewMatColumnVector(a){}
-MyColumnVector::ColumnVector(const NewMatColumnVector & a) : 
+MyColumnVector::ColumnVector(const NewMatColumnVector & a) :
   NewMatColumnVector(a){}
 
 // Resizing
@@ -60,18 +60,18 @@ void MyColumnVector::resize(int num_rows)
 unsigned int MyColumnVector::rows() const { return this->Nrows();}
 unsigned int MyColumnVector::columns() const { return this->Ncols();}
 
-MyColumnVector 
+MyColumnVector
 MyColumnVector::vectorAdd(const MyColumnVector& v2) const
 {
   const MyColumnVector& v1 = *this;
   MyColumnVector res(v1.rows() + v2.rows());
-  
+
   for (unsigned int i=0; i<v1.rows(); i++)
     res(i+1) = v1(i+1);
 
   for (unsigned int i=0; i<v2.rows(); i++)
     res(v1.rows()+i+1) = v2(i+1);
- 
+
   return res;
 }
 
@@ -81,7 +81,7 @@ double& MyColumnVector::operator()(unsigned int i)
   return op1(i);
 }
 
-const double MyColumnVector::operator()(unsigned int i) const 
+const double MyColumnVector::operator()(unsigned int i) const
 {
   NewMatColumnVector op1 = (*this);
   return op1(i);
@@ -303,7 +303,7 @@ MyRowVector MyRowVector::operator- (const MyRowVector &a) const
 
 
 
-double 
+double
 MyRowVector::operator*(const MyColumnVector& a) const
 {
   assert (this->columns() == a.rows());
@@ -415,7 +415,7 @@ double& MyRowVector::operator()(unsigned int i)
   return  op1(i);
 }
 
-const double MyRowVector::operator()(unsigned int i) const 
+const double MyRowVector::operator()(unsigned int i) const
 {
   NewMatRowVector op1 = (*this);
   return  op1(i);
@@ -429,18 +429,18 @@ const bool MyRowVector::operator==(const MyRowVector& a) const
 }
 
 
-MyRowVector 
+MyRowVector
 MyRowVector::vectorAdd(const MyRowVector& v2) const
 {
   const MyRowVector& v1 = *this;
   MyRowVector res(v1.rows() + v2.rows());
-  
+
   for (unsigned int i=0; i<v1.rows(); i++)
     res(i+1) = v1(i+1);
 
   for (unsigned int i=0; i<v2.rows(); i++)
     res(v1.rows()+i+1) = v2(i+1);
- 
+
   return res;
 }
 

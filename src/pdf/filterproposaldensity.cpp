@@ -1,27 +1,27 @@
 // $Id$
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #include "filterproposaldensity.h"
 
 namespace BFL
 {
   using namespace MatrixWrapper;
-  
+
 
 #define FilterPropDens FilterProposalDensity
 
@@ -59,8 +59,8 @@ namespace BFL
 
   // BUG Copy constructor not implemented yet
   FilterPropDens::FilterPropDens(const FilterPropDens & fpd){}
-  
-  void 
+
+  void
   FilterPropDens::SystemModelSet(AnalyticSystemModelGaussianUncertainty * SysModel)
   {
     assert ( SysModel != NULL );
@@ -76,9 +76,9 @@ namespace BFL
 				       + _measmodel->MeasurementPdfGet()->NumConditionalArgumentsGet());
     _sysmodel = SysModel;
   }
-  
 
-  void 
+
+  void
   FilterPropDens::MeasurementModelSet(AnalyticMeasurementModelGaussianUncertainty * MeasModel)
   {
     assert ( MeasModel != NULL );
@@ -97,7 +97,7 @@ namespace BFL
 
   ColumnVector
   FilterPropDens::ExpectedValueGet() const
-  { 
+  {
     this->FilterStep();
     return (this->_filter->PostGet()->ExpectedValueGet());
   }
@@ -144,7 +144,7 @@ namespace BFL
 	  _filter->Update(_sysmodel,_measmodel,this->ConditionalArgumentGet(1));
       }
   }
-  
+
   Matrix
   FilterPropDens::dfGet(unsigned int i) const
   {

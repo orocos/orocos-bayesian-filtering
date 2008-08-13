@@ -1,21 +1,21 @@
 // Copyright (C) 2007 Wim Meeussen <wim DOT meeussen AT mech DOT kuleuven DOT be>
 // Copyright (C) 2008 Tinne De Laet <tinne DOT delaet AT mech DOT kuleuven DOT be>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
- 
+//
+
 
 #include "complete_filter_test.hpp"
 #include "approxEqual.hpp"
@@ -30,18 +30,18 @@ using namespace MatrixWrapper;
 using namespace BFL;
 
 
-void 
+void
 Complete_FilterTest::setUp()
 {
 }
 
 
-void 
+void
 Complete_FilterTest::tearDown()
 {
 }
 
-void 
+void
 Complete_FilterTest::testComplete_FilterValue_Cont()
 {
   double epsilon       = 0.01;
@@ -74,13 +74,13 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
   H = 0.0;
   H(1,1) = wall_ct * RICO_WALL;
   H(1,2) = 0 - wall_ct;
-  
+
   // Construct the measurement noise (a scalar in this case)
   ColumnVector MeasNoise_Mu(MEAS_SIZE);
   SymmetricMatrix MeasNoise_Cov(MEAS_SIZE);
   MeasNoise_Mu(1) = MU_MEAS_NOISE;
   MeasNoise_Cov(1,1) = SIGMA_MEAS_NOISE;
-  
+
   Gaussian Measurement_Uncertainty(MeasNoise_Mu,MeasNoise_Cov);
   LinearAnalyticConditionalGaussian meas_pdf(H,Measurement_Uncertainty);
   LinearAnalyticMeasurementModelGaussianUncertainty meas_model(&meas_pdf);
@@ -89,7 +89,7 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
    * Initialise prior DENSITY *
    ***************************/
   // Continuous Gaussian prior (for Kalman filters)
-  ColumnVector prior_mu(STATE_SIZE);  
+  ColumnVector prior_mu(STATE_SIZE);
   SymmetricMatrix prior_sigma(STATE_SIZE);
   prior_mu(1) = PRIOR_MU_X;
   prior_mu(2) = PRIOR_MU_Y;
@@ -98,8 +98,8 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
   prior_sigma(1,1) = PRIOR_COV_X;
   prior_sigma(2,2) = PRIOR_COV_Y;
   prior_sigma(3,3) = PRIOR_COV_THETA;
-  Gaussian prior_cont(prior_mu,prior_sigma); 
-  
+  Gaussian prior_cont(prior_mu,prior_sigma);
+
   // Discrete prior for Particle filter (using the continuous Gaussian prior)
   vector<Sample<ColumnVector> > prior_samples(NUM_SAMPLES);
   MCPdf<ColumnVector> prior_discr(NUM_SAMPLES,STATE_SIZE);
@@ -115,8 +115,8 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
   cov_check(3,1) = 0; cov_check(3,2) = 0; cov_check(3,3) = PRIOR_COV_THETA;
   CPPUNIT_ASSERT_EQUAL(approxEqual(prior_cont.ExpectedValueGet(), mean_check, epsilon),true);
   CPPUNIT_ASSERT_EQUAL(approxEqual(prior_cont.CovarianceGet(), cov_check, epsilon),true);
-  
-  
+
+
   /***************************
    * initialise MOBILE ROBOT *
    **************************/
@@ -140,7 +140,7 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
   /*******************
    * ESTIMATION LOOP *
    *******************/
-  cout << "Running 4 different filters. This may take a few minutes... " << endl; 
+  cout << "Running 4 different filters. This may take a few minutes... " << endl;
   unsigned int time_step;
   for (time_step = 0; time_step < NUM_TIME_STEPS-1; time_step++)
     {
@@ -149,12 +149,12 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
 
       // DO ONE MEASUREMENT
       ColumnVector measurement = mobile_robot.Measure();
-     
-      // UPDATE FILTER                                      
+
+      // UPDATE FILTER
       my_filter_extendedkalman->Update(&sys_model,input,&meas_model, measurement);
       my_filter_iteratedextendedkalman->Update(&sys_model,input,&meas_model, measurement);
       my_filter_bootstrap->Update(&sys_model,input,&meas_model, measurement);
-      //my_filter_ekparticle->Update(&sys_model,input,&meas_model, measurement);	  
+      //my_filter_ekparticle->Update(&sys_model,input,&meas_model, measurement);
     }
 
 
@@ -215,7 +215,7 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
   delete my_filter_ekparticle;
 }
 
-void 
+void
 Complete_FilterTest::testComplete_FilterValue_Discr()
 {
   int num_states = 20;
@@ -266,7 +266,7 @@ Complete_FilterTest::testComplete_FilterValue_Discr()
    ******************************/
   HistogramFilter<ColumnVector> filter(&prior);
   DiscretePdf * prior_test = filter.PostGet();
-  
+
   /***************************
    * initialise MOBILE ROBOT *
    **************************/
@@ -288,7 +288,7 @@ Complete_FilterTest::testComplete_FilterValue_Discr()
       mobile_robot.Move(input);
       // DO ONE MEASUREMENT
       ColumnVector measurement = mobile_robot.Measure();
-      // UPDATE FILTER                                      
+      // UPDATE FILTER
       filter.Update(&sys_model,&meas_model,measurement);
     } // estimation loop
 

@@ -1,21 +1,21 @@
 // $Id$
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
 //               2008 Tinne De Laet <first dot last at mech dot kuleuven dot be>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 #include "discreteconditionalpdf.h"
 #include "../wrappers/rng/rng.h"
 #include <vector>
@@ -53,7 +53,7 @@ namespace BFL
 #ifdef __DCPDFDEBUG__
     cout << "DCPdf Destructor:" << endl;
 #endif // __DCPDFDEBUG__
-    delete _probability_p; 
+    delete _probability_p;
     delete _cond_arg_dims_p;
   }
 
@@ -85,12 +85,12 @@ namespace BFL
   }
 
   // Calculate index (used by ProbabilityGet and ProbabilitySet)
-  int DiscreteConditionalPdf::IndexGet(const int& input, 
+  int DiscreteConditionalPdf::IndexGet(const int& input,
 				       const std::vector<int>& condargs) const
   {
     int index = 0;
     int blocksize = 1;
-  
+
     // The first hyperdimension is that of input itself
     index += input * blocksize;
     blocksize *= NumStatesGet();
@@ -102,22 +102,22 @@ namespace BFL
       }
 #ifdef __INDEXDEBUG__
     cout << "DCPdf::IndexGet -> Index = " << index << endl;
-#endif // __INDEXDEBUG__  
+#endif // __INDEXDEBUG__
     return index;
   }
 
-  
+
 
   Probability DiscreteConditionalPdf::ProbabilityGet(const int& input) const
   {
     unsigned int index = IndexGet(input, ConditionalArgumentsGet());
-    double prob = (this->_probability_p)[index]; 
+    double prob = (this->_probability_p)[index];
     return prob;
   }
 
   // Typical for discrete Pdf's
-  void DiscreteConditionalPdf::ProbabilitySet(const double& prob, 
-					      const int& input, 
+  void DiscreteConditionalPdf::ProbabilitySet(const double& prob,
+					      const int& input,
 					      const std::vector<int>& condargs) const
   {
     int index = this->IndexGet(input, condargs);
@@ -130,8 +130,8 @@ namespace BFL
     int startindex = IndexGet(0,ConditionalArgumentsGet());
     double SumWeights = 0.0; double CumSum=0.0;
     unsigned int index;
-  
-    for ( index = 0; index < NumStatesGet() ; index++ ) 
+
+    for ( index = 0; index < NumStatesGet() ; index++ )
       {
 	_probs[index] = _probability_p[startindex+index];
 	CumSum += _probs[index];
@@ -142,17 +142,17 @@ namespace BFL
       }
     SumWeights = CumSum;
     _valuelist[0] = 0.0; CumSum = 0.0;
-    for ( index = 1; index <= NumStatesGet() ; index++ ) 
+    for ( index = 1; index <= NumStatesGet() ; index++ )
       {
 	CumSum += _probs[index-1]/SumWeights;
 	_valuelist[index] = CumSum;
-      }  
+      }
     // Check if last element of valuelist is +- 1
     assert ( (_valuelist[NumStatesGet()] >= 1.0 - NUMERIC_PRECISION) &&
 	     (_valuelist[NumStatesGet()] <= 1.0 + NUMERIC_PRECISION) );
 
     _valuelist[NumStatesGet()]=1;
-  
+
     // Sample from univariate uniform rng between 0 and 1;
     double unif_sample; unif_sample = runif();
     // Compare where we should be: THIS CAN BE MADE FASTER: TODO

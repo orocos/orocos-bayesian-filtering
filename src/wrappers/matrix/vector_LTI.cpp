@@ -1,21 +1,21 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
 
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #include "../config.h"
 #ifdef __MATRIXWRAPPER_LTI__
@@ -30,14 +30,14 @@ using std::endl;
 // Constructors
 MyColumnVector::ColumnVector() : ltiColumnVector() {}
 MyColumnVector::ColumnVector(int num_rows) : ltiColumnVector(num_rows){}
-MyColumnVector::ColumnVector(const MyColumnVector& a, 
-			     const MyColumnVector& b) 
-  : ltiColumnVector(a.rows() + b.rows()) 
+MyColumnVector::ColumnVector(const MyColumnVector& a,
+			     const MyColumnVector& b)
+  : ltiColumnVector(a.rows() + b.rows())
 {
   ltiColumnVector& opl = (*this);
-  
+
   unsigned int i;
-  
+
   // copy elements of a to opl
   for (i=0; i< a.rows(); i++)
     opl.at(i) = a(i+1);
@@ -48,7 +48,7 @@ MyColumnVector::ColumnVector(const MyColumnVector& a,
 }
 
 // Create from matrix
-MyColumnVector::ColumnVector(const MyMatrix &a) 
+MyColumnVector::ColumnVector(const MyMatrix &a)
 : ltiColumnVector(a.rows())
 {
   assert(a.columns() == 1);
@@ -65,9 +65,9 @@ MyColumnVector::ColumnVector(const MyMatrix &a)
 MyColumnVector::~ColumnVector(){}
 
 // Copy constructor
-MyColumnVector::ColumnVector(const MyColumnVector& a) : 
+MyColumnVector::ColumnVector(const MyColumnVector& a) :
   ltiColumnVector(a){}
-MyColumnVector::ColumnVector(const ltiColumnVector & a) : 
+MyColumnVector::ColumnVector(const ltiColumnVector & a) :
   ltiColumnVector(a){}
 
 // Resizing
@@ -81,18 +81,18 @@ void MyColumnVector::resize(int num_rows)
 unsigned int MyColumnVector::rows() const { return this->size();}
 unsigned int MyColumnVector::columns() const { return 1;}
 
-MyColumnVector 
+MyColumnVector
 MyColumnVector::vectorAdd(const MyColumnVector& v2) const
 {
   const MyColumnVector& v1 = *this;
   MyColumnVector res(v1.rows() + v2.rows());
-  
+
   for (unsigned int i=0; i<v1.rows(); i++)
     res(i) = v1(i);
 
   for (unsigned int i=0; i<v2.rows(); i++)
     res(v1.rows()+i) = v2(i);
- 
+
   return res;
 }
 
@@ -246,7 +246,7 @@ double &MyColumnVector::operator()(unsigned int i)
   return this->at(i-1);
 }
 
-const double MyColumnVector::operator()(unsigned int i) const 
+const double MyColumnVector::operator()(unsigned int i) const
 {
   assert (i != 0);
   //ltiColumnVector op1(*this);
@@ -407,9 +407,9 @@ double MyRowVector::operator*(const MyColumnVector& a) const
 MyRowVector& MyRowVector::operator=(const MyRowVector &a)
 {
   // Both these implementations result in the same
-  ltiRowVector * op1; 
+  ltiRowVector * op1;
   const ltiRowVector * op2;
-  op1 = this; 
+  op1 = this;
   op2 = &a;
   *op1 = *op2;
 
@@ -443,7 +443,7 @@ double &MyRowVector::operator()(unsigned int i)
   return op1->at(i-1);
 }
 
-const double MyRowVector::operator()(unsigned int i) const 
+const double MyRowVector::operator()(unsigned int i) const
 {
   assert (i != 0);
   ltiRowVector op1(*this);
@@ -467,18 +467,18 @@ void MyRowVector::resize(int num_cols)
 
 
 
-MyRowVector 
+MyRowVector
 MyRowVector::vectorAdd(const MyRowVector& v2) const
 {
   const MyRowVector& v1 = *this;
   MyRowVector res(v1.columns() + v2.columns());
-  
+
   for (unsigned int i=0; i<v1.columns(); i++)
     res(i) = v1(i);
 
   for (unsigned int i=0; i<v2.columns(); i++)
     res(v1.columns()+i) = v2(i);
- 
+
   return res;
 }
 
