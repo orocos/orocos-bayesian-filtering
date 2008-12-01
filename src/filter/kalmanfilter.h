@@ -79,9 +79,9 @@ private:
   struct MeasUpdateVariables
   {
     Matrix _S;
-    Matrix _postHT;
     Matrix _K;
     ColumnVector _innov;
+    Matrix _postHT;
     MeasUpdateVariables() {};
     MeasUpdateVariables(unsigned int meas_dimension, unsigned int state_dimension):
       _S(meas_dimension,meas_dimension) 
