@@ -126,7 +126,7 @@ MeasurementModel<MeasVar,StateVar>::Simulate (const StateVar& x,
   assert(_systemWithoutSensorParams == false);
   _MeasurementPdf->ConditionalArgumentSet(0,x);
   _MeasurementPdf->ConditionalArgumentSet(1,s);
-  Sample<StateVar> Simulated(MeasurementSizeGet());
+  Sample<MeasVar> Simulated(MeasurementSizeGet());
   _MeasurementPdf->SampleFrom(Simulated, sampling_method,sampling_args);
   MeasVar result = Simulated.ValueGet();
   return result;
