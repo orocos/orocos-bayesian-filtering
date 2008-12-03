@@ -78,7 +78,7 @@ ModelTestGinac::testNonLinearAnalyticSystemModelGaussianUncertaintyGinac()
       for (int index_sigma_cols=0; index_sigma_cols < 6; index_sigma_cols++)
        	{
     	  if (index_sigma_cols == index_sigma_rows)
-    	    sigma[index_sigma_rows][index_sigma_cols]=SIGMA;
+    	    sigma(index_sigma_rows+1,index_sigma_cols+1)=SIGMA;
     	}
   }
   Gaussian My_Noise(mu,sigma);
