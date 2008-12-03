@@ -150,15 +150,40 @@ Now you find the precompiled BFL examples in /usr/bin/bfl.
 \end{enumerate}
 \end{itemize}
 
+% -----------------------------------------------------------
+% --- GENERAL PROCEDURE -------------------------------------
+% -----------------------------------------------------------
 
+\section{The general procedure to construct a filter}
+To constuct a filter one has to construct:
+ \begin{itemize}
+  \item the system model (daughter of SystemModel),
+  \item the measurement model (daughter of MeasurementModel),
+  \item the prior density (daughter of Pdf), and finally
+  \item the filter itself (daughter of Filter).
+ \end{itemize}
 
+A system model contains the ConditionalPdf representing $P(x_k | x_{k-1}, u_{k})$, with $x$ the state variable, $k$ the time step and $u$ the input. The ConditionalPdf of the system often makes use of some basic type of uncertainty, which can be modeled using the Pdf class (e.g. simple Gaussian). Summarized, the construction of the system model (often) needs the following steps:
+\begin{itemize}
+ \item create a Pdf to model the system uncertainty,
+ \item create a ConditionalPdf representing $P(x_k | x_{k-1}, u_{k})$ using the Pdf of the system uncertainty,
+ \item create the SystemModel itself, using the ConditionalPdf.
+\end{itemize}
+
+Similar to the system model, the measurement model contains the ConditionalPdf representing $P(z_k | x_{k}, s_{k})$, with $z$ the measurement variable, $x$ the state variable, $k$ the time step and $s$ the (optional) sensing parameters. The ConditionalPdf of the measurement often makes use of some basic type of uncertainty, which can be modeled using the Pdf class (e.g. simple Gaussian). Summarized, the construction of the measurement model (often) needs the following steps:
+\begin{itemize}
+ \item create a Pdf to model the measurement uncertainty,
+ \item create a ConditionalPdf representing $P(z_k | x_{k}, s_{k})$ using the Pdf of the measurement uncertainty,
+ \item create the MeasurementModel itself, using the ConditionalPdf.
+\end{itemize}
+
+The prior density is a simple Pdf, or a daughter of the Pdf class.
+The final step consist of creating a filter (daughter of Filter) and in this tutorial the prior density is passed along with the constructor.
 
 
 % -----------------------------------------------------------
 % --- KALMAN ------------------------------------------------
 % -----------------------------------------------------------
-
-\pagebreak
 \section{Your first Kalman filter in 15 minutes}
 This section will guide you step-by-step through the implementation of
 a Kalman filter with a linear system model and a linear measurement
@@ -381,10 +406,13 @@ ExtendedKalmanFilter for this purpose:
 \begin{verbatim}
   ExtendedKalmanFilter filter(&prior_cont);
 \end{verbatim}
-The only argument that has to be provided to the ExtandedKalmanFilter
+The only argument that has to be provided to the ExtendedKalmanFilter
 is the prior distribution.
 
-
+\paragraph{Remark:}
+Remark that an extended Kalman filter can also handle nonlinear system and/or measurement models. 
+When looking at BFL one could first be tempted to create a simple Kalman filter by using the class KalmanFilter (kalmanfilter.h). KalmanFilter however is a class representing the family of all Kalman Filters (EKF, IEKF, ...). The system of updating the Posterior density is implemented in this base class. However, the parameters used for this update differ for different KFs (Simple KF,EKF,IEKF): that's why the xUpdate members are still pure virtual functions.
+Therefore, KalmanFilter is not the class which is closest to our needs: ExtendedKalmanFilter is the class closest to our needs.
 
 
 \subsection{Mobile Robot Simulator}
@@ -437,7 +465,7 @@ model will be used the update reduces to:
 To get the posterior of the updated filter which is the result of all
 the system model and measurement information:
 \begin{verbatim}
-  Pdf<ColumnVector> * posterior = my_filter->PostGet();
+  Pdf<ColumnVector> * posterior = filter->PostGet();
 \end{verbatim}
 The expected value and covariance can be obtained according to:
 \begin{verbatim}
@@ -899,7 +927,7 @@ the implementation:
 \emph{nonlinearSystemPdf.cpp}.\\
 The conditional arguments of the conditional pdf, the state and the
 input (velocity), are private variables of the conditional pdf.\\
-Now, we switch to the implementation of ExpectedValueGet().  To
+Now, we switch to the implementation of SampleFrom(...).  To
 calculate the expected value of the conditional pdf, the current state
 and input are necessary:
 \begin{verbatim}
@@ -933,6 +961,8 @@ Finally we create the system model from the system pdf:
 \end{verbatim}
 
 
+\paragraph{Remark:} The code \begin{verbatim}
+Sample<ColumnVector> noise; \end{verbatim} causes an allocation every time SampleFrom is called and therefore breaks realtime execution. For realtime use noise should be allocated during construction.
 
 
 \subsection{The nonlinear measurement model}
@@ -990,8 +1020,8 @@ representing the measurement noise.
 \begin{verbatim}
   namespace BFL
   {
-   class NonLlinearMeasurementPdf: 
-     public ConditionlPdf<MatrixWrapper::ColumnVector, MatrixWrapper::ColumnVector>
+   class NonLinearMeasurementPdf: 
+     public ConditionalPdf<MatrixWrapper::ColumnVector, MatrixWrapper::ColumnVector>
    {
     public:
      NonlinearMeasurementPdf( const Gaussian& additiveNoise);
@@ -1014,10 +1044,10 @@ following declaration to the public part of the header file:
 \end{verbatim}
 The header file is ready, and we can now switch to the cpp file for
 the implementation:
-\emph{nonlinearMeausrementPdf.cpp}.\\
+\emph{nonlinearMeasurementPdf.cpp}.\\
 The conditional arguments of the conditional pdf, the state and the
 input (velocity), are private variables of the conditional pdf.\\
-Now, we switch to the implementation of ExpectedValueGet().  To
+Now, we switch to the implementation of ProbabilityGet().  To
 calculate the expected value of the conditional pdf, the current state
 and input are necessary:
 \begin{verbatim}
@@ -1029,9 +1059,9 @@ The expected value is then calculated and returned by:
   ColumnVector expected_measurement(1);
   expected_measurement(1) = 2 * state(2);
 \end{verbatim}
-We return the probability of this expected value:
+We return the probability of this expected value (this is the probability of the difference between the expected and the real measurement according to the additive measurement noise):
 \begin{verbatim}
-   return _measNoise.ProbabilityGet(expected_measurement);
+   return _measNoise.ProbabilityGet(expected_measurement-measurement);
 \end{verbatim}
 The implementation of our own measurement model is terminated. We can
 now create an instance of the non linear conditional probability
