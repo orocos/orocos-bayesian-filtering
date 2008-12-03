@@ -142,7 +142,7 @@ MeasurementModel<MeasVar,StateVar>::Simulate(const StateVar& x,
   _MeasurementPdf->ConditionalArgumentSet(0,x);
   Sample<StateVar> Simulated(MeasurementSizeGet());
   _MeasurementPdf->SampleFrom(Simulated, sampling_method,sampling_args);
-  MatrixWrapper::ColumnVector result = Simulated.ValueGet();
+  MeasVar result = Simulated.ValueGet();
   return result;
 }
 
