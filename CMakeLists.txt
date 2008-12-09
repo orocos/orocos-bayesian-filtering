@@ -48,8 +48,6 @@ MESSAGE( "Build type set to '${CMAKE_BUILD_TYPE}'" )
 # MESSAGE("Looking for compiler:")
 # --------------------------------
 INCLUDE (${CMAKE_ROOT}/Modules/CMakeDetermineCXXCompiler.cmake)
-INCLUDE( ${CMAKE_ROOT}/Modules/CheckIncludeFileCXX.cmake )
-INCLUDE( ${CMAKE_ROOT}/Modules/CheckIncludeFile.cmake )
 INCLUDE( ${PROJ_SOURCE_DIR}/config/DependentOption.cmake )
 
 

@@ -1,7 +1,6 @@
 # Locate RNG LIB install directory
 
 # This module defines
-# RNG_INSTALL where to find include, lib, bin, etc.
 # RNG_FOUND, is set to true
 
 # variables
@@ -30,61 +29,53 @@ SET(__RNGWRAPPER_SCYTHE__ OFF)
 IF(NOT RNG_LIB)
   SET( RNG_LIB lti CACHE STRING "Which rng library to use: lti, boost or scythe")
 ENDIF(NOT RNG_LIB)
-IF(NOT RNG_INSTALL)
-  SET( RNG_INSTALL /usr CACHE PATH "The rng lib installation directory.")
-ENDIF(NOT RNG_INSTALL)
 MESSAGE("Searching for rng lib ${RNG_LIB}")
 
 
 # find libs
 # ---------
 IF (RNG_LIB STREQUAL "lti")
-  SET(LTI_FOUND LTI_FOUND-NOTFOUND)
-  MARK_AS_ADVANCED(LTI_FOUND)
-  FIND_FILE(LTI_FOUND ltiMatrix.h ${RNG_INSTALL}/include/ltilib/ )
-  IF ( LTI_FOUND )
-    MESSAGE("-- Looking for Lti in ${RNG_INSTALL}/include/ltilib/ - found")
-    SET( RNG_INCLUDE "${RNG_INSTALL}/include/")
-    SET( RNG_LIBS "-L${RNG_INSTALL}/lib/ltilib -lltir") 
+  FIND_LIBRARY(LTI ltir )
+  FIND_PATH(LTI_FOUND ltilib/ltiMatrix.h )
+  IF ( LTI AND LTI_FOUND )
+    MESSAGE("-- Looking for Lti - found")
+    SET( RNG_INCLUDE "${LTI_FOUND}")
+    SET( RNG_LIBS "${LTI}") 
     MESSAGE( "-- Lti includes ${RNG_INCLUDE}")
     MESSAGE( "-- Lti libs     ${RNG_LIBS}")
     SET(__RNGWRAPPER_LTI__ ON)	
-  ELSE ( LTI_FOUND )
-    MESSAGE(FATAL_ERROR "Looking for Lti in ${RNG_INSTALL}/include/ltilib/ - not found")
-  ENDIF ( LTI_FOUND )
+  ELSE ( LTI AND LTI_FOUND )
+    MESSAGE(FATAL_ERROR "Looking for Lti - not found")
+  ENDIF ( LTI AND LTI_FOUND )
 ELSE (RNG_LIB STREQUAL "lti")
 
 
 IF (RNG_LIB STREQUAL "boost")
-  SET(BOOST_FOUND BOOST_FOUND-NOTFOUND)
-  MARK_AS_ADVANCED(BOOST_FOUND)
-  FIND_FILE(BOOST_FOUND mersenne_twister.hpp ${RNG_INSTALL}/include/boost/random/ )
+  FIND_PATH(BOOST_FOUND boost/random/mersenne_twister.hpp )
   IF ( BOOST_FOUND )
-    MESSAGE("-- Looking for Boost in ${RNG_INSTALL}/include/boost/ - found")
-    SET( RNG_INCLUDE "${RNG_INSTALL}/include/")
+    MESSAGE("-- Looking for Boost - found")
+    SET( RNG_INCLUDE "${BOOST_FOUND}")
     SET( RNG_LIBS "") 
     MESSAGE( "-- Boost includes ${RNG_INCLUDE}")
     MESSAGE( "-- Boost libs     ${RNG_LIBS}")
     SET(__RNGWRAPPER_BOOST__ ON)	
   ELSE ( BOOST_FOUND )
-    MESSAGE(FATAL_ERROR "Looking for Boost in ${RNG_INSTALL}/include/boost/ - not found")
+    MESSAGE(FATAL_ERROR "Looking for Boost - not found")
   ENDIF ( BOOST_FOUND )
 ELSE (RNG_LIB STREQUAL "boost")
 
 
 IF (RNG_LIB STREQUAL "scythe")
-  SET(SCYTHE_FOUND SCYTHE_FOUND-NOTFOUND)
-  MARK_AS_ADVANCED(SCYTHE_FOUND)
-  FIND_FILE(SCYTHE_FOUND mersenne.h ${RNG_INSTALL}/include/scythestat/rng/ )
+  FIND_PATH(SCYTHE_FOUND scythestat/rng/mersenne.h )
   IF ( SCYTHE_FOUND )
-    MESSAGE("-- Looking for Scythe in ${RNG_INSTALL}/include/scythestat/ - found")
-    SET( RNG_INCLUDE "${RNG_INSTALL}/include/")
+    MESSAGE("-- Looking for Scythe - found")
+    SET( RNG_INCLUDE "${SCYTHE_FOUND}")
     SET( RNG_LIBS "") 
     MESSAGE( "-- Scythe includes ${RNG_INCLUDE}")
     MESSAGE( "-- Scythe libs     ${RNG_LIBS}")
     SET(__RNGWRAPPER_SCYTHE__ ON)	
   ELSE ( SCYTHE_FOUND )
-    MESSAGE(FATAL_ERROR "Looking for Scythe in ${RNG_INSTALL}/include/scythestat/ - not found")
+    MESSAGE(FATAL_ERROR "Looking for Scythe - not found")
   ENDIF ( SCYTHE_FOUND )
 ELSE (RNG_LIB STREQUAL "scythe")
  

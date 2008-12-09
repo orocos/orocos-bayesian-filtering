@@ -33,9 +33,9 @@ ParticleFilter<SV,MV>::ParticleFilter(MCPdf<SV> * prior,
 				      int resamplescheme)
   : Filter<SV,MV>(prior)
   , _proposal(proposal)
+  , _sample(WeightedSample<SV>(prior->DimensionGet()))
   , _resampleScheme(resamplescheme)
   , _created_post(true)
-  , _sample(WeightedSample<SV>(prior->DimensionGet()))
 {
   /* Initialize Post, at time = 0, post = prior
      To be more clean, this should be done in the filter base class,
