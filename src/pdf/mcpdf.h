@@ -471,7 +471,7 @@ namespace BFL
 	}
 
 #ifdef __MCPDF_DEBUG__
-      cout << "MCPDF::SumWeightsUpdate: SumWeights = " << _SumWeights << endl;
+      cout << "MCPDF::SumWeightsUpdate: SumWeights = " << SumOfWeights << endl;
 #endif // __MCPDF_DEBUG__
 
       if (SumOfWeights > 0){
@@ -479,7 +479,7 @@ namespace BFL
 	return true;
       }
       else{
-	cerr << "MCPDF::SumWeightsUpdate: SumWeights = " << _SumWeights << endl;
+	cerr << "MCPDF::SumWeightsUpdate: SumWeights = " << SumOfWeights << endl;
 	return false;
       }
     }
