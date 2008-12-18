@@ -6,6 +6,10 @@ IF (BUILD_TESTS)
   LINK_DIRECTORIES( ${PROJ_BINARY_DIR}/src )
   ADD_DEFINITIONS("-g")
 
+  ADD_EXECUTABLE( test_ekf ${DO_EXCLUDE} test-runner.cpp approxEqual.cpp ekf_test.cpp  ekf_test.hpp )
+  TARGET_LINK_LIBRARIES( test_ekf orocos-bfl ${MATRIX_LIBS} ${RNG_LIBS} ${GINAC_LIBS} ${CPPUNIT_LIBS} )
+  ADD_TEST( test_ekf test_ekf )
+
   ADD_EXECUTABLE( test_pdf ${DO_EXCLUDE} test-runner.cpp approxEqual.cpp pdf_test.cpp  pdf_test.hpp )
   TARGET_LINK_LIBRARIES( test_pdf orocos-bfl ${MATRIX_LIBS} ${RNG_LIBS} ${GINAC_LIBS} ${CPPUNIT_LIBS} )
   ADD_TEST( test_pdf test_pdf )
@@ -43,7 +47,7 @@ ENDIF (GINAC_SUPPORT)
 
 
   ADD_CUSTOM_TARGET(check ctest -V 
-                    DEPENDS test_pdf test_sample test_matrixwrapper test_model test_smoother test_complete_filter
+                    DEPENDS test_ekf test_pdf test_sample test_matrixwrapper test_model test_smoother test_complete_filter
                     WORKING_DIRECTORY ${PROJ_BINARY_DIR}/tests)
 
 IF (GINAC_SUPPORT)
