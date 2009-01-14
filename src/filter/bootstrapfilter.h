@@ -1,5 +1,5 @@
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
-//  
+//
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU General Public                   *
@@ -26,7 +26,7 @@
  *   Foundation, Inc., 59 Temple Place,                                    *
  *   Suite 330, Boston, MA  02111-1307  USA                                *
  *                                                                         *
- ***************************************************************************/ 
+ ***************************************************************************/
 // $Id$
 
 #ifndef __BOOTSTRAP_FILTER__
@@ -44,7 +44,7 @@ namespace BFL
     resampling step
 
     The reason why I chose the name bootstrap filter is the fact that
-    this is the name used in the book by Doucet et al. 
+    this is the name used in the book by Doucet et al.
 
     @verbatim
     @Book{		  doucet_book,
@@ -62,10 +62,10 @@ namespace BFL
     filtering).  Typical for the bootstrap filter is the fact that the
     proposal density is chosen to be the SystemPdf of the SystemModel.
     So there is no proposal density in the constructor here
-    
+
     @todo The implementation is very slow for the moment.  It would
     probably be much faster to add a vector<WeightedSample> to the
-    private members of this class.  
+    private members of this class.
     @see Pdf
  */
 template <typename StateVar, typename MeasVar> class BootstrapFilter

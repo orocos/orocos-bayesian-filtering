@@ -79,7 +79,7 @@ void EKFTest::testMeasUpdate()
     meas(i) = 2.4*i;
   filter_->Update(meas_model_, meas);
 
-  
+
   // expected value should be like this
   ColumnVector expectedvalue(state_size);
   expectedvalue(1) = 29.066225;

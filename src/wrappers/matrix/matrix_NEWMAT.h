@@ -1,21 +1,21 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
 
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #include "../config.h"
 #ifdef __MATRIXWRAPPER_NEWMAT__
@@ -25,8 +25,8 @@
 
 #include "matrix_wrapper.h"
 #include "vector_wrapper.h"
-#include <newmat/newmatio.h> 
-#include <newmat/newmatap.h> 
+#include <newmat/newmatio.h>
+#include <newmat/newmatap.h>
 
 #define NewMatMatrix          NEWMAT::Matrix
 #define NewMatSymmetricMatrix NEWMAT::SymmetricMatrix
@@ -38,7 +38,7 @@ namespace MatrixWrapper
 class Matrix : public NewMatMatrix, public Matrix_Wrapper
 {
  private: // No private members:  We don't add anything.
-      
+
  public: // Public Members
 
   // Constructors
@@ -81,7 +81,7 @@ class Matrix : public NewMatMatrix, public Matrix_Wrapper
   virtual MyRowVector rowCopy(unsigned int r) const;
   virtual MyColumnVector columnCopy(unsigned int c) const;
 
-  virtual void resize(unsigned int i, unsigned int j, 
+  virtual void resize(unsigned int i, unsigned int j,
 		      bool copy=true, bool initialize=true);
   virtual MyMatrix inverse() const;
   virtual MyMatrix transpose() const;
@@ -146,7 +146,7 @@ class SymmetricMatrix : public NewMatSymmetricMatrix, public SymmetricMatrix_Wra
   virtual MyMatrix sub(int i_start, int i_end, int j_start , int j_end) const;
 
 };
- 
+
 }
 
 #endif

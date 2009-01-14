@@ -1,6 +1,6 @@
 // $Id: backwardfilter.h 6736 2006-12-21 11:24:42Z tdelaet $
 // Copyright (C) 2006 Tinne De Laet <first dot last at mech dot kuleuven dot be>
-//  
+//
  /***************************************************************************
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU General Public                   *
@@ -27,7 +27,7 @@
  *   Foundation, Inc., 59 Temple Place,                                    *
  *   Suite 330, Boston, MA  02111-1307  USA                                *
  *                                                                         *
- ***************************************************************************/ 
+ ***************************************************************************/
 
 #ifndef __BACKWARDFILTER__
 #define __BACKWARDFILTER__
@@ -48,18 +48,18 @@ namespace BFL
       The backward filters related with these smoothers are related to a
       System Model (they don't need a measurement model!(for as far I see now))
 
-      This class is the base class for a rauch tung striebel backward filter, a 
+      This class is the base class for a rauch tung striebel backward filter, a
       backward particle filters, ...
 
       @see Pdf SystemModel ConditionalPdf
-    
+
       StateVar represents the form of the states and inputs
   */
 
   template <typename StateVar> class BackwardFilter
     {
     protected:
- 
+
       /// prior Pdf
       Pdf<StateVar> * _prior;
 
@@ -67,14 +67,14 @@ namespace BFL
       /** The Posterior Pdf represents the subjective belief of the person
 	  applying the filter AFTER processing a backwards step.**/
       Pdf<StateVar> * _post;
-  
+
       /// Represents the current timestep of the filter
       int _timestep;
 
       /// Actual implementation of Update, varies along filters
       /** @param sysmodel pointer to the used system model
 	  @param u input param for proposal density
-      @param filtered_post is the posterior obtained by filtering of the timestep you want to smooth 
+      @param filtered_post is the posterior obtained by filtering of the timestep you want to smooth
       */
       virtual bool UpdateInternal(SystemModel<StateVar>* const sysmodel,
 				  const StateVar& u,
@@ -93,7 +93,7 @@ namespace BFL
       /// destructor
       virtual ~BackwardFilter();
 
-      /// Reset Filter 
+      /// Reset Filter
       virtual void Reset(Pdf<StateVar> * prior);
 
       /// Full Update (system with inputs)
@@ -117,14 +117,14 @@ namespace BFL
       /** Get the current Posterior density
 	  @return a pointer to the current posterior
       */
-      virtual Pdf<StateVar> * PostGet();  
+      virtual Pdf<StateVar> * PostGet();
 
       /// Get current time
       /** Get the current time of the filter
 	  @return the current timestep
       */
       int TimeStepGet() const;
-    };    
+    };
 
   // For template instantiation
 #include "backwardfilter.cpp"

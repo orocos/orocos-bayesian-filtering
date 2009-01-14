@@ -26,7 +26,7 @@
  *   Foundation, Inc., 59 Temple Place,                                    *
  *   Suite 330, Boston, MA  02111-1307  USA                                *
  *                                                                         *
- ***************************************************************************/ 
+ ***************************************************************************/
 #ifndef MCPDF_H
 #define MCPDF_H
 
@@ -46,12 +46,12 @@ namespace BFL
       Pdf P(x), which can both be continu or discrete
       @todo This class can and should be made far more efficient!!!
   */
-  template <typename T> class MCPdf: public Pdf<T> 
+  template <typename T> class MCPdf: public Pdf<T>
     {
     protected:
 
       /// Sum of all weights: used for normalising purposes
-      double _SumWeights; 
+      double _SumWeights;
       /// STL-list containing the list of samples
       vector<WeightedSample<T> > _listOfSamples;
       /// STL-iterator
@@ -61,7 +61,7 @@ namespace BFL
       /// STL-iterator for cumulative PDF list
       //  typename vector<double>::iterator CumPDFit;
 
-  
+
       /// After updating weights, we have to recalculate the sum of weights
       bool SumWeightsUpdate();
       /// Normalizing the weights
@@ -94,7 +94,7 @@ namespace BFL
 
       // implemented virtual functions
       bool SampleFrom (Sample<T>& one_sample, int method = DEFAULT, void * args = NULL) const;
-      bool SampleFrom (vector<Sample<T> >& list_samples, const unsigned int num_samples, int method = DEFAULT, 
+      bool SampleFrom (vector<Sample<T> >& list_samples, const unsigned int num_samples, int method = DEFAULT,
 		       void * args = NULL) const;
       T ExpectedValueGet() const;
       MatrixWrapper::SymmetricMatrix CovarianceGet() const;
@@ -105,7 +105,7 @@ namespace BFL
 	  @see sample, weightedsample
       */
       void NumSamplesSet(unsigned int num_samples);
-  
+
 
       /// Get number of samples
       /** @return the number of samples
@@ -117,7 +117,7 @@ namespace BFL
           @param i the ith sample
        */
       const WeightedSample<T>& SampleGet(unsigned int i) const;
-  
+
       /// Set the list of weighted samples
       /** @param list_of_samples an STL-list containing the list of all
 	  weighted samples
@@ -158,15 +158,15 @@ namespace BFL
       /** @return a vector of doubles representing the CumulativePDF
        */
       vector<double> & CumulativePDFGet();
-      
+
     };
 
   /////////////////////////////////////////////////////////////////
   // Template Code here
   /////////////////////////////////////////////////////////////////
-  
+
   // Constructor
-  template <typename T> MCPdf<T>::MCPdf(unsigned int num_samples, unsigned int dimension) : 
+  template <typename T> MCPdf<T>::MCPdf(unsigned int num_samples, unsigned int dimension) :
     Pdf<T>(dimension)
     , _CumSum(dimension)
     , _mean(dimension)
@@ -185,12 +185,12 @@ namespace BFL
       // if (num_samples > 0)
       cout << "MCPDF Constructor: NumSamples = " << _listOfSamples.size()
 	   << ", CumPDF Samples = " << _CumPDF.size()
-	   << ", _SumWeights = " << _SumWeights << endl; 
+	   << ", _SumWeights = " << _SumWeights << endl;
 #endif // __CONSTRUCTOR__
     }
 
   // Destructor
-  template <typename T> 
+  template <typename T>
     MCPdf<T>::~MCPdf()
     {
 #ifdef __DESTRUCTOR__
@@ -199,7 +199,7 @@ namespace BFL
     }
 
   // Copy constructor
-  template <typename T> 
+  template <typename T>
     MCPdf<T>::MCPdf(const MCPdf & pdf) : Pdf<T>(pdf)
     , _CumSum(pdf.DimensionGet())
     , _mean(pdf.DimensionGet())
@@ -223,7 +223,7 @@ namespace BFL
   template <typename T> bool
     MCPdf<T>::SampleFrom (vector<Sample<T> >& list_samples,
 			  const unsigned int numsamples,
-			  int method, 
+			  int method,
 			  void * args) const
     {
       list_samples.resize(numsamples);
@@ -234,7 +234,7 @@ namespace BFL
 	    return Pdf<T>::SampleFrom(list_samples, numsamples,method,args);
 	  }
 	case RIPLEY: // Only possible here ( O(N) efficiency )
-	  /* See 
+	  /* See
 	     @Book{		  ripley87,
 	     author	= {Ripley, Brian D.},
 	     title		= {Stochastic Simulation},
@@ -272,9 +272,9 @@ namespace BFL
 		    assert(index <= size);
 		    index++; it++; CumPDFit++;
 		  }
-		it--; 
-		*sit = *it; 
-		it++; 
+		it--;
+		*sit = *it;
+		it++;
 		sit++;
 	      }
 	    return true;
@@ -297,13 +297,13 @@ namespace BFL
 	    // Sample from univariate uniform rng between 0 and 1;
 	    double unif_sample; unif_sample = runif();
 	    // Compare where we should be:
-	    unsigned int index = 0; 
+	    unsigned int index = 0;
 	    unsigned int size; size = _listOfSamples.size();
 	    typename vector<WeightedSample<T> >::const_iterator it;
-	    it = _listOfSamples.begin(); 
+	    it = _listOfSamples.begin();
 	    typename vector<double>::const_iterator CumPDFit;
 	    CumPDFit = _CumPDF.begin();
-	    
+
 	    while ( unif_sample > *CumPDFit )
 	      {
 		// check for internal error
@@ -323,12 +323,12 @@ namespace BFL
     }
 
 
-  template <typename T> unsigned int MCPdf<T>::NumSamplesGet() const 
+  template <typename T> unsigned int MCPdf<T>::NumSamplesGet() const
     {
       return _listOfSamples.size();
     }
 
-  template <typename T> const WeightedSample<T>& 
+  template <typename T> const WeightedSample<T>&
     MCPdf<T>::SampleGet(unsigned int i) const
     {
       assert(i < NumSamplesGet());
@@ -336,7 +336,7 @@ namespace BFL
     }
 
   // Get and set number of samples
-  template <typename T> void 
+  template <typename T> void
     MCPdf<T>::NumSamplesSet(unsigned int num_samples)
     {
 #ifdef __MCPDF_DEBUG__
@@ -398,7 +398,7 @@ namespace BFL
       // Update the list of samples
       for ( it = _listOfSamples.begin() ; it != _listOfSamples.end() ; it++ )
 	{
-	  *it = *lit; ; 
+	  *it = *lit; ;
 	  it->WeightSet(1.0/numsamples);
 	  lit++;
 	}
@@ -414,7 +414,7 @@ namespace BFL
       return true;
     }
 
-  template <typename T> const vector<WeightedSample<T> > & 
+  template <typename T> const vector<WeightedSample<T> > &
     MCPdf<T>::ListOfSamplesGet() const
     {
       return _listOfSamples;
@@ -447,7 +447,7 @@ namespace BFL
 	  // Update the sumweights
 	  for ( it = _listOfSamples.begin() ; it != _listOfSamples.end() ; it++ )
 	    {
-	      *it = *lit; ; 
+	      *it = *lit; ;
 	      it->WeightSet(1.0/numsamples);
 	      lit++;
 	    }
@@ -461,7 +461,7 @@ namespace BFL
   template <typename T> bool
     MCPdf<T>::SumWeightsUpdate()
     {
-      double SumOfWeights = 0.0; 
+      double SumOfWeights = 0.0;
       double current_weight;
       static typename vector<WeightedSample<T> >::iterator it;
       for ( it = _listOfSamples.begin() ; it != _listOfSamples.end() ; it++ )
@@ -502,10 +502,10 @@ namespace BFL
     }
 
 
-  template <typename T> void 
+  template <typename T> void
     MCPdf<T>::CumPDFUpdate()
     {
-      double CumSum=0.0; 
+      double CumSum=0.0;
       static typename vector<double>::iterator CumPDFit;
       static typename vector<WeightedSample<T> >::iterator it;
       CumPDFit = _CumPDF.begin(); *CumPDFit = 0.0;
@@ -524,8 +524,8 @@ namespace BFL
   template <typename T>
     T MCPdf<T>::ExpectedValueGet (  ) const
     {
-      cerr << "MCPDF ExpectedValueGet: not implemented for the template parameters you use." 
-	   << endl << "Use template specialization as shown in mcpdf.cpp " << endl; 
+      cerr << "MCPDF ExpectedValueGet: not implemented for the template parameters you use."
+	   << endl << "Use template specialization as shown in mcpdf.cpp " << endl;
 
       assert(0);
       T result;
@@ -536,8 +536,8 @@ namespace BFL
   template <typename T>
     MatrixWrapper::SymmetricMatrix MCPdf<T>::CovarianceGet (  ) const
     {
-      cerr << "MCPDF CovarianceGet: not implemented for the template parameters you use." 
-	   << endl << "Use template specialization as shown in mcpdf.cpp " << endl; 
+      cerr << "MCPDF CovarianceGet: not implemented for the template parameters you use."
+	   << endl << "Use template specialization as shown in mcpdf.cpp " << endl;
 
       assert(0);
       MatrixWrapper::SymmetricMatrix result;
@@ -553,7 +553,7 @@ namespace BFL
     }
 
 
-  
+
 } // End namespace BFL
 
 #include "mcpdf.cpp"

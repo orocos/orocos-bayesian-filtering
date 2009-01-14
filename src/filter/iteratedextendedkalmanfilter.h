@@ -7,16 +7,16 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #ifndef __ITERATED_EXTENDED_KALMAN_FILTER__
 #define __ITERATED_EXTENDED_KALMAN_FILTER__
@@ -29,10 +29,10 @@
 
 namespace BFL
 {
-  /** This is a class implementing the Kalman Filter (KF) class for 
+  /** This is a class implementing the Kalman Filter (KF) class for
       Iterated Extended Kalman Filters.
-    
-      The System- and MeasurementUpdate equasions are not linear, and 
+
+      The System- and MeasurementUpdate equasions are not linear, and
       will be approximated by local linearisations.
 
       @see KalmanFilter
@@ -43,7 +43,7 @@ namespace BFL
       virtual void SysUpdate(SystemModel<MatrixWrapper::ColumnVector>* const sysmodel,
 			     const MatrixWrapper::ColumnVector& u);
       virtual void MeasUpdate(MeasurementModel<MatrixWrapper::ColumnVector,MatrixWrapper::ColumnVector>* const measmodel,
-			      const MatrixWrapper::ColumnVector& z, 
+			      const MatrixWrapper::ColumnVector& z,
 			      const MatrixWrapper::ColumnVector& s);
 
     public:
@@ -51,10 +51,10 @@ namespace BFL
 	  @pre you created the prior
 	  @param prior pointer to the Monte Carlo Pdf prior density
 	  @param nr_it the number of iterations in one update
-	  @param innov pointer to InnovationCheck (to end the iterations of the innovation is too small) 
+	  @param innov pointer to InnovationCheck (to end the iterations of the innovation is too small)
       */
       IteratedExtendedKalmanFilter(Gaussian* prior, unsigned int nr_it=1, InnovationCheck* innov = NULL);
-   
+
       /// Destructor
       virtual ~IteratedExtendedKalmanFilter();
 
@@ -74,9 +74,9 @@ namespace BFL
 
     private:
       /// number of iterations for iterated extended kalman filter
-      unsigned int _nr_iterations; 
+      unsigned int _nr_iterations;
       /// pointer to InnovationCheck (to end the iterations if the innovation is too small)
-      InnovationCheck* _innovationChecker; 
+      InnovationCheck* _innovationChecker;
 
       struct MeasUpdateVariablesIExt
       {
@@ -86,7 +86,7 @@ namespace BFL
         ColumnVector    _Z_i;
         MeasUpdateVariablesIExt() {};
         MeasUpdateVariablesIExt(unsigned int meas_dimension, unsigned int state_dimension):
-          _R_i(meas_dimension) 
+          _R_i(meas_dimension)
         , _K_i(state_dimension,meas_dimension)
         , _H_i(meas_dimension,state_dimension)
         , _Z_i(meas_dimension)

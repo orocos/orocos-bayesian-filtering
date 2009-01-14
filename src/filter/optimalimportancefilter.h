@@ -26,7 +26,7 @@
  *   Foundation, Inc., 59 Temple Place,                                    *
  *   Suite 330, Boston, MA  02111-1307  USA                                *
  *                                                                         *
- ***************************************************************************/ 
+ ***************************************************************************/
 
 // $Id$
 
@@ -58,11 +58,11 @@ namespace BFL
     pages =        {197--208},
     }
     @endverbatim
-    
+
     for a more thorough discussion about all these issues and the
     possible suboptimal alternatives in case one is not able to sample
     from the optimal importance function.
-    
+
  */
 template <typename StateVar, typename MeasVar> class Optimalimportancefilter
   : public ParticleFilter<StateVar,MeasVar>
@@ -116,7 +116,7 @@ template <typename StateVar, typename MeasVar> class Optimalimportancefilter
   virtual void Update(SystemModel<StateVar>* const sysmodel,
 		      const StateVar& u);
   virtual void Update(SystemModel<StateVar>* const sysmodel);
-  
+
   /// Only measupdate
   virtual void Update(MeasurementModel<MeasVar,StateVar>* const measmodel,
 		      const MeasVar& z,

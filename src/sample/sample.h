@@ -26,7 +26,7 @@
  *   Foundation, Inc., 59 Temple Place,                                    *
  *   Suite 330, Boston, MA  02111-1307  USA                                *
  *                                                                         *
- ***************************************************************************/ 
+ ***************************************************************************/
 #ifndef SAMPLE_H
 #define SAMPLE_H
 
@@ -44,18 +44,18 @@ namespace BFL
   /** Template Class representing a basic sample of a continuous or
       discrete pdf
   */
-  template <typename T> class Sample 
+  template <typename T> class Sample
     {
     protected:
       /// The Sample Value
       T Value;
-  
+
     public:
       /// Constructor
       /**
 	 @param dimension of the ColumnVector for the continuous
 	 samples.  This parameter is ignored in the discrete case.
-      */   
+      */
       Sample (unsigned int dimension = 0);
 
       /// Destructor
@@ -77,21 +77,21 @@ namespace BFL
       void DimensionSet (unsigned int dim);
 
       /// Set the value of the Sample
-      /** 
+      /**
 	  @param value the value indeed :-)
       */
       void ValueSet ( const T& value );
-  
+
       /// Print a sample
       /** @param stream the stream to be returned
 	  @param my_sample the sample to be printed
 	  @return the stream :-)
       */
-      template <typename S> friend ostream & operator<< (ostream & stream, 
+      template <typename S> friend ostream & operator<< (ostream & stream,
 							 Sample<S> & my_sample);
-      /// Operator = 
+      /// Operator =
       Sample & operator= (const Sample & my_sample);
-  
+
     };
 
 
@@ -126,7 +126,7 @@ namespace BFL
 
 
   // get value
-  template <typename T> T& Sample<T>::ValueGet (  ) 
+  template <typename T> T& Sample<T>::ValueGet (  )
     {
       return Value;
     }
@@ -145,7 +145,7 @@ namespace BFL
     }
 
   // set dimension
-  template <typename T> void Sample<T>::DimensionSet (unsigned int dim)  
+  template <typename T> void Sample<T>::DimensionSet (unsigned int dim)
     {}
 
   // stream

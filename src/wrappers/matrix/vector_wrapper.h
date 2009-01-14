@@ -1,20 +1,20 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 #ifndef __OROVECTOR__
 #define __OROVECTOR__
 
@@ -30,17 +30,17 @@
 #define MyRowVector MatrixWrapper::RowVector
 #define MyMatrix MatrixWrapper::Matrix
 
-namespace MatrixWrapper{ 
+namespace MatrixWrapper{
 
-class Matrix; 
-class ColumnVector; 
+class Matrix;
+class ColumnVector;
 class RowVector;
 
 /// Class ColumnVectorWrapper
 class ColumnVector_Wrapper
 {
 public:
-  
+
   /// Constructor
   ColumnVector_Wrapper() {};
 
@@ -58,7 +58,7 @@ public:
 
   /// join two vectors
   virtual MyColumnVector vectorAdd(const MyColumnVector& v2) const = 0;
-  
+
   /// element indexing
   virtual const double operator()(unsigned int) const = 0;
 
@@ -73,7 +73,7 @@ public:
 
   /// Initialise all elements to a
   virtual MyColumnVector& operator =(double a) = 0;
-  
+
 
 
   /// Operators
@@ -81,13 +81,13 @@ public:
 
   /// Operators
   virtual MyColumnVector& operator-= (const MyColumnVector& a) = 0;
-  
+
   /// Operators
   virtual MyColumnVector operator+ (const MyColumnVector &a) const = 0;
 
   /// Operators
   virtual MyColumnVector operator- (const MyColumnVector &a) const = 0;
-  
+
 
 
   /// Operators
@@ -132,7 +132,7 @@ public:
 class RowVector_Wrapper
 {
 public:
-  
+
   /// Constructor
   RowVector_Wrapper() {};
 
@@ -150,7 +150,7 @@ public:
 
   /// join two vectors
   virtual MyRowVector vectorAdd(const MyRowVector& v2) const = 0;
-  
+
   /// element indexing
   virtual const double operator()(unsigned int) const = 0;
 
@@ -165,7 +165,7 @@ public:
 
   /// Initialise all elements to a
   virtual MyRowVector& operator =(double a) = 0;
-  
+
 
 
   /// Operators
@@ -179,8 +179,8 @@ public:
 
   /// Operators
   virtual MyRowVector operator- (const MyRowVector &a) const = 0;
-  
-  
+
+
   /// Operators
   virtual MyRowVector& operator+= (double b) = 0;
 

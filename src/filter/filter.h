@@ -1,6 +1,6 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
-//  
+//
  /***************************************************************************
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU General Public                   *
@@ -27,7 +27,7 @@
  *   Foundation, Inc., 59 Temple Place,                                    *
  *   Suite 330, Boston, MA  02111-1307  USA                                *
  *                                                                         *
- ***************************************************************************/ 
+ ***************************************************************************/
 
 #ifndef __FILTER__
 #define __FILTER__
@@ -46,7 +46,7 @@ namespace BFL
       System Model, ii) a Measurement Model and iii) a Prior density
       reflecting the subjective belief of the person applying the filter
       BEFORE getting sensor or any other form of information about the
-      modeled system.  
+      modeled system.
 
       This class is the base class for particle filters, kalman filters,
       ...
@@ -56,7 +56,7 @@ namespace BFL
       with a fixed number of states (discrete states) but with
       continuous observations, as needed in Automatic Speech
       Recognition.
-    
+
       @see Pdf SystemModel MeasurementModel ConditionalPdf
       @bug For now, due to a "bug" (= non-existence of a feature :-) in
       the ConditionalPdf class, STATES AND INPUTS MUST BE OF THE SAME
@@ -67,7 +67,7 @@ namespace BFL
       - States and inputs continous, Measurements discrete
       - States and inputs discrete, Measurements continous
       - States, inputs and measurements discrete
-    
+
       StateVar represents the nature of the states and inputs
       MeasVar represents the nature of the measurements
 
@@ -77,7 +77,7 @@ namespace BFL
   template <typename StateVar, typename MeasVar> class Filter
     {
     protected:
- 
+
       /// prior Pdf
       Pdf<StateVar> * _prior;
 
@@ -93,7 +93,7 @@ namespace BFL
 	  @see PostGet()
       */
       Pdf<StateVar> * _post;
-  
+
       /// Represents the current timestep of the filter
       /** @todo Check wether this really belongs here
        */
@@ -127,7 +127,7 @@ namespace BFL
       /// destructor
       virtual ~Filter();
 
-      /// Reset Filter 
+      /// Reset Filter
       virtual void Reset(Pdf<StateVar> * prior);
 
       /// Full Update (system with inputs/sensing params)
@@ -190,7 +190,7 @@ namespace BFL
 
       /// Measurement Update (system with "sensing params")
       /** @param measmodel pointer to the measurement model to use for
-	  update 
+	  update
 	  @param z measurement
 	  @param s "sensing parameter"
        */
@@ -209,7 +209,7 @@ namespace BFL
       /** Get the current Posterior density
 	  @return a pointer to the current posterior
       */
-      virtual Pdf<StateVar> * PostGet();  
+      virtual Pdf<StateVar> * PostGet();
 
       /// Get current time
       /** Get the current time of the filter

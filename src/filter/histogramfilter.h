@@ -5,16 +5,16 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #ifndef __HISTOGRAM_FILTER__
 #define __HISTOGRAM_FILTER__
@@ -27,8 +27,8 @@
 namespace BFL
 {
 
-/// Class representing the histogram filter 
-/** This is a class representing the histogram filter. 
+/// Class representing the histogram filter
+/** This is a class representing the histogram filter.
     A histogram filter is the basic discrete state filter for histogram
     representations of the state.
     The implementation is based upon Probabilistic Robotics book of Thrun, Burgard, Fox
@@ -43,7 +43,7 @@ namespace BFL
       keywords        = {Bayes theory, estimation}
     }
     The system of updating the Posterior density is implemented in this
-    class. 
+    class.
 */
 
 template <typename MeasVar> class HistogramFilter : public Filter<int,MeasVar>
@@ -71,12 +71,12 @@ protected:
     @param sysmodel pointer to the system model the filter should use
     @param u input to the system
   */
-  void SysUpdate(SystemModel<int>* const sysmodel, 
+  void SysUpdate(SystemModel<int>* const sysmodel,
 			 const int& u);
-  
-  /// Measurement Update 
+
+  /// Measurement Update
   /** Update the filter's Posterior density using the sensor
-      measurements, an input and the measurement model.  
+      measurements, an input and the measurement model.
       @param measmodel pointer to the measurement model the filter
       should use
       @param z sensor measurement
@@ -84,7 +84,7 @@ protected:
       for now, since this was not yet implemented in ConditionalPdf
   */
   void MeasUpdate(MeasurementModel<MeasVar,int>* const measmodel,
-			  const MeasVar& z, 
+			  const MeasVar& z,
 			  const int& s);
 
   bool UpdateInternal(SystemModel<int>* const sysmodel,
@@ -98,5 +98,5 @@ protected:
 #include "histogramfilter.cpp"
 
 } // End namespace BFL
- 
+
 #endif // __HISTOGRAM_FILTER__

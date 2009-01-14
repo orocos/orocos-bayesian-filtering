@@ -5,16 +5,16 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #ifndef __RAUCHTUNGSTRIEBEL__
 #define __RAUCHTUNGSTRIEBEL__
@@ -28,13 +28,13 @@ namespace BFL
 {
 
 /// Class representing  all Rauch-Tung-Striebel backward filters
-/** This is a class representing the Rauch-Tung-Striebel backward filter.  
+/** This is a class representing the Rauch-Tung-Striebel backward filter.
  *  It is a backward filter in which the Posterior
     density is represented by a Gaussian density.  Rauch-Tung-Striebel backward filter  are
     only applicable to continuous systems.
 
     The system of updating the Posterior density is implemented in this
-    base class. 
+    base class.
 
     @see Gaussian
     @see LinearAnalyticSystemModelGaussianUncertainty
@@ -55,7 +55,7 @@ protected:
 
   /// Set covariance of posterior estimate
   void PostSigmaSet( const MatrixWrapper::SymmetricMatrix& s);
-  
+
   /// Set expected value of posterior estimate
   void PostMuSet( const MatrixWrapper::ColumnVector& c);
 

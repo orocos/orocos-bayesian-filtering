@@ -26,7 +26,7 @@
  *   Foundation, Inc., 59 Temple Place,                                    *
  *   Suite 330, Boston, MA  02111-1307  USA                                *
  *                                                                         *
- ***************************************************************************/ 
+ ***************************************************************************/
 
 #ifndef __PARTICLE_FILTER__
 #define __PARTICLE_FILTER__
@@ -44,7 +44,7 @@
    filters for non-linear systems.
 
    See eg.
-   
+
    @Article{        gordon93,
    author = 	 {Gordon, Neil and Salmond, D. J. and Smith, A. F. M.},
    title = 	 {Novel approach to nonlinear/non-Gaussian state estimation},
@@ -135,18 +135,18 @@ namespace BFL
       members are still pure virtual functions.
 
       This class is the base class for all sorts of particle filters.
-    
+
       @todo:  Actually all particle filters represented by this class
       are of the "Sequential importance sampling methods" type.  Typical
       of those methods is the so called Proposal density.  In theory it
       would be possible to create Filters using a recursive version of
       other Monte Carlo methods (eg. MCMC methods), although I am not
       aware of any of these (due to the increased complexity).
-    
+
       @see MCPdf
       @see Sample
       @see WeightedSample
-      
+
       @bug Resampling is not implemented generically enough yet.
       There's only the possibility to choose between static period
       resampling and dynamic resampling as proposed by Jun Liu.
@@ -154,9 +154,9 @@ namespace BFL
       virtual function that has to be implemented by the user, but
       this creates more hassle for the user (a different particle
       filter for each scheme).
-      
+
   */
-  template <typename StateVar, typename MeasVar> class ParticleFilter 
+  template <typename StateVar, typename MeasVar> class ParticleFilter
     : public Filter<StateVar,MeasVar>
     {
     protected:
@@ -172,8 +172,8 @@ namespace BFL
 	  forward sampling step
       */
       ConditionalPdf<StateVar,StateVar> * _proposal;
-  
-      /// While updating use sample<StateVar> 
+
+      /// While updating use sample<StateVar>
       WeightedSample<StateVar>  _sample;
       /// While updating store list of old samples
       vector<WeightedSample<StateVar> > _old_samples;
@@ -200,13 +200,13 @@ namespace BFL
 
       /// Dynamic resampling or fixed period resampling?
       bool _dynamicResampling;
-  
+
       /// Proposal depends on last measurement?
       bool _proposal_depends_on_meas;
 
       /// created own post
       bool _created_post;
-  
+
       /// Proposal step
       /** Implementation of proposal step
 	  @param sysmodel pointer to the used system model
@@ -221,7 +221,7 @@ namespace BFL
 	                                MeasurementModel<MeasVar,StateVar> * const measmodel,
 					const MeasVar & z,
 					const StateVar & s);
-  
+
       /// Update Weights
       /** @param sysmodel pointer to the used system model
 	  @param u input param for proposal density
@@ -232,7 +232,7 @@ namespace BFL
       virtual bool UpdateWeightsInternal(SystemModel<StateVar> * const sysmodel,
 					 const StateVar & u,
 					 MeasurementModel<MeasVar,StateVar> * const measmodel,
-					 const MeasVar & z, 
+					 const MeasVar & z,
 					 const StateVar & s);
 
       /// Resample if necessary
@@ -247,7 +247,7 @@ namespace BFL
 
       /// Actual Resampling happens here;
       virtual bool Resample();
-      
+
     public:
       /// Constructor
       /** @pre you created the necessary models and the prior
@@ -261,8 +261,8 @@ namespace BFL
 	  notes with implementation
 	  @bug let the user implement her/his own resamplescheme
       */
-      ParticleFilter(MCPdf<StateVar> * prior, 
-		     ConditionalPdf<StateVar,StateVar> * proposal, 
+      ParticleFilter(MCPdf<StateVar> * prior,
+		     ConditionalPdf<StateVar,StateVar> * proposal,
 		     int resampleperiod = 0,
 		     double resamplethreshold = 0,
 		     int resamplescheme = DEFAULT_RS);
@@ -281,9 +281,9 @@ namespace BFL
 	  notes with implementation
 	  @bug let the user implement her/his own resamplescheme
       */
-      ParticleFilter(MCPdf<StateVar> * prior, 
+      ParticleFilter(MCPdf<StateVar> * prior,
 		     MCPdf<StateVar> * post,
-		     ConditionalPdf<StateVar,StateVar> * proposal, 
+		     ConditionalPdf<StateVar,StateVar> * proposal,
 		     int resampleperiod = 0,
 		     double resamplethreshold = 0,
 		     int resamplescheme = DEFAULT_RS);
@@ -307,9 +307,9 @@ namespace BFL
       /** @return a pointer to the proposal density
        */
       ConditionalPdf<StateVar,StateVar> * ProposalGet();
-  
+
       // implement virtual function
-      virtual MCPdf<StateVar> * PostGet();  
+      virtual MCPdf<StateVar> * PostGet();
     };
 
 #include "particlefilter.cpp"

@@ -26,8 +26,8 @@
  *   Foundation, Inc., 59 Temple Place,                                    *
  *   Suite 330, Boston, MA  02111-1307  USA                                *
  *                                                                         *
- ***************************************************************************/ 
-//  
+ ***************************************************************************/
+//
 
 #ifndef WEIGHTEDSAMPLE_H
 #define WEIGHTEDSAMPLE_H
@@ -45,18 +45,18 @@ namespace BFL
       for a particular class hybridweightedsample (see the
       rob/actsens/cubeincorner CVS tree)
   */
-  template <typename T> class WeightedSample: virtual public Sample<T> 
+  template <typename T> class WeightedSample: virtual public Sample<T>
     {
     protected:
       /// The weight
       double Weight;
-  
+
     public:
       /// Constructor
       /**
 	 @param dimension of the ColumnVector for the continuous samples,
 	 number of discrete states for the discrete case
-      */ 
+      */
       WeightedSample (int dimension = 0 );
       /// Destructor
       virtual ~WeightedSample();
@@ -73,13 +73,13 @@ namespace BFL
 	  @return true if weight is a reasonable value
        */
       void WeightSet ( double weight );
-  
+
       /// Print a weighted sample
       /** @param stream the stream to be returned
 	  @param mws the weighted sample to be printed
 	  @return the stream :-)
       */
-      template <typename S> friend ostream & operator<< (ostream & stream, 
+      template <typename S> friend ostream & operator<< (ostream & stream,
 							 WeightedSample<S> & mws);
 
       /// Operator =
@@ -90,30 +90,30 @@ namespace BFL
     };
 
 
-  template <typename T> WeightedSample<T>::WeightedSample(int dimension) 
+  template <typename T> WeightedSample<T>::WeightedSample(int dimension)
     : Sample<T>(dimension){}
 
   template <typename T> WeightedSample<T>::~WeightedSample(){}
 
-  template <typename T> WeightedSample<T>::WeightedSample (const WeightedSample<T> & mws) 
+  template <typename T> WeightedSample<T>::WeightedSample (const WeightedSample<T> & mws)
     : Sample<T>(mws)
-    {  
+    {
       Weight = mws.Weight;
     }
 
-  template <typename T> double WeightedSample<T>::WeightGet (  ) const 
-    { 
+  template <typename T> double WeightedSample<T>::WeightGet (  ) const
+    {
       return Weight;
     }
 
   template <typename T> void WeightedSample<T>::WeightSet ( double weight )
-    { 
+    {
       assert(weight >= 0);
-      
+
       Weight = weight;
     }
 
-  template <typename S> ostream & operator<< (ostream & stream, 
+  template <typename S> ostream & operator<< (ostream & stream,
 					      WeightedSample<S> & mws)
     {
       stream << "WeightedSample Value = " << (Sample<S> &) mws

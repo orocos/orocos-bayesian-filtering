@@ -6,16 +6,16 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #ifndef __SR_ITERATED_EXTENDED_KALMAN_FILTER__
 #define __SR_ITERATED_EXTENDED_KALMAN_FILTER__
@@ -27,10 +27,10 @@
 namespace BFL
 {
 
-  /** This is a class implementing the Kalman Filter (KF) class for 
+  /** This is a class implementing the Kalman Filter (KF) class for
       Square Root Iterated Extended Kalman Filters.
       this is a possible implementation of a Kalman filter, which in
-       will yield better numerical stable results, since the covariance matrix 
+       will yield better numerical stable results, since the covariance matrix
        is defined as the Square root of the Covariance matrix of the state estimation.
        See
      @verbatim
@@ -43,7 +43,7 @@ namespace BFL
      @endverbatim
       for more details.
      Note that this particular implementation:
-	        - Currently only works for implicit measurement model 
+	        - Currently only works for implicit measurement model
 		(LinearAnalyticMeasurementModelGaussianUncertainty_Implicit)
     		the implicit measurement model is described as :\f[  0 = f (x,z) \f]
     		and internally defined as a linear measurement model with virtual measurement z_k^{virtual}
@@ -59,7 +59,7 @@ namespace BFL
 	  @param nr_it the number of iterations in one update
       */
       SRIteratedExtendedKalmanFilter(Gaussian* prior, unsigned int nr_it=1);
-   
+
       /// Destructor
       virtual ~SRIteratedExtendedKalmanFilter();
       /// Perform a system update with the current measurement model ans system model using an input u
@@ -69,7 +69,7 @@ namespace BFL
       virtual void SysUpdate(SystemModel<MatrixWrapper::ColumnVector>* const sysmodel);
       /// Perform a measurement update use a measurement model, measurements z and virutal measurements s
       virtual void MeasUpdate(MeasurementModel<MatrixWrapper::ColumnVector,MatrixWrapper::ColumnVector>* const measmodel,
-			      const MatrixWrapper::ColumnVector& z, 
+			      const MatrixWrapper::ColumnVector& z,
 			      const MatrixWrapper::ColumnVector& s);
        /// Perform a measurement update use a measurement model, measurements z
       virtual void MeasUpdate(MeasurementModel<MatrixWrapper::ColumnVector,MatrixWrapper::ColumnVector>* const measmodel,const MatrixWrapper::ColumnVector& z);
@@ -89,21 +89,21 @@ namespace BFL
       \f[ K = J_{k}*J_{k}^{'}*H'*inv(S)^{'}*inv(S) \f]
       */
       virtual void CalculateMeasUpdate(MatrixWrapper::ColumnVector z, MatrixWrapper::ColumnVector Z, MatrixWrapper::Matrix H, MatrixWrapper::SymmetricMatrix R);
-     
-      /// Calculate K_i , invS and  Sr 
+
+      /// Calculate K_i , invS and  Sr
       /**
        \f[ Sr= cholesky(H_i*JP*JP^{'}*H_i^{'}+R_i)^{'}  \f]
        \f[ invS=inv(Sr)\f]
        \f[ K_i=JP*JP^{'}*H_i^{'}*invS^{'}*invS \f]
        */
       virtual void  CalculateMatrix(MatrixWrapper::Matrix& H_i  , MatrixWrapper::SymmetricMatrix& R_i , MatrixWrapper::Matrix& invS  , MatrixWrapper::Matrix& Sr  , MatrixWrapper::Matrix& K_i );
-      
+
       /// Calculate the new state estimate
       /**
 	 \f[ x_k = x_{k-} + K.(z - Z) \f]
       */
       virtual void CalculateMean(MatrixWrapper::ColumnVector& x_k, const MatrixWrapper::ColumnVector& z, MatrixWrapper::ColumnVector& Z_i ,MatrixWrapper::Matrix& K_i);
-      
+
       /// Calculate the covariance of the new state estimate (P_k)
       /**
         \f[ JP = JP-JP*JP^{'}*H_k^{'}*inv(S)^{'}*inv(R+Sr)*H_k*JP  \f]
@@ -115,7 +115,7 @@ namespace BFL
       /// Variable indicating the number of iterations of the filter
       unsigned int nr_iterations;
       /// the upper triangular matrix cholesky decompostion of the state covariance (\f$ JP*JP^{'}=P \f$)
-      MatrixWrapper::Matrix JP;   
+      MatrixWrapper::Matrix JP;
       /// inv(S) matrix
       //BFL::Matrix invS;
       /// define \f$ S=H*JP*JP^{'}*H^{'}+D*R*D^{'} \f$

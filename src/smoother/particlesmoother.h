@@ -1,6 +1,6 @@
 // $Id: particlesmoother.h 6736 2006-12-21 11:24:42Z tdelaet $
 // Copyright (C) 2006 Tinne De Laet <first dot last at mech dot kuleuven dot be>
-//  
+//
  /***************************************************************************
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU General Public                   *
@@ -27,7 +27,7 @@
  *   Foundation, Inc., 59 Temple Place,                                    *
  *   Suite 330, Boston, MA  02111-1307  USA                                *
  *                                                                         *
- ***************************************************************************/ 
+ ***************************************************************************/
 
 
 // implementation based on "A smoothing filter for condensation", by Isard and
@@ -46,8 +46,8 @@
 namespace BFL
 {
 
-  /// Class representing a particle backward filter 
-  template <typename StateVar> class ParticleSmoother 
+  /// Class representing a particle backward filter
+  template <typename StateVar> class ParticleSmoother
     : public BackwardFilter<StateVar>
     {
     protected:
@@ -71,11 +71,11 @@ namespace BFL
 
     public:
       /// Constructor
-      ParticleSmoother(MCPdf<StateVar> * prior); 
+      ParticleSmoother(MCPdf<StateVar> * prior);
 
       /// Destructor
       virtual ~ParticleSmoother();
-  
+
     };
 #include "particlesmoother.cpp"
 

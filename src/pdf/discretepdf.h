@@ -6,16 +6,16 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 #ifndef DISCRETEPDF_H
 #define DISCRETEPDF_H
 
@@ -34,10 +34,10 @@ namespace BFL
   class DiscretePdf : public Pdf<int> // inherit abstract_template_class
     {
     protected:
-      /// The number of discrete state 
+      /// The number of discrete state
       unsigned int _num_states;
 
-      /// Pointer to the discrete PDF-values, the sum of the elements = 1 
+      /// Pointer to the discrete PDF-values, the sum of the elements = 1
       vector<Probability> *_Values_p;
 
       /// Normalize all the probabilities (eg. after setting a probability)
@@ -50,7 +50,7 @@ namespace BFL
       bool CumPDFUpdate();
 
     public:
-      /// Constructor (dimension = number of classes) An equal probability is set for all classes 
+      /// Constructor (dimension = number of classes) An equal probability is set for all classes
       /** @param num_states number of different classes or states
        */
       DiscretePdf(unsigned int num_states=0);
@@ -69,16 +69,16 @@ namespace BFL
 
       /// Function to change/set the probability of a single state
       /** Changes the probabilities such that AFTER normalization the
-          probability of the state "state" is equal to the probability a 
+          probability of the state "state" is equal to the probability a
            @param state number of state of which the probability will be set
-           @param a probability value to which the probability of state "state" 
+           @param a probability value to which the probability of state "state"
             will be set (must be <= 1)
       */
       bool ProbabilitySet(unsigned int state, Probability a);
 
       bool SampleFrom (vector<Sample<int> >& list_samples,
 		       const unsigned int num_samples,
-		       int method = DEFAULT, 
+		       int method = DEFAULT,
 		       void * args = NULL) const;
       bool SampleFrom (Sample<int>& one_sample, int method = DEFAULT, void * args = NULL) const;
 
@@ -86,9 +86,9 @@ namespace BFL
       vector<Probability> ProbabilitiesGet() const;
 
       /// Set all probabilities
-      /**  @param values vector<Probability> containing the new probability values. 
+      /**  @param values vector<Probability> containing the new probability values.
            The sum of the probabilities of this list is not required to be one
-           since the normalization is automatically carried out. 
+           since the normalization is automatically carried out.
       */
       bool ProbabilitiesSet(vector<Probability> & values);
 

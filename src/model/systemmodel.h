@@ -1,6 +1,6 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
-//  
+//
  /***************************************************************************
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU General Public                   *
@@ -27,7 +27,7 @@
  *   Foundation, Inc., 59 Temple Place,                                    *
  *   Suite 330, Boston, MA  02111-1307  USA                                *
  *                                                                         *
- ***************************************************************************/ 
+ ***************************************************************************/
 #ifndef __SYSTEM_MODEL__
 #define __SYSTEM_MODEL__
 
@@ -39,7 +39,7 @@ namespace BFL
   /** Template class representing all possible (continu and discrete)
       System Models
       @todo Check if there should be a "model" base class...
-      @bug Currently supports only systemmodels of the form P(x | x, u), 
+      @bug Currently supports only systemmodels of the form P(x | x, u),
       where both u and x are continu or discrete.  So it
       lacks support for mixed systems () and systems with extra
       parameters.  You are welcome to provide an API and implementation
@@ -68,10 +68,10 @@ namespace BFL
 	  @see STATE_SIZE, INPUT_SIZE, _SystemPdf
       */
       SystemModel(ConditionalPdf<T,T>* systempdf=NULL);
-  
+
       /// Destructor
       virtual ~SystemModel();
-  
+
       /// Copy constructor
       /// SystemModel(const SystemModel<T>& model);
 
@@ -95,7 +95,7 @@ namespace BFL
       /** @return a reference to the ConditionalPdf describing the system
        */
       ConditionalPdf<T,T>* SystemPdfGet();
-  
+
       /// Set the SystemPDF
       /** @param pdf a reference to the ConditionalPdf describing the system
        */
@@ -112,7 +112,7 @@ namespace BFL
 	  @param sampling_args Sometimes a sampling method can have some
 	  extra parameters (eg mcmc sampling)
 	  @note Maybe the return value would better be a Sample<T> instead
-	  of a T 
+	  of a T
       */
       T Simulate (const T& x, const T& u, int sampling_method = DEFAULT, void * sampling_args = NULL);
       /// Simulate the system (no input system)
@@ -120,14 +120,14 @@ namespace BFL
 	  @return State where we arrive by simulating the system model for
 	  1 step
 	  @note Maybe the return value would better be a Sample<T> instead
-	  of a T 
+	  of a T
 	  @param sampling_method the sampling method to be used while
 	  sampling from the Conditional Pdf describing the system (if not
 	  specified = DEFAULT)
 	  @param sampling_args Sometimes a sampling method can have some
 	  extra parameters (eg mcmc sampling)
       */
-  
+
       T Simulate (const T& x, int sampling_method = DEFAULT, void * sampling_args = NULL);
 
       /// Get the probability of arriving in a next state
@@ -136,7 +136,7 @@ namespace BFL
 	  @param u  the input
 	  @return the probability value
       */
-  
+
       Probability ProbabilityGet(const T& x_k, const T& x_kminusone, const T& u );
 
       /// Get the probability of arriving in a next state
@@ -146,7 +146,7 @@ namespace BFL
 	  @return the probability value
       */
       Probability ProbabilityGet(const T& x_k, const T& x_kminusone );
-  
+
 
     };
 

@@ -7,16 +7,16 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #ifndef __KALMAN_FILTER__
 #define __KALMAN_FILTER__
@@ -42,7 +42,7 @@ namespace BFL
     are still pure virtual functions.
 
     This class is the base class for all sorts of KFs.
-    
+
     @see Gaussian
     @see LinearAnalyticSystemModelGaussianUncertainty
 */
@@ -84,7 +84,7 @@ private:
     Matrix _postHT;
     MeasUpdateVariables() {};
     MeasUpdateVariables(unsigned int meas_dimension, unsigned int state_dimension):
-      _S(meas_dimension,meas_dimension) 
+      _S(meas_dimension,meas_dimension)
     , _K(state_dimension,meas_dimension)
     , _innov(meas_dimension)
     , _postHT(state_dimension,meas_dimension)
@@ -101,9 +101,9 @@ protected:
   Matrix _K;
   std::map<unsigned int, MeasUpdateVariables> _mapMeasUpdateVariables;
   std::map<unsigned int, MeasUpdateVariables>::iterator _mapMeasUpdateVariables_it;
-  
 
-  /** Very dirty hack to avoid ugly methods PostSigmaSet 
+
+  /** Very dirty hack to avoid ugly methods PostSigmaSet
       and PostMuSet to be public!
       NonMinimalKalmanFilter should be redesigned though!
   */
@@ -111,7 +111,7 @@ protected:
 
   /// Set covariance of posterior estimate
   void PostSigmaSet( const MatrixWrapper::SymmetricMatrix& s);
-  
+
   /// Set expected value of posterior estimate
   void PostMuSet( const MatrixWrapper::ColumnVector& c);
 
@@ -120,7 +120,7 @@ protected:
       \f[ P_k = F.P_{k-}.F' + Q \f]
   */
   void CalculateSysUpdate(const MatrixWrapper::ColumnVector& J, const MatrixWrapper::Matrix& F, const MatrixWrapper::SymmetricMatrix& Q);
-    
+
   /** Calculate Kalman filter Measurement Update
       \f[ x_k = x_{k-} + K.(z - Z) \f]
       \f[ P_k = (I-K.H).P_{k-} \f]
@@ -135,9 +135,9 @@ protected:
       @param sysmodel pointer to the system model the filter should use
       @param u input to the system
   */
-  virtual void SysUpdate(SystemModel<MatrixWrapper::ColumnVector>* const sysmodel, 
+  virtual void SysUpdate(SystemModel<MatrixWrapper::ColumnVector>* const sysmodel,
 			 const MatrixWrapper::ColumnVector& u) = 0;
-  
+
   /// Measurement Update (overloaded)
   /** Update the filter's Posterior density using the sensor
       measurements, an input and the measurement model.  This method is
@@ -151,7 +151,7 @@ protected:
       for now, since this was not yet implemented in ConditionalPdf
   */
   virtual void MeasUpdate(MeasurementModel<MatrixWrapper::ColumnVector,MatrixWrapper::ColumnVector>* const measmodel,
-			  const MatrixWrapper::ColumnVector& z, 
+			  const MatrixWrapper::ColumnVector& z,
 			  const MatrixWrapper::ColumnVector& s) = 0;
 
   virtual bool UpdateInternal(SystemModel<MatrixWrapper::ColumnVector>* const sysmodel,
@@ -165,5 +165,5 @@ protected:
 
 
 } // End namespace BFL
- 
+
 #endif // __KALMAN_FILTER__

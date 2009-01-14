@@ -1,6 +1,6 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
-//  
+//
  /***************************************************************************
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU General Public                   *
@@ -27,8 +27,8 @@
  *   Foundation, Inc., 59 Temple Place,                                    *
  *   Suite 330, Boston, MA  02111-1307  USA                                *
  *                                                                         *
- ***************************************************************************/ 
-//  
+ ***************************************************************************/
+//
 #ifndef __MEASUREMENT_MODEL__
 #define __MEASUREMENT_MODEL__
 
@@ -82,7 +82,7 @@ namespace BFL
 
     /// Get the MeasurementPDF
     ConditionalPdf<MeasVar,StateVar> * MeasurementPdfGet();
-  
+
     /// Set the MeasurementPDF
     /** @param pdf a pointer to the measurement pdf
      */
@@ -98,7 +98,7 @@ namespace BFL
 	@param sampling_args Sometimes a sampling method can have some
 	extra parameters (eg mcmc sampling)
 	@note Maybe the return value would better be a Sample<StateVar> instead
-	of a StateVar 
+	of a StateVar
     */
     MeasVar Simulate (const StateVar& x, const StateVar& s, int sampling_method = DEFAULT, void * sampling_args = NULL);
 
@@ -106,7 +106,7 @@ namespace BFL
     /** @param x current state of the system
 	@return State where we arrive by simulating the measurement model
 	@note Maybe the return value would better be a Sample<StateVar> instead
-	of a StateVar 
+	of a StateVar
 	@param sampling_method the sampling method to be used while
 	sampling from the Conditional Pdf describing the system (if not
 	specified = DEFAULT)
@@ -123,8 +123,8 @@ namespace BFL
 	@return the "probability" of the measurement
     */
     Probability ProbabilityGet(const MeasVar& z, const StateVar& x, const StateVar& s );
-  
-    /// Get the probability of a certain measurement 
+
+    /// Get the probability of a certain measurement
     /** (measurement independent of input) gived a certain state and
 	input
 	@param z the measurement value

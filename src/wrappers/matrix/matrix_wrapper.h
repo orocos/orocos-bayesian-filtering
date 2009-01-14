@@ -1,21 +1,21 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
 
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 #ifndef __MATRIX_WRAPPER__
 #define __MATRIX_WRAPPER__
 
@@ -30,9 +30,9 @@
 
 namespace MatrixWrapper{
 
-class Matrix; 
-class ColumnVector; 
-class RowVector; 
+class Matrix;
+class ColumnVector;
+class RowVector;
 class SymmetricMatrix;
 
 /// Class Matrixwrapper
@@ -117,13 +117,13 @@ public:
 
   /// Get row from matrix
   virtual MyRowVector rowCopy(unsigned int r) const = 0;
-  
+
   /// Get column from matrix
   virtual MyColumnVector columnCopy(unsigned int c) const = 0;
 
 
   /// resize matrix
-  virtual void resize(unsigned int i, unsigned int j, 
+  virtual void resize(unsigned int i, unsigned int j,
 		      bool copy=true, bool initialize=true) = 0;
 
   /// get pseudoinverse
@@ -137,7 +137,7 @@ public:
 
   /// get determinant
   virtual double determinant() const = 0;
-  
+
   /// Turn matrix into Symmetric one
   /** Convert Matrix to SymmetricMatrix
       Elements of matrix are copied to lower triangle of new symmetric matrix
@@ -149,13 +149,13 @@ public:
 
   /// SVD Decomposition (for pseudo-inverse properties)
   virtual bool SVD(MyColumnVector& D, MyMatrix& U, MyMatrix& V) const ;
-  
-  double PYTHAG(double a,double b) const; 
- 
+
+  double PYTHAG(double a,double b) const;
+
   double SIGN(double a,double b) const;
 
 }; // class Matrix_Wrapper
- 
+
 
 /// Class SymmetricMatrixWrapper
 class SymmetricMatrix_Wrapper
@@ -178,7 +178,7 @@ public:
 
   /// Operator ()
   virtual const double operator()(unsigned int,unsigned int) const = 0;
-  
+
   /// Operator ==
   virtual const bool operator==(const MySymmetricMatrix& a) const = 0;
 
@@ -258,7 +258,7 @@ public:
 
   /// get determinant
   virtual double determinant() const = 0;
-  
+
   /// get sub matrix
   virtual MyMatrix sub(int i_start, int i_end, int j_start , int j_end) const = 0;
 

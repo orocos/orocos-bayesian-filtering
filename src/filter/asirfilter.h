@@ -1,5 +1,5 @@
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
-//  
+//
 /***************************************************************************
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU General Public                   *
@@ -26,7 +26,7 @@
  *   Foundation, Inc., 59 Temple Place,                                    *
  *   Suite 330, Boston, MA  02111-1307  USA                                *
  *                                                                         *
- ***************************************************************************/ 
+ ***************************************************************************/
 // $Id$
 
 #ifndef __ASIR_FILTER__
@@ -37,11 +37,11 @@
 namespace BFL
 {
 
-  /// ASIR: Auxiliary Particle Filter 
+  /// ASIR: Auxiliary Particle Filter
   /** This is a possible implementation of a particle filter, which in
       some/many  cases will yield better results, since measures are
-      taken to make the proposal density more similar to the posterior.  
-      See 
+      taken to make the proposal density more similar to the posterior.
+      See
 
       @verbatim
       @Article{	  pitt_auxiliary,
@@ -62,7 +62,7 @@ namespace BFL
       of a log concave measurement density.
 
       Particular issue with of proposalstep in case of ASIR
-      filter... 
+      filter...
       The current implementation uses the approximation (see p. 11 of
       the Pitt and Shephard paper, we use their notation here ---
       \f[ \alpha \f] denoting the state and \f[ y \f] denoting the

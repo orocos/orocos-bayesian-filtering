@@ -146,7 +146,7 @@ int main(int argc, char** argv)
   prior_Cov(1,2) = 0.0;
   prior_Cov(2,1) = 0.0;
   prior_Cov(2,2) = 1.0;
-  Gaussian prior(prior_Mu,prior_Cov); 
+  Gaussian prior(prior_Mu,prior_Cov);
 
 
 
