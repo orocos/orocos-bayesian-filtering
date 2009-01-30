@@ -146,7 +146,7 @@ MyMatrix & MyMatrix::operator-= (const MyMatrix& a)
 // MATRIX - VECTOR Operators
 MyColumnVector MyMatrix::operator* (const MyColumnVector &b) const
 {
-  const BoostMatrix op1 = (BoostMatrix) *this;
+  const BoostMatrix& op1 = (*this);
   return (MyColumnVector) prod(op1, ((const BoostColumnVector&)b));
 }
 
@@ -213,20 +213,36 @@ double MyMatrix::determinant() const
 {
   unsigned int r = this->rows();
   assert(r == this->columns());
-  const BoostMatrix& A = (*this);
-  BoostMatrix LU(r,r);
-  boost::numeric::ublas::permutation_matrix<> ndx(r);
-  noalias(LU) = A;
-  int res = lu_factorize(LU,ndx);
-  assert(res == 0);
-
   double result = 1.0;
-  int s = 1;
-  for (boost::numeric::ublas::matrix<double>::size_type i=0;i<LU.size1();++i) {
-    result *= LU(i,i);
-    if (ndx(i)!=i) s = -s;
+  if(r==2)
+  {
+    double result = ( ( (*this)(1,1) * (*this)(2,2)) - ( (*this)(2,1) * (*this)(1,2)) );
+    return result;
+
   }
-  return result*s;
+  else
+  {
+    if(r==1)
+    {
+        return  (*this)(1,1) ;
+    }
+    else
+    {
+        const BoostMatrix& A = (*this);
+        BoostMatrix LU(r,r);
+        boost::numeric::ublas::permutation_matrix<> ndx(r);
+        noalias(LU) = A;
+        int res = lu_factorize(LU,ndx);
+        assert(res == 0);
+
+        int s = 1;
+        for (boost::numeric::ublas::matrix<double>::size_type i=0;i<LU.size1();++i) {
+          result *= LU(i,i);
+          if (ndx(i)!=i) s = -s;
+        }
+        return result*s;
+    }
+  }
 }
 
 
@@ -494,12 +510,17 @@ MyMatrix MySymmetricMatrix::operator* (const MySymmetricMatrix &a) const
 
 MyColumnVector MySymmetricMatrix::operator* (const MyColumnVector &b) const
 {
-  const BoostSymmetricMatrix op1 = (BoostSymmetricMatrix) *this;
+  const BoostSymmetricMatrix& op1 = (BoostSymmetricMatrix) *this;
   return (MyColumnVector) prod(op1, ((const BoostColumnVector&)b));
 }
 
-MyMatrix MySymmetricMatrix::sub(int i_start, int i_end,
-				int j_start , int j_end) const
+void MySymmetricMatrix::multiply (const MyColumnVector &b, MyColumnVector &result) const
+{
+  const BoostSymmetricMatrix& op1 = (BoostSymmetricMatrix) *this;
+  result = (MyColumnVector) prod(op1, ((const BoostColumnVector&)b));
+}
+
+MyMatrix MySymmetricMatrix::sub(int i_start, int i_end, int j_start , int j_end) const
 {
   MyMatrix submatrix(i_end-i_start+1, j_end-j_start+1);
   for (int i=i_start; i<=i_end; i++)

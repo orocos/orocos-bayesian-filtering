@@ -35,6 +35,7 @@ namespace BFL
       mutable MatrixWrapper::SymmetricMatrix _Sigma_inverse;
       mutable double _sqrt_pow;
       mutable ColumnVector _diff; //needed in probabilityGet
+      mutable ColumnVector _tempColumn; //needed in probabilityGet
       // variables to avoid allocation on the heap during resampling
       mutable ColumnVector _samples;
       mutable ColumnVector _sampleValue;

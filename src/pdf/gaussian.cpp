@@ -30,6 +30,7 @@ namespace BFL
   Gaussian::Gaussian (const ColumnVector& m, const SymmetricMatrix& s)
     : Pdf<ColumnVector> ( m.rows() )
     , _diff(DimensionGet())
+    , _tempColumn(DimensionGet())
     , _samples(DimensionGet())
     , _sampleValue(DimensionGet())
     , _Low_triangle(DimensionGet(),DimensionGet())
@@ -45,6 +46,7 @@ namespace BFL
   Gaussian::Gaussian (int dimension)
     : Pdf<ColumnVector>(dimension)
     , _diff(dimension)
+    , _tempColumn(DimensionGet())
     , _samples(dimension)
     , _sampleValue(dimension)
     , _Low_triangle(dimension,dimension)
@@ -75,7 +77,10 @@ namespace BFL
 
     _diff = input;
     _diff -= _Mu;
-    Probability temp = _diff.transpose() * (_Sigma_inverse * _diff);
+    _Sigma_inverse.multiply(_diff,_tempColumn);
+    //_tempColumn = _Sigma_inverse * _diff; 
+    Probability temp = _diff.transpose() * _tempColumn;
+    //Probability temp = _diff.transpose() * (_Sigma_inverse * _diff);
     Probability result = exp(-0.5 * temp) * _sqrt_pow;
     return result;
   }

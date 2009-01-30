@@ -148,7 +148,7 @@ class MySymmetricMatrix : public ltiSymmetricMatrix, public SymmetricMatrix_Wrap
         virtual MyMatrix  operator * (const MySymmetricMatrix& a) const;
 
         virtual MyColumnVector operator* (const MyColumnVector &b) const;
-
+        //virtual void multiply (const MyColumnVector &b, MyColumnVector &result) const;
         virtual void resize(unsigned int i, bool copy=true, bool initialize=true);
         virtual MyMatrix sub(int i_start, int i_end, int j_start , int j_end) const;
 

@@ -511,8 +511,14 @@ MyColumnVector MySymmetricMatrix::operator* (const MyColumnVector &b) const
   return (MyColumnVector) op1.multiply(op2);
 }
 
-MyMatrix MySymmetricMatrix::sub(int i_start, int i_end,
-				int j_start , int j_end) const
+void MySymmetricMatrix::multiply (const MyColumnVector &b, MyColumnVector &result) const
+{
+  const ltiSymmetricMatrix& op1 = (const ltiSymmetricMatrix&) *this;
+  ltiColumnVector op2 = b;
+  result = (MyColumnVector) op1.multiply(op2);
+}
+
+MyMatrix MySymmetricMatrix::sub(int i_start, int i_end, int j_start , int j_end) const
 {
   // first copy all elements from lower triangle to upper triangle
   unsigned int r = this->rows();

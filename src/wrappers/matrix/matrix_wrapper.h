@@ -247,6 +247,9 @@ public:
   /// SYMMETRICMATRIX - VECTOR operator
   virtual ColumnVector operator* ( const MyColumnVector &b) const = 0;
 
+  /// SYMMETRICMATRIX - VECTOR operator
+  virtual void multiply( const MyColumnVector &b, MyColumnVector &result) const = 0;
+
   /// resize symmetric matrix
   virtual void resize(unsigned int i, bool copy=true, bool initialize=true) = 0;
 
