@@ -71,6 +71,8 @@ namespace BFL
 	_cond_arg_dims_p[arg] = pdf._cond_arg_dims_p[arg];
 	total_dim *= _cond_arg_dims_p[arg];
       }
+    total_dim *= _num_states;
+    _total_dimension = total_dim;
     _probability_p = new double[total_dim];
     for (int prob = 0 ; prob < total_dim ; prob++)
       {

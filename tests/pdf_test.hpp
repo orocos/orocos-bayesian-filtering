@@ -36,12 +36,12 @@ using namespace MatrixWrapper;
 class PdfTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( PdfTest );
-  CPPUNIT_TEST( testGaussian );
   CPPUNIT_TEST( testUniform );
   CPPUNIT_TEST( testDiscretePdf );
   CPPUNIT_TEST( testLinearAnalyticConditionalGaussian );
   CPPUNIT_TEST( testDiscreteConditionalPdf );
   CPPUNIT_TEST( testMcpdf );
+  CPPUNIT_TEST( testGaussian );
   CPPUNIT_TEST_SUITE_END();
 
   ColumnVector _mu;

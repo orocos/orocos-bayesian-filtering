@@ -522,11 +522,15 @@ PdfTest::testDiscreteConditionalPdf()
   CPPUNIT_ASSERT_EQUAL( cond_arg, a_discretecondpdf.ConditionalArgumentGet(0));
 
   /* Get the probability for the states given the conditional argument set */
-  for (state_k = 0 ; state_k < NUM_DS ;  state_k++)
+  for (cond_arg = 0 ; cond_arg < NUM_DS ;  cond_arg++)
+  {
+    a_discretecondpdf.ConditionalArgumentSet(0, cond_arg);
+    for (state_k = 0 ; state_k < NUM_DS ;  state_k++)
     {
       if( state_k == cond_arg) CPPUNIT_ASSERT_EQUAL( prob_diag, (double)a_discretecondpdf.ProbabilityGet(state_k));
       else CPPUNIT_ASSERT_EQUAL( prob_nondiag, (double)a_discretecondpdf.ProbabilityGet(state_k));
     }
+  }
 
   /* Sampling */
   vector<Sample<int> > los(NUM_SAMPLES);
@@ -534,6 +538,21 @@ PdfTest::testDiscreteConditionalPdf()
   Sample<int> a_sample ;
   CPPUNIT_ASSERT_EQUAL( true, a_discretecondpdf.SampleFrom(a_sample,DEFAULT,NULL));
 
+  /* Copy */
+  DiscreteConditionalPdf b_discretecondpdf(a_discretecondpdf);
+  CPPUNIT_ASSERT_EQUAL( a_discretecondpdf.DimensionGet(),b_discretecondpdf.DimensionGet() );
+  CPPUNIT_ASSERT_EQUAL( a_discretecondpdf.NumConditionalArgumentsGet(), b_discretecondpdf.NumConditionalArgumentsGet());
+  CPPUNIT_ASSERT_EQUAL( a_discretecondpdf.NumStatesGet(),b_discretecondpdf.NumStatesGet());
+  for (cond_arg = 0 ; cond_arg < NUM_DS ;  cond_arg++)
+  {
+    a_discretecondpdf.ConditionalArgumentSet(0, cond_arg);
+    b_discretecondpdf.ConditionalArgumentSet(0, cond_arg);
+    for (state_k = 0 ; state_k < NUM_DS ;  state_k++)
+    {
+       CPPUNIT_ASSERT_EQUAL( (double)a_discretecondpdf.ProbabilityGet(state_k) , (double)b_discretecondpdf.ProbabilityGet(state_k));
+    }
+  }
+  
 }
 
 void
