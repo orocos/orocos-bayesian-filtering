@@ -58,6 +58,12 @@ namespace BFL
     return os;
   }
 
+  //Clone function
+  Uniform* Uniform::Clone() const
+  {
+      return new Uniform(*this);
+  }
+
   Probability Uniform::ProbabilityGet(const ColumnVector& input) const
   {
     // test if input is located in area of Uniform distribution

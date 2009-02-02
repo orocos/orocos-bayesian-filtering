@@ -64,6 +64,9 @@ namespace BFL
       /// Destructor
       virtual ~Pdf();
 
+      ///Pure virtual clone function
+      virtual Pdf<T>* Clone() const = 0;
+
       /// Draw multiple samples from the Pdf (overloaded)
       /** @param list_samples list of samples that will contain result of sampling
           @param num_samples Number of Samples to be drawn (iid)
@@ -195,7 +198,7 @@ Pdf<T>::SampleFrom (Sample<T>& one_sample,
 		    int method,
 		    void * args) const
 {
-  cerr << "Error: The SampleFrom function was called, but you didn't implement it!\n";
+  cerr << "Error Pdf<T>: The SampleFrom function was called, but you didn't implement it!\n";
   exit(-BFL_ERRMISUSE);
   return false;
 }
@@ -203,7 +206,7 @@ Pdf<T>::SampleFrom (Sample<T>& one_sample,
 template<typename T> Probability
 Pdf<T>::ProbabilityGet (const T& input) const
 {
-  cerr << "Error: The ProbabilityGet function was called, but you didn't implement it!\n";
+  cerr << "Error Pdf<T>: The ProbabilityGet function was called, but you didn't implement it!\n";
   exit(-BFL_ERRMISUSE);
   return 1;
 }
@@ -211,7 +214,7 @@ Pdf<T>::ProbabilityGet (const T& input) const
 template<typename T>  T
 Pdf<T>::ExpectedValueGet () const
 {
-  cerr << "Error: The ExpectedValueGet function was called, but you didn't implement it!\n";
+  cerr << "Error Pdf<T>: The ExpectedValueGet function was called, but you didn't implement it!\n";
   exit(-BFL_ERRMISUSE);
   T t;
   return t;
@@ -221,7 +224,7 @@ Pdf<T>::ExpectedValueGet () const
 template<typename T> MatrixWrapper::SymmetricMatrix
 Pdf<T>::CovarianceGet () const
 {
-  cerr << "Error: The CovarianceGet function was called, but you didn't implement it!\n";
+  cerr << "Error Pdf<T>: The CovarianceGet function was called, but you didn't implement it!\n";
   exit(-BFL_ERRMISUSE);
   MatrixWrapper::SymmetricMatrix m;
   return m;

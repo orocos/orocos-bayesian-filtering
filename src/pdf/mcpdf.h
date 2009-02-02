@@ -92,6 +92,9 @@ namespace BFL
       /// copy constructor
       MCPdf(const MCPdf<T> &);
 
+      ///Clone function
+      virtual MCPdf<T>* Clone() const;
+
       // implemented virtual functions
       bool SampleFrom (Sample<T>& one_sample, int method = DEFAULT, void * args = NULL) const;
       bool SampleFrom (vector<Sample<T> >& list_samples, const unsigned int num_samples, int method = DEFAULT,
@@ -219,6 +222,12 @@ namespace BFL
 #endif // __CONSTRUCTOR__
     }
 
+  //Clone function
+  template <typename T> MCPdf<T>*
+    MCPdf<T>::Clone() const
+    {
+        return new MCPdf<T>(*this);
+    }
 
   template <typename T> bool
     MCPdf<T>::SampleFrom (vector<Sample<T> >& list_samples,

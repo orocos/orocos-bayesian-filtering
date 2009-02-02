@@ -61,6 +61,9 @@ namespace BFL
       /// Destructor
       virtual ~LinearAnalyticConditionalGaussian();
 
+      ///Clone function
+      virtual LinearAnalyticConditionalGaussian* Clone() const;
+
       // implement virtual functions
       virtual MatrixWrapper::ColumnVector    ExpectedValueGet() const;
       virtual MatrixWrapper::Matrix          dfGet(unsigned int i)       const;

@@ -38,6 +38,12 @@ namespace BFL
   /// Destructor
   ConditionalGaussian::~ConditionalGaussian(){}
 
+  //Clone function
+  ConditionalGaussian* ConditionalGaussian::Clone() const
+  {
+      return new ConditionalGaussian(*this);
+  }
+
   Probability
   ConditionalGaussian::ProbabilityGet(const ColumnVector& input) const
   {

@@ -68,7 +68,7 @@ PdfTest::testGaussian()
   first_gaussian.ExpectedValueSet(_mu);
   first_gaussian.CovarianceSet(_sigma);
   Sample<ColumnVector> test_sample ;
-    CPPUNIT_ASSERT_EQUAL( true, first_gaussian.SampleFrom(test_sample,DEFAULT,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, first_gaussian.SampleFrom(test_sample,DEFAULT,NULL));
 
   Gaussian a_gaussian(_mu,_sigma);
 
@@ -161,6 +161,12 @@ PdfTest::testGaussian()
   CPPUNIT_ASSERT_EQUAL( _mu, c_gaussian.ExpectedValueGet());
   c_gaussian.CovarianceSet(_sigma);
   CPPUNIT_ASSERT_EQUAL( _sigma, c_gaussian.CovarianceGet());
+  
+  /* Clone */
+  Gaussian* clone = NULL;
+  clone = c_gaussian.Clone();
+  CPPUNIT_ASSERT_EQUAL( c_gaussian.ExpectedValueGet(), clone->ExpectedValueGet());
+  CPPUNIT_ASSERT_EQUAL( c_gaussian.CovarianceGet(), clone->CovarianceGet());
 }
 
 void
@@ -223,7 +229,14 @@ PdfTest::testUniform()
   test_prob = _mu;
   test_prob(DIMENSION) = _mu(DIMENSION) + _width(DIMENSION)*2/3;
   CPPUNIT_ASSERT_EQUAL(0.0, (double)c_uniform.ProbabilityGet(test_prob));
+
+  /* Clone */
+  Uniform* clone = NULL;
+  clone = c_uniform.Clone();
+  CPPUNIT_ASSERT_EQUAL( c_uniform.CenterGet(), clone->CenterGet());
+  CPPUNIT_ASSERT_EQUAL( c_uniform.WidthGet(), clone->WidthGet());
 }
+
 void
 PdfTest::testDiscretePdf()
 {
@@ -326,14 +339,13 @@ PdfTest::testDiscretePdf()
   vector<Sample<int> > los(NUM_SAMPLES);
   vector<Sample<int> >::iterator it;
 
-  //cout << "most probable state" << d_discretepdf.MostProbableStateGet()<< endl;
   // check most probable state
   CPPUNIT_ASSERT_EQUAL( 2, d_discretepdf.MostProbableStateGet());
 
   CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(los,NUM_SAMPLES,DEFAULT,NULL));
   // test if samples are distributed according to probabilities
   // remark that this test occasionally fails
-  vector<unsigned int> num_samples(NUM_DS);
+  vector<unsigned int> num_samples(NUM_DS,0);
   for (it = los.begin(); it!=los.end();it++)
   {
     num_samples[it->ValueGet()] +=1;
@@ -348,7 +360,7 @@ PdfTest::testDiscretePdf()
   CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(los,NUM_SAMPLES,RIPLEY,NULL));
   // test if samples are distributed according to probabilities
   // remark that this test occasionally fails
-  vector<unsigned int> num_samples2(NUM_DS);
+  vector<unsigned int> num_samples2(NUM_DS,0);
   for (it = los.begin(); it!=los.end();it++)
   {
     num_samples2[it->ValueGet()] +=1;
@@ -359,11 +371,60 @@ PdfTest::testDiscretePdf()
    CPPUNIT_ASSERT( approxEqual( prob_vecd[i] , (double)num_samples2[i] / NUM_SAMPLES, 0.05 ) );
   }
 
+  prob_vecd[0] = 0.0; 
+  prob_vecd[1] = 0.0; 
+  prob_vecd[2] = 1.0; 
+  prob_vecd[3] = 0.0; 
+  prob_vecd[4] = 0.0; 
+  d_discretepdf.ProbabilitiesSet(prob_vecd);
+
+  // check most probable state
+  CPPUNIT_ASSERT_EQUAL( 2, d_discretepdf.MostProbableStateGet());
+
+  CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(los,NUM_SAMPLES,DEFAULT,NULL));
+  // test if samples are distributed according to probabilities
+  // remark that this test occasionally fails
+  vector<unsigned int> num_samples3(NUM_DS,0);
+  for (it = los.begin(); it!=los.end();it++)
+  {
+    num_samples3[it->ValueGet()] +=1;
+  }
+  for (int i = 0 ; i< NUM_DS ; i++)
+  {
+    //TODO: find some theoretical limits depending on the number of samples
+    CPPUNIT_ASSERT( approxEqual( prob_vecd[i] , (double)num_samples3[i] / NUM_SAMPLES, 0.05 ) );
+  }
+
+  // Ripley
+  CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(los,NUM_SAMPLES,RIPLEY,NULL));
+  // test if samples are distributed according to probabilities
+  // remark that this test occasionally fails
+  vector<unsigned int> num_samples4(NUM_DS,0);
+  for (it = los.begin(); it!=los.end();it++)
+  {
+    num_samples4[it->ValueGet()] +=1;
+  }
+  for (int i = 0 ; i< NUM_DS ; i++)
+  {
+    //TODO: find some theoretical limits depending on the number of samples
+   CPPUNIT_ASSERT( approxEqual( prob_vecd[i] , (double)num_samples4[i] / NUM_SAMPLES, 0.05 ) );
+  }
+
   Sample<int> a_sample ;
   CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(a_sample,DEFAULT,NULL));
   // Ripley not implemented for one sample
   CPPUNIT_ASSERT_EQUAL( false, d_discretepdf.SampleFrom(a_sample,RIPLEY,NULL));
 
+  /* Clone */
+  DiscretePdf* clone = NULL;
+  clone = d_discretepdf.Clone();
+  CPPUNIT_ASSERT_EQUAL( d_discretepdf.NumStatesGet(), clone->NumStatesGet());
+  vector<Probability> result_probd = d_discretepdf.ProbabilitiesGet();
+  vector<Probability> result_probClone = clone->ProbabilitiesGet();
+  for( int i = 0; i< d_discretepdf.NumStatesGet() ; i++)
+  {
+    CPPUNIT_ASSERT_EQUAL( (double)result_probd[i],(double)result_probClone[i]);
+  }
 }
 
 void
@@ -481,8 +542,15 @@ PdfTest::testLinearAnalyticConditionalGaussian()
   CPPUNIT_ASSERT_EQUAL( mu2, a_condgaussian.AdditiveNoiseMuGet());
   CPPUNIT_ASSERT_EQUAL( sigma2, a_condgaussian.AdditiveNoiseSigmaGet());
 
-  /* What would be the best way to test ProbabilityGet? */
+  /* TODO: What would be the best way to test ProbabilityGet? */
 
+  /* Clone */
+  LinearAnalyticConditionalGaussian* clone = NULL;
+  clone = a_condgaussian.Clone();
+  CPPUNIT_ASSERT_EQUAL( a_condgaussian.AdditiveNoiseMuGet(), clone->AdditiveNoiseMuGet());
+  CPPUNIT_ASSERT_EQUAL( a_condgaussian.AdditiveNoiseSigmaGet(), clone->AdditiveNoiseSigmaGet());
+  CPPUNIT_ASSERT_EQUAL( a_condgaussian.MatrixGet(0), clone->MatrixGet(0));
+  CPPUNIT_ASSERT_EQUAL( a_condgaussian.MatrixGet(1), clone->MatrixGet(1));
 }
 
 void
@@ -553,6 +621,19 @@ PdfTest::testDiscreteConditionalPdf()
     }
   }
   
+  /* Clone */
+  DiscreteConditionalPdf* clone = NULL;
+  clone = a_discretecondpdf.Clone();
+  CPPUNIT_ASSERT_EQUAL( a_discretecondpdf.DimensionGet(), clone->DimensionGet());
+  CPPUNIT_ASSERT_EQUAL( a_discretecondpdf.NumConditionalArgumentsGet(), clone->NumConditionalArgumentsGet());
+  CPPUNIT_ASSERT_EQUAL( a_discretecondpdf.NumStatesGet(),clone->NumStatesGet());
+  for (cond_arg = 0 ; cond_arg < NUM_DS ;  cond_arg++)
+  {
+    a_discretecondpdf.ConditionalArgumentSet(0, cond_arg);
+    clone->ConditionalArgumentSet(0, cond_arg);
+    for (state_k = 0 ; state_k < NUM_DS ;  state_k++)
+       CPPUNIT_ASSERT_EQUAL( (double)a_discretecondpdf.ProbabilityGet(state_k) , (double)clone->ProbabilityGet(state_k));
+  }
 }
 
 void
@@ -748,3 +829,387 @@ PdfTest::testMcpdf()
   CPPUNIT_ASSERT_EQUAL(approxEqual(test_diff, (Matrix)a_mcpdf_uint.CovarianceGet(),epsilon),true);
   /* ProbabilityGet */
 }
+
+void
+PdfTest::testMixture()
+{
+  /*******************************
+  A) TEMPlATE = COLUMNVECTOR
+  *******************************/
+
+  // Constructor with DIMENSION
+  Mixture<ColumnVector> mixture(DIMENSION);
+  ColumnVector cv1(DIMENSION,0.0);
+  cv1 = 0.0;
+  Sample<ColumnVector> sample ;
+  vector<Sample<ColumnVector> > los(NUM_SAMPLES);
+
+  CPPUNIT_ASSERT_EQUAL( DIMENSION, mixture.DimensionGet() );
+  CPPUNIT_ASSERT_EQUAL( 0, (int)mixture.NumComponentsGet() );
+
+  // all these calls results in assertions since numComponents = 0
+  /*
+  (double)mixture.ProbabilityGet(cv1) ;
+  mixture.SampleFrom(sample) ;
+  mixture.SampleFrom(los,NUM_SAMPLES) ;
+  mixture.SampleFrom(los,NUM_SAMPLES,RIPLEY) ;
+  mixture.ExpectedValueGet() ;
+  mixture.WeightsGet() ;
+  mixture.WeightGet(0) ;
+  vector<Probability> weightVec(1);
+  weightVec[0]=Probability(1.0);
+  mixture.WeightsSet(weightVec) ;
+  mixture.WeightSet(0,Probability(1.0)) ;
+  mixture.MostProbableComponentGet();
+  */
+
+  Gaussian comp1(_mu,_sigma);
+  comp1.ExpectedValueSet(_mu);
+  comp1.CovarianceSet(_sigma);
+  CPPUNIT_ASSERT_EQUAL(true, mixture.AddComponent(comp1));
+  CPPUNIT_ASSERT_EQUAL(1.0, (double)mixture.WeightGet(0));
+
+  //one component tests
+  CPPUNIT_ASSERT_EQUAL( DIMENSION, mixture.DimensionGet() );
+  CPPUNIT_ASSERT_EQUAL( 1, (int)mixture.NumComponentsGet() );
+  CPPUNIT_ASSERT_EQUAL((double)comp1.ProbabilityGet(cv1),(double)mixture.ProbabilityGet(cv1)) ;
+  ColumnVector expected_mix = mixture.ExpectedValueGet() ;
+  ColumnVector expected_comp1 = comp1.ExpectedValueGet() ;
+  for(int j = 1 ; j <= DIMENSION; j++)
+        CPPUNIT_ASSERT_EQUAL(expected_comp1(j), expected_mix(j) ) ;
+  vector<Probability> vecW(1);
+  vecW[0]=1.0;
+  vector<Probability> mixWeights = mixture.WeightsGet() ;
+  for(int j = 1 ; j <= mixture.NumComponentsGet(); j++)
+        CPPUNIT_ASSERT_EQUAL( (double)vecW[j-1], (double)mixWeights[j-1] );
+  CPPUNIT_ASSERT_EQUAL(1.0,(double)mixture.WeightGet(0) ) ;
+  vecW[0]=Probability(1.0);
+  mixture.WeightsSet(vecW) ;
+  for(int j = 1 ; j <= mixture.NumComponentsGet(); j++)
+        CPPUNIT_ASSERT_EQUAL( (double)vecW[j-1], (double)mixWeights[j-1] );
+  mixture.WeightSet(0,Probability(1.0)) ;
+  CPPUNIT_ASSERT_EQUAL(1.0 , (double)mixture.WeightGet(0) ) ;
+  CPPUNIT_ASSERT_EQUAL(0,(int)mixture.MostProbableComponentGet() );
+
+
+  // sampling with one component test
+  CPPUNIT_ASSERT_EQUAL( true, mixture.SampleFrom(sample,DEFAULT,NULL));
+  // 4 sigma test : REMARK: this test WILL occasionaly fail with probability
+  // erf(4/sqrt(2)) for each sample
+  for(int j = 1 ; j <= DIMENSION; j++)
+  {
+    CPPUNIT_ASSERT( (sample.ValueGet())(j) > _mu(j) - 4.0 * sqrt(_sigma(j,j) ) );
+    CPPUNIT_ASSERT( (sample.ValueGet())(j) < _mu(j) + 4.0 * sqrt(_sigma(j,j) ) );
+  }
+  // Box-Muller and Choleskyis not implemented yet
+  CPPUNIT_ASSERT_EQUAL( false, mixture.SampleFrom(sample,BOXMULLER,NULL));
+  CPPUNIT_ASSERT_EQUAL( false, mixture.SampleFrom(sample,CHOLESKY,NULL));
+
+  // list of samples
+  CPPUNIT_ASSERT_EQUAL( true, mixture.SampleFrom(los,NUM_SAMPLES,DEFAULT,NULL));
+  // 4 sigma test : REMARK: this test WILL occasionaly fail with probability
+  // erf(4/sqrt(2)) for each sample
+  ColumnVector sample_mean(DIMENSION);
+  sample_mean = 0.0;
+  for(int i = 0 ; i < NUM_SAMPLES; i++)
+  {
+    sample = los[i];
+    sample_mean += sample.ValueGet();
+    for(int j = 1 ; j <= DIMENSION; j++)
+    {
+        CPPUNIT_ASSERT( (sample.ValueGet())(j) > _mu(j) - 4.0 * sqrt(_sigma(j,j) ) );
+        CPPUNIT_ASSERT( (sample.ValueGet())(j) < _mu(j) + 4.0 * sqrt(_sigma(j,j) ) );
+    }
+  }
+  // check whether mean and of samples is in withing the expected 3 sigma border
+  // 3 sigma test : REMARK: this test WILL occasionaly fail with probability
+  // erf(3/sqrt(2)) for each sample
+  sample_mean = sample_mean / (double)NUM_SAMPLES;
+  for(int j = 1 ; j <= DIMENSION; j++)
+  {
+    CPPUNIT_ASSERT( sample_mean(j) <= _mu(j) + 3.0 * 1/sqrt(NUM_SAMPLES) * sqrt(_sigma(j,j)) );
+    CPPUNIT_ASSERT( sample_mean(j) >= _mu(j) - 3.0 * 1/sqrt(NUM_SAMPLES) * sqrt(_sigma(j,j)) );
+  }
+  // Box-Muller and cholesky is not implemented 
+  CPPUNIT_ASSERT_EQUAL( false, mixture.SampleFrom(los,NUM_SAMPLES,BOXMULLER,NULL));
+  CPPUNIT_ASSERT_EQUAL( false, mixture.SampleFrom(los,NUM_SAMPLES,CHOLESKY,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, mixture.SampleFrom(los,NUM_SAMPLES,RIPLEY,NULL));
+  // 4 sigma test : REMARK: this test WILL occasionaly fail with probability
+  // erf(4/sqrt(2)) for each sample
+  sample_mean = 0.0;
+  for(int i = 0 ; i < NUM_SAMPLES; i++)
+  {
+    sample = los[i];
+    sample_mean += sample.ValueGet();
+    for(int j = 1 ; j <= DIMENSION; j++)
+    {
+        CPPUNIT_ASSERT( (sample.ValueGet())(j) > _mu(j) - 4.0 * sqrt(_sigma(j,j) ) );
+        CPPUNIT_ASSERT( (sample.ValueGet())(j) < _mu(j) + 4.0 * sqrt(_sigma(j,j) ) );
+    }
+  }
+  // check whether mean and of samples is in withing the expected 3 sigma border
+  // 3 sigma test : REMARK: this test WILL occasionaly fail with probability
+  // erf(3/sqrt(2)) for each sample
+  sample_mean = sample_mean / (double)NUM_SAMPLES;
+  for(int j = 1 ; j <= DIMENSION; j++)
+  {
+    CPPUNIT_ASSERT( sample_mean(j) <= _mu(j) + 3.0 * 1/sqrt(NUM_SAMPLES) * sqrt(_sigma(j,j)) );
+    CPPUNIT_ASSERT( sample_mean(j) >= _mu(j) - 3.0 * 1/sqrt(NUM_SAMPLES) * sqrt(_sigma(j,j)) );
+  }
+
+  // DELETING COMPONENT
+  CPPUNIT_ASSERT_EQUAL(true, mixture.DeleteComponent(0));
+
+  // One component with weight w1
+  Gaussian comp2(_mu,_sigma);
+  Mixture<ColumnVector> mixture1(DIMENSION);
+  Probability w1 = 0.5;
+  CPPUNIT_ASSERT_EQUAL(true, mixture1.AddComponent(comp2,w1));
+  CPPUNIT_ASSERT_EQUAL(1.0, (double)mixture1.WeightGet(0));
+  CPPUNIT_ASSERT_EQUAL( DIMENSION, mixture1.DimensionGet() );
+  CPPUNIT_ASSERT_EQUAL( 1, (int)mixture1.NumComponentsGet() );
+  CPPUNIT_ASSERT_EQUAL((double)comp2.ProbabilityGet(cv1),(double)mixture1.ProbabilityGet(cv1)) ;
+
+  //AddComponent (default weight addef = 0)
+  ColumnVector mu3(DIMENSION);
+  mu3(1) =1.2; mu3(2) = 1.5;
+  SymmetricMatrix sigma3(DIMENSION);
+  sigma3 = 0.0;
+  for (unsigned int rows=1; rows < DIMENSION + 1; rows++){ sigma3(rows,rows)=2.3; }
+  Gaussian comp3(mu3,sigma3);
+  CPPUNIT_ASSERT_EQUAL(true, mixture1.AddComponent(comp3));
+  CPPUNIT_ASSERT_EQUAL(1.0, (double)mixture1.WeightGet(0));
+  CPPUNIT_ASSERT_EQUAL(0.0, (double)mixture1.WeightGet(1));
+  CPPUNIT_ASSERT_EQUAL( DIMENSION, mixture1.DimensionGet() );
+  CPPUNIT_ASSERT_EQUAL( 2, (int)mixture1.NumComponentsGet() );
+  CPPUNIT_ASSERT_EQUAL((double)comp2.ProbabilityGet(cv1),(double)mixture1.ProbabilityGet(cv1)) ;
+  vecW.resize(mixture1.NumComponentsGet());
+  vecW[0]=1.0;
+  vecW[1]=0.0;
+  mixWeights = mixture1.WeightsGet() ;
+  for(int j = 1 ; j <= mixture1.NumComponentsGet(); j++)
+        CPPUNIT_ASSERT_EQUAL( (double)vecW[j-1], (double)mixWeights[j-1] );
+  //WeightSet and WeightGet
+  CPPUNIT_ASSERT_EQUAL(true, mixture1.WeightSet(1,0.2));
+  vecW[0]=0.8;
+  vecW[1]=0.2;
+  mixWeights = mixture1.WeightsGet() ;
+  for(int j = 1 ; j <= mixture1.NumComponentsGet(); j++)
+        CPPUNIT_ASSERT_EQUAL( (double)vecW[j-1], (double)mixWeights[j-1] );
+  //WeightsSet (with non-normalized vector of Probabilities) and WeightsGet
+  vecW[0]=0.4;
+  vecW[1]=1.6;
+  CPPUNIT_ASSERT_EQUAL(true, mixture1.WeightsSet(vecW));
+  mixWeights = mixture1.WeightsGet() ;
+  double sumVecW = 0.0;  
+  for(int j = 0 ; j < vecW.size(); j++)
+    sumVecW += (double)vecW[j];
+  for(int j = 0 ; j < vecW.size(); j++)
+    vecW[j] = (double)vecW[j]/sumVecW;
+  for(int j = 1 ; j <= mixture1.NumComponentsGet(); j++)
+        CPPUNIT_ASSERT_EQUAL( (double)vecW[j-1], (double)mixWeights[j-1] );
+  //ProbabilityGet
+  Probability prob = 0.0;
+  prob = vecW[0] * comp2.ProbabilityGet(cv1) + vecW[1] * comp3.ProbabilityGet(cv1);
+  CPPUNIT_ASSERT_EQUAL((double)prob,(double)mixture1.ProbabilityGet(cv1)) ;
+  //ExpectedValueGet
+  expected_mix = mixture1.ExpectedValueGet() ;
+  ColumnVector expected_true = comp2.ExpectedValueGet() * (double)vecW[0] + comp3.ExpectedValueGet() * (double)vecW[1];
+  for(int j = 1 ; j <= DIMENSION; j++)
+        CPPUNIT_ASSERT_EQUAL(expected_true(j), expected_mix(j) ) ;
+  //MostProbableComponentGet
+  CPPUNIT_ASSERT_EQUAL(1,mixture1.MostProbableComponentGet());
+  vecW[0]=0.8;
+  vecW[1]=0.2;
+  CPPUNIT_ASSERT_EQUAL(true, mixture1.WeightsSet(vecW));
+  CPPUNIT_ASSERT_EQUAL(0,mixture1.MostProbableComponentGet());
+  vecW[0]=0.5;
+  vecW[1]=0.5;
+  CPPUNIT_ASSERT_EQUAL(true, mixture1.WeightsSet(vecW));
+  CPPUNIT_ASSERT_EQUAL(0,mixture1.MostProbableComponentGet());
+
+  // DELETING COMPONENT
+  CPPUNIT_ASSERT_EQUAL(true, mixture1.DeleteComponent(1));
+  CPPUNIT_ASSERT_EQUAL( 1, (int)mixture1.NumComponentsGet() );
+  CPPUNIT_ASSERT_EQUAL(1.0, (double)mixture1.WeightGet(0));
+  CPPUNIT_ASSERT_EQUAL( DIMENSION, mixture1.DimensionGet() );
+  CPPUNIT_ASSERT_EQUAL((double)comp2.ProbabilityGet(cv1),(double)mixture1.ProbabilityGet(cv1)) ;
+
+  // CONSTRUCTOR WITH VECTOR OF PDFS
+  //AddComponent (default weight addef = 0)
+  ColumnVector muVec1(DIMENSION);
+  ColumnVector muVec2(DIMENSION);
+  muVec1(1) =1.2; muVec1(2) = 1.5;
+  muVec2(1) =0.2; muVec2(2) = -1.1;
+  SymmetricMatrix sigmaVec1(DIMENSION);
+  SymmetricMatrix sigmaVec2(DIMENSION);
+  sigmaVec1 = 0.0;
+  sigmaVec2 = 0.0;
+  double sigmaValVec1 = 2.3;
+  double sigmaValVec2 = 0.3;
+  for (unsigned int rows=1; rows < DIMENSION + 1; rows++){
+    sigmaVec1(rows,rows)=sigmaValVec1;
+    sigmaVec2(rows,rows)=sigmaValVec2;
+  }
+
+  Gaussian compVec1(muVec1,sigmaVec1);
+  Gaussian compVec2(muVec2,sigmaVec2);
+
+  vector<Pdf<ColumnVector>*> componentVec(2);
+  componentVec[0] = &compVec1;
+  componentVec[1] = &compVec2;
+
+  Mixture<ColumnVector> mixtureVec(componentVec);
+
+  CPPUNIT_ASSERT_EQUAL(0.5, (double)mixtureVec.WeightGet(0));
+  CPPUNIT_ASSERT_EQUAL(0.5, (double)mixtureVec.WeightGet(1));
+  vecW[0]=0.5;
+  vecW[1]=0.5;
+  mixWeights = mixtureVec.WeightsGet() ;
+  for(int j = 1 ; j <= mixtureVec.NumComponentsGet(); j++)
+        CPPUNIT_ASSERT_EQUAL( (double)vecW[j-1], (double)mixWeights[j-1] );
+  CPPUNIT_ASSERT_EQUAL( DIMENSION, mixtureVec.DimensionGet() );
+  CPPUNIT_ASSERT_EQUAL( 2, (int)mixtureVec.NumComponentsGet() );
+  for(int j = 1 ; j <= mixtureVec.NumComponentsGet(); j++)
+        CPPUNIT_ASSERT_EQUAL( (double)vecW[j-1], (double)mixWeights[j-1] );
+  vecW.resize(mixtureVec.NumComponentsGet());
+  vecW[0]=1.0;
+  vecW[1]=0.0;
+  mixWeights = mixtureVec.WeightsGet() ;
+  ColumnVector expectedComp(DIMENSION);
+  ColumnVector expectedMix(DIMENSION);
+  for(int j = 1 ; j <= mixtureVec.NumComponentsGet(); j++)
+  {
+        expectedComp = componentVec[j-1]->ExpectedValueGet();
+        expectedMix = mixtureVec.ComponentGet(j-1)->ExpectedValueGet();
+        for(int i = 1 ; i <= DIMENSION; i++)
+            CPPUNIT_ASSERT_EQUAL(expectedComp(i), expectedMix(i) ) ;
+  }
+  //WeightSet and WeightGet
+  vecW[0]=0.8;
+  vecW[1]=0.2;
+  CPPUNIT_ASSERT_EQUAL(true, mixtureVec.WeightsSet(vecW));
+  mixWeights = mixtureVec.WeightsGet() ;
+  for(int j = 1 ; j <= mixtureVec.NumComponentsGet(); j++)
+        CPPUNIT_ASSERT_EQUAL( (double)vecW[j-1], (double)mixWeights[j-1] );
+  //WeightsSet (with non-normalized vector of Probabilities) and WeightsGet
+  vecW[0]=0.4;
+  vecW[1]=1.6;
+  CPPUNIT_ASSERT_EQUAL(true, mixtureVec.WeightsSet(vecW));
+  mixWeights = mixtureVec.WeightsGet() ;
+  sumVecW = 0.0;  
+  for(int j = 0 ; j < vecW.size(); j++)
+    sumVecW += (double)vecW[j];
+  for(int j = 0 ; j < vecW.size(); j++)
+    vecW[j] = (double)vecW[j]/sumVecW;
+  for(int j = 1 ; j <= mixtureVec.NumComponentsGet(); j++)
+        CPPUNIT_ASSERT_EQUAL( (double)vecW[j-1], (double)mixWeights[j-1] );
+  //ProbabilityGet
+  prob = 0.0;
+  for(int j = 1 ; j <= componentVec.size();j++)
+  {
+    prob = prob + vecW[j-1] * componentVec[j-1]->ProbabilityGet(cv1) ;
+  }
+  CPPUNIT_ASSERT_EQUAL((double)prob,(double)mixtureVec.ProbabilityGet(cv1)) ;
+  //ExpectedValueGet
+  expectedMix = mixtureVec.ExpectedValueGet() ;
+  expectedComp = 0.0; 
+  for(int j = 1 ; j <= componentVec.size();j++)
+    expectedComp = expectedComp + componentVec[j-1]->ExpectedValueGet() * (double)vecW[j-1] ;
+  for(int j = 1 ; j <= DIMENSION; j++)
+        CPPUNIT_ASSERT_EQUAL(expectedComp(j), expectedMix(j) ) ;
+  //MostProbableComponentGet
+  CPPUNIT_ASSERT_EQUAL(1,mixtureVec.MostProbableComponentGet());
+  vecW[0]=0.5;
+  vecW[1]=0.5;
+  CPPUNIT_ASSERT_EQUAL(true, mixtureVec.WeightsSet(vecW));
+  CPPUNIT_ASSERT_EQUAL(0,mixtureVec.MostProbableComponentGet());
+
+  /*******************************
+  B) TEMPlATE = INT
+  *******************************/
+  // One component with weight w1
+  DiscretePdf disc1(NUM_DS);
+  vector<Probability> probs1(NUM_DS);
+  disc1.ProbabilitySet(1,0.8);
+
+  Mixture<int> mixture_int(1);
+  w1 = 0.5;
+  CPPUNIT_ASSERT_EQUAL(true, mixture_int.AddComponent(disc1,w1));
+  CPPUNIT_ASSERT_EQUAL(1.0, (double)mixture_int.WeightGet(0));
+  CPPUNIT_ASSERT_EQUAL( 1, (int)mixture_int.NumComponentsGet() );
+  for(int state = 0; state<NUM_DS ; state++)
+    CPPUNIT_ASSERT_EQUAL((double)disc1.ProbabilityGet(state),(double)mixture_int.ProbabilityGet(state)) ;
+
+  //AddComponent (default weight addef = 0)
+  DiscretePdf disc2(NUM_DS);
+  vector<Probability> probs2(2);
+  disc2.ProbabilitySet(2,0.5);
+
+  CPPUNIT_ASSERT_EQUAL(true, mixture_int.AddComponent(disc2));
+  CPPUNIT_ASSERT_EQUAL(1.0, (double)mixture_int.WeightGet(0));
+  CPPUNIT_ASSERT_EQUAL(0.0, (double)mixture_int.WeightGet(1));
+  CPPUNIT_ASSERT_EQUAL( 1, (int)mixture_int.DimensionGet() );
+  CPPUNIT_ASSERT_EQUAL( 2, (int)mixture_int.NumComponentsGet() );
+  for(int state = 0; state<NUM_DS ; state++)
+    CPPUNIT_ASSERT_EQUAL((double)disc1.ProbabilityGet(state),(double)mixture_int.ProbabilityGet(state)) ;
+  vecW.resize(mixture_int.NumComponentsGet());
+  vecW[0]=1.0;
+  vecW[1]=0.0;
+  mixWeights = mixture_int.WeightsGet() ;
+  for(int j = 1 ; j <= mixture_int.NumComponentsGet(); j++)
+        CPPUNIT_ASSERT_EQUAL( (double)vecW[j-1], (double)mixWeights[j-1] );
+  //WeightSet and WeightGet
+  CPPUNIT_ASSERT_EQUAL(true, mixture_int.WeightSet(1,0.2));
+  vecW[0]=0.8;
+  vecW[1]=0.2;
+  mixWeights = mixture_int.WeightsGet() ;
+  for(int j = 1 ; j <= mixture_int.NumComponentsGet(); j++)
+        CPPUNIT_ASSERT_EQUAL( (double)vecW[j-1], (double)mixWeights[j-1] );
+  //WeightsSet (with non-normalized vector of Probabilities) and WeightsGet
+  vecW[0]=0.4;
+  vecW[1]=1.6;
+  CPPUNIT_ASSERT_EQUAL(true, mixture_int.WeightsSet(vecW));
+  mixWeights = mixture_int.WeightsGet() ;
+  sumVecW = 0.0;  
+  for(int j = 0 ; j < vecW.size(); j++)
+    sumVecW += (double)vecW[j];
+  for(int j = 0 ; j < vecW.size(); j++)
+    vecW[j] = (double)vecW[j]/sumVecW;
+  for(int j = 1 ; j <= mixture_int.NumComponentsGet(); j++)
+        CPPUNIT_ASSERT_EQUAL( (double)vecW[j-1], (double)mixWeights[j-1] );
+  //ProbabilityGet
+  for(int state = 0; state<NUM_DS ; state++)
+  {
+    prob = vecW[0] * disc1.ProbabilityGet(state) + vecW[1] * disc2.ProbabilityGet(state);
+    CPPUNIT_ASSERT_EQUAL((double)prob,(double)mixture_int.ProbabilityGet(state)) ;
+  }
+  //ExpectedValueGet
+  probs1 = disc1.ProbabilitiesGet();
+  probs2 = disc2.ProbabilitiesGet();
+  vector<Probability> probs(probs1.size());
+  // search for most probable state
+  int mostProbState = -1;
+  double probMostProbState = -1.0;
+  double probState = 0.0;
+  for( int i = 0 ; i<probs.size() ; i++)
+  {
+    probState = (double)(probs1[i]) * (double)vecW[0] + (double)probs2[i] * (double) vecW[1];
+    if(probState > probMostProbState)
+    {
+        probMostProbState = probState;
+        mostProbState = i;
+    }
+  }
+  CPPUNIT_ASSERT_EQUAL(mostProbState ,mixture_int.ExpectedValueGet());
+  //MostProbableComponentGet
+  CPPUNIT_ASSERT_EQUAL(1,mixture_int.MostProbableComponentGet());
+  vecW[0]=0.8;
+  vecW[1]=0.2;
+  CPPUNIT_ASSERT_EQUAL(true, mixture_int.WeightsSet(vecW));
+  CPPUNIT_ASSERT_EQUAL(0,mixture_int.MostProbableComponentGet());
+  vecW[0]=0.5;
+  vecW[1]=0.5;
+  CPPUNIT_ASSERT_EQUAL(true, mixture_int.WeightsSet(vecW));
+  CPPUNIT_ASSERT_EQUAL(0,mixture_int.MostProbableComponentGet());
+ }

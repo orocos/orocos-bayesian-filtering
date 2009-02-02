@@ -65,20 +65,25 @@ namespace BFL
     delete _Values_p;
   }
 
+  //Clone function
+  DiscretePdf* DiscretePdf::Clone() const
+  {
+      return new DiscretePdf(*this);
+  }
+
   unsigned int DiscretePdf::NumStatesGet()const
   {
     return _num_states;
   }
 
 
-  Probability DiscretePdf::ProbabilityGet(const unsigned int& state) const
+  Probability DiscretePdf::ProbabilityGet(const int& state) const
   {
     assert((int)state >= 0 && state < NumStatesGet());
-
     return (*_Values_p)[state];
   }
 
-  bool DiscretePdf::ProbabilitySet(unsigned int state, Probability a)
+  bool DiscretePdf::ProbabilitySet(int state, Probability a)
   {
     assert((int)state >= 0 && state < NumStatesGet());
     assert(a<=1);

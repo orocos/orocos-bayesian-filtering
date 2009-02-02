@@ -53,6 +53,9 @@ namespace BFL
       /// Destructor
       virtual ~ConditionalGaussian();
 
+      ///Clone function
+      virtual ConditionalGaussian* Clone() const;
+
       // implemented virtuals!
       virtual Probability ProbabilityGet(const MatrixWrapper::ColumnVector& input) const;
       virtual bool SampleFrom (Sample<MatrixWrapper::ColumnVector>& sample, int method=DEFAULT, void * args=NULL) const;

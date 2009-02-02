@@ -62,6 +62,9 @@ namespace BFL
       /// Destructor
       virtual ~ConditionalPdf();
 
+      ///Clone function
+      virtual ConditionalPdf<Var,CondArg>* Clone() const;
+
       ///Get the Number of conditional arguments
       /**@return the number of conditional arguments
        */
@@ -121,6 +124,12 @@ namespace BFL
     ConditionalPdf<Var,CondArg>::~ConditionalPdf()
     {}
 
+  //Clone function
+  template<typename Var, typename CondArg>
+    ConditionalPdf<Var,CondArg>* ConditionalPdf<Var,CondArg>::Clone() const
+  {
+      return new ConditionalPdf(*this);
+  }
 
   template<typename Var, typename CondArg> inline unsigned int
     ConditionalPdf<Var,CondArg>::NumConditionalArgumentsGet() const

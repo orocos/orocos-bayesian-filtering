@@ -27,11 +27,18 @@
 #include <pdf/linearanalyticconditionalgaussian.h>
 #include <pdf/discreteconditionalpdf.h>
 #include <pdf/mcpdf.h>
+#include <pdf/mixture.h>
 #include <wrappers/matrix/matrix_wrapper.h>
 
+#include <iostream>
 using namespace std;
 using namespace BFL;
 using namespace MatrixWrapper;
+
+#define DEFAULT 0 // Default sampling method, must be valid for every PDF!!
+#define BOXMULLER 1
+#define CHOLESKY 2
+#define RIPLEY 3 // For efficient sampling from discrete/mcpdfs
 
 class PdfTest : public CppUnit::TestFixture
 {
@@ -41,6 +48,7 @@ class PdfTest : public CppUnit::TestFixture
   CPPUNIT_TEST( testLinearAnalyticConditionalGaussian );
   CPPUNIT_TEST( testDiscreteConditionalPdf );
   CPPUNIT_TEST( testMcpdf );
+  CPPUNIT_TEST( testMixture );
   CPPUNIT_TEST( testGaussian );
   CPPUNIT_TEST_SUITE_END();
 
@@ -58,6 +66,7 @@ public:
   void testLinearAnalyticConditionalGaussian();
   void testDiscreteConditionalPdf();
   void testMcpdf();
+  void testMixture();
 
 private:
   double epsilon;

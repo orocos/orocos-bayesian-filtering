@@ -55,6 +55,9 @@ namespace BFL
       /// output stream for Uniform distribution
       friend std::ostream& operator<< (std::ostream& os, const Uniform& u);
 
+      ///Clone function
+      virtual Uniform* Clone() const;
+
       // Redefinition of pure virtuals
       virtual Probability ProbabilityGet(const MatrixWrapper::ColumnVector& input) const;
       bool SampleFrom (vector<Sample<MatrixWrapper::ColumnVector> >& list_samples,

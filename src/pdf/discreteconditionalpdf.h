@@ -95,6 +95,9 @@ namespace BFL
       /// Destructor
       virtual ~DiscreteConditionalPdf();
 
+      ///Clone function
+      virtual DiscreteConditionalPdf* Clone() const;
+
       /// Get the number of discrete states
       unsigned int NumStatesGet()const;
 

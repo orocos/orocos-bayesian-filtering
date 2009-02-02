@@ -61,11 +61,14 @@ namespace BFL
       /// Destructor
       virtual ~DiscretePdf();
 
+      ///Clone function
+      virtual DiscretePdf* Clone() const;
+
       /// Get the number of discrete States
       unsigned int NumStatesGet()const;
 
       /// Implementation of virtual base class method
-      Probability ProbabilityGet(const unsigned int& state) const;
+      Probability ProbabilityGet(const int& state) const;
 
       /// Function to change/set the probability of a single state
       /** Changes the probabilities such that AFTER normalization the
@@ -74,7 +77,7 @@ namespace BFL
            @param a probability value to which the probability of state "state"
             will be set (must be <= 1)
       */
-      bool ProbabilitySet(unsigned int state, Probability a);
+      bool ProbabilitySet(int state, Probability a);
 
       bool SampleFrom (vector<Sample<int> >& list_samples,
 		       const unsigned int num_samples,

@@ -59,6 +59,12 @@ namespace BFL
 
   LinearAnalyticConditionalGaussian::~LinearAnalyticConditionalGaussian(){}
 
+  //Clone function
+  LinearAnalyticConditionalGaussian* LinearAnalyticConditionalGaussian::Clone() const
+  {     
+      return new LinearAnalyticConditionalGaussian(*this);
+  }
+
   ColumnVector
   LinearAnalyticConditionalGaussian::ExpectedValueGet() const
   {

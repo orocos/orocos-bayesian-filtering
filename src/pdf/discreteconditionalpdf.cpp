@@ -80,6 +80,12 @@ namespace BFL
       }
   }
 
+  //Clone function
+  DiscreteConditionalPdf* DiscreteConditionalPdf::Clone() const
+  {
+      return new DiscreteConditionalPdf(*this);
+  }
+
   // Get the number of discrete states
   unsigned int DiscreteConditionalPdf::NumStatesGet() const
   {

@@ -60,6 +60,9 @@ namespace BFL
       /// output stream for Gaussian
       friend std::ostream& operator<< (std::ostream& os, const Gaussian& g);
 
+      ///Clone function
+      virtual Gaussian* Clone() const;
+
       // Redefinition of pure virtuals
       virtual Probability ProbabilityGet(const MatrixWrapper::ColumnVector& input) const;
       bool SampleFrom (vector<Sample<MatrixWrapper::ColumnVector> >& list_samples,

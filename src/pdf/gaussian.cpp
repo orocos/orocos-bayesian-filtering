@@ -66,6 +66,12 @@ namespace BFL
     return os;
   }
 
+  //Clone function
+  Gaussian* Gaussian::Clone() const
+  {     
+      return new Gaussian(*this);
+  }
+
   Probability Gaussian::ProbabilityGet(const ColumnVector& input) const
   {
     // only calculate these variables if sigma has changed
