@@ -9,7 +9,6 @@ ADD_SUBDIRECTORY( pdf )
 ADD_SUBDIRECTORY( model )
 ADD_SUBDIRECTORY( filter )
 ADD_SUBDIRECTORY( smoother )
-ADD_SUBDIRECTORY( dataAssociation )
 
 
 # examples will be linked with orocos-bfl, so when building both static and shared, examples will link with shared
