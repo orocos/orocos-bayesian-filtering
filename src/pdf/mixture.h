@@ -78,9 +78,9 @@ namespace BFL
       Mixture(unsigned int dimension=0);
 
       /// Constructor: An equal weights is set for all components
-      /** @param componentVector vector of components (Pdf<T>)
+      /** @param componentVector vector of components (Pdf<T>*)
        */
-      Mixture(vector<Pdf<T>* > &componentVector );
+      template <typename U> Mixture(U &componentVector);
 
       /// Copy Constructor
 
@@ -194,11 +194,10 @@ Mixture<T>::Mixture( unsigned int dimension):
   }
 
 // Constructor
-template<typename T>
-Mixture<T>::Mixture( vector<Pdf<T>* >  &componentVector):
-  Pdf<T>(componentVector[0]->DimensionGet())
-  , _numComponents(componentVector.size())
-  {
+template<typename T> template <typename U>
+Mixture<T>::Mixture(U &componentVector): Pdf<T>(componentVector[0]->DimensionGet() )
+    , _numComponents(componentVector.size())
+{
     //create pointer to vector of component weights
     _componentWeights = new vector<Probability>(NumComponentsGet());
     for (int i=0; i<NumComponentsGet();i++)
@@ -213,16 +212,14 @@ Mixture<T>::Mixture( vector<Pdf<T>* >  &componentVector):
     //TODO: take copy or point to same???
     for (int i=0; i<NumComponentsGet();i++)
     {
-        //(*_componentPdfs)[i] = componentVector[i];
         //TODO: will this call the constructor of e.g. Gaussian or always the
         //general one?
-        //(*_componentPdfs)[i] = new Pdf<T>(componentVector[i]);
-        (*_componentPdfs)[i] = componentVector[i]->Clone();
+        (*_componentPdfs)[i] = (componentVector[i])->Clone();
     }
 #ifdef __CONSTRUCTOR__
     cout << "Mixture constructor\n";
 #endif // __CONSTRUCTOR__
-  }
+}
 
 template<typename T>
 Mixture<T>::Mixture(const Mixture & my_mixture):Pdf<T>(my_mixture.DimensionGet() )

@@ -1055,7 +1055,8 @@ PdfTest::testMixture()
   Gaussian compVec1(muVec1,sigmaVec1);
   Gaussian compVec2(muVec2,sigmaVec2);
 
-  vector<Pdf<ColumnVector>*> componentVec(2);
+  //vector<Pdf<ColumnVector>*> componentVec(2);
+  vector<Gaussian*> componentVec(2);
   componentVec[0] = &compVec1;
   componentVec[1] = &compVec2;
 
