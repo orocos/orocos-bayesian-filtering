@@ -26,8 +26,7 @@
 #include <smoother/rauchtungstriebel.h>
 #include <smoother/particlesmoother.h>
 
-#include "../examples/compare_filters/mobile_robot_wall_cts.h"
-#include "../examples/compare_filters/nonlinearanalyticconditionalgaussianmobile.h"
+#include "../examples/mobile_robot_wall_cts.h"
 #include "../examples/mobile_robot.h"
 
 // Registers the fixture into the 'registry'
@@ -80,71 +79,57 @@ SmootherTest::testKalmanSmoother()
      /****************************
       * NonLinear system model      *
       ***************************/
+      ColumnVector SysNoise_Mu(STATE_SIZE);
+      SysNoise_Mu = 0.0;
+      SysNoise_Mu(1) = MU_SYSTEM_NOISE_X;
+      SysNoise_Mu(2) = MU_SYSTEM_NOISE_Y;
+      SysNoise_Mu(3) = MU_SYSTEM_NOISE_THETA;
 
-      // create gaussian
-      ColumnVector sysNoise_Mu(3);
-      sysNoise_Mu(1) = 0.0;
-      sysNoise_Mu(2) = 0.0;
-      sysNoise_Mu(3) = 0.0;
+      SymmetricMatrix SysNoise_Cov(STATE_SIZE);
+      SysNoise_Cov = 0.0;
+      // Uncertainty or Noice (Additive) and Matrix A
+      SysNoise_Cov(1,1) = SIGMA_SYSTEM_NOISE_X;
+      SysNoise_Cov(2,2) = SIGMA_SYSTEM_NOISE_Y;
+      SysNoise_Cov(3,3) = SIGMA_SYSTEM_NOISE_THETA;
 
-      SymmetricMatrix sysNoise_Cov(3);
-      sysNoise_Cov(1,1) = pow(0.01,2);
-      sysNoise_Cov(1,2) = 0.0;
-      sysNoise_Cov(1,3) = 0.0;
-      sysNoise_Cov(2,1) = 0.0;
-      sysNoise_Cov(2,2) = pow(0.01,2);
-      sysNoise_Cov(2,3) = 0.0;
-      sysNoise_Cov(3,1) = 0.0;
-      sysNoise_Cov(3,2) = 0.0;
-      sysNoise_Cov(3,3) = pow(0.03,2);
-
-      Gaussian system_Uncertainty(sysNoise_Mu, sysNoise_Cov);
-
-      // create the model
-      NonLinearAnalyticConditionalGaussianMobile sys_pdf(system_Uncertainty);
+      Gaussian System_Uncertainty(SysNoise_Mu, SysNoise_Cov);
+      NonLinearAnalyticConditionalGaussianMobile sys_pdf(System_Uncertainty);
       AnalyticSystemModelGaussianUncertainty sys_model(&sys_pdf);
 
       /*********************************
        * Initialise measurement model *
        ********************************/
+      // Fill up H
+      double wall_ct = 2/(sqrt(pow(RICO_WALL,2.0) + 1));
+      Matrix H(MEAS_SIZE,STATE_SIZE);
+      H = 0.0;
+      H(1,1) = wall_ct * RICO_WALL;
+      H(1,2) = 0 - wall_ct;
 
-      // create matrix H for linear measurement model
-      Matrix H(1,3);
-      H(1,1) = 0.0;
-      H(1,2) = 2.0;
-      H(1,3) = 0;
       // Construct the measurement noise (a scalar in this case)
-      ColumnVector measNoise_Mu(1);
-      measNoise_Mu(1) = 0.0;
+      ColumnVector MeasNoise_Mu(MEAS_SIZE);
+      SymmetricMatrix MeasNoise_Cov(MEAS_SIZE);
+      MeasNoise_Mu(1) = MU_MEAS_NOISE;
+      MeasNoise_Cov(1,1) = SIGMA_MEAS_NOISE;
 
-      SymmetricMatrix measNoise_Cov(1);
-      measNoise_Cov(1,1) = pow(0.05,2);
-      Gaussian measurement_Uncertainty(measNoise_Mu, measNoise_Cov);
-
-      // create the model
-      LinearAnalyticConditionalGaussian meas_pdf(H, measurement_Uncertainty);
+      Gaussian Measurement_Uncertainty(MeasNoise_Mu,MeasNoise_Cov);
+      LinearAnalyticConditionalGaussian meas_pdf(H,Measurement_Uncertainty);
       LinearAnalyticMeasurementModelGaussianUncertainty meas_model(&meas_pdf);
-
 
       /****************************
        * Linear prior DENSITY     *
        ***************************/
-       // Continuous Gaussian prior (for Kalman filters)
-      ColumnVector prior_Mu(3);
-      prior_Mu(1) = 0.0;//-1.0;
-      prior_Mu(2) = 0.0;//1.0;
-      prior_Mu(3) = 0.0;
-      SymmetricMatrix prior_Cov(3);
-      prior_Cov(1,1) = 1.0;
-      prior_Cov(1,2) = 0.0;
-      prior_Cov(1,3) = 0.0;
-      prior_Cov(2,1) = 0.0;
-      prior_Cov(2,2) = 1.0;
-      prior_Cov(2,3) = 0.0;
-      prior_Cov(3,1) = 0.0;
-      prior_Cov(3,2) = 0.0;
-      prior_Cov(3,3) = pow(0.8,2);
-      Gaussian prior_cont(prior_Mu,prior_Cov);
+      // Continuous Gaussian prior (for Kalman filters)
+      ColumnVector prior_mu(STATE_SIZE);
+      SymmetricMatrix prior_sigma(STATE_SIZE);
+      prior_mu(1) = PRIOR_MU_X;
+      prior_mu(2) = PRIOR_MU_Y;
+      prior_mu(STATE_SIZE) = PRIOR_MU_THETA;
+      prior_sigma = 0.0;
+      prior_sigma(1,1) = PRIOR_COV_X;
+      prior_sigma(2,2) = PRIOR_COV_Y;
+      prior_sigma(3,3) = PRIOR_COV_THETA;
+      Gaussian prior_cont(prior_mu,prior_sigma);
 
       /******************************
        * Construction of the Filter *
@@ -162,23 +147,17 @@ SmootherTest::testKalmanSmoother()
       input(1) = 0.1;
       input(2) = 0.0;
 
-
-      /***************************
-       * number of timesteps*
-       **************************/
-      unsigned int num_timesteps = 100;
-
       /***************************
        * vector in which all posteriors will be stored*
        **************************/
-      vector<Gaussian> posteriors(num_timesteps);
+      vector<Gaussian> posteriors(NUM_TIME_STEPS);
       vector<Gaussian>::iterator posteriors_it  = posteriors.begin();
 
       /*******************
        * ESTIMATION LOOP *
        *******************/
       unsigned int time_step;
-      for (time_step = 0; time_step < num_timesteps; time_step++)
+      for (time_step = 0; time_step < NUM_TIME_STEPS; time_step++)
         {
 
           // write posterior to file
@@ -217,7 +196,7 @@ SmootherTest::testKalmanSmoother()
       /*******************
        * ESTIMATION LOOP *
        *******************/
-      for (time_step = num_timesteps-1; time_step+1 > 0 ; time_step--)
+      for (time_step = NUM_TIME_STEPS-1; time_step+1 > 0 ; time_step--)
         {
           posteriors_it--;
           // UPDATE  BACKWARDFILTER
@@ -232,11 +211,10 @@ SmootherTest::testKalmanSmoother()
         } // estimation loop
 
   ColumnVector mean_smoother_check(STATE_SIZE);
-  mean_smoother_check(1) = 0.75; mean_smoother_check(2) = 0.27; mean_smoother_check(3) = 0.82;
+  mean_smoother_check(1) = PRIOR_MU_X; mean_smoother_check(2) = PRIOR_MU_Y; mean_smoother_check(3) = PRIOR_MU_THETA;
   SymmetricMatrix cov_smoother_check(STATE_SIZE);
-  cov_smoother_check(1,1) = 1.0;     cov_smoother_check(1,2) = -0.004; cov_smoother_check(1,3) = 0.006;
-  cov_smoother_check(2,1) = -0.004; cov_smoother_check(2,2) = 0.005; cov_smoother_check(2,3) = -0.006;
-  cov_smoother_check(3,1) = 0.006;  cov_smoother_check(3,2) = -0.006;  cov_smoother_check(3,3) = 0.01;
+  cov_smoother_check=0.0;
+  cov_smoother_check(1,1) = PRIOR_COV_X; 
   CPPUNIT_ASSERT_EQUAL(approxEqual(posteriors_it->ExpectedValueGet(), mean_smoother_check, epsilon_large),true);
   CPPUNIT_ASSERT_EQUAL(approxEqual(posteriors_it->CovarianceGet(), cov_smoother_check, epsilon_large),true);
 

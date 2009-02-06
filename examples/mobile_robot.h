@@ -26,8 +26,23 @@
 #include <wrappers/matrix/matrix_wrapper.h>
 #include <wrappers/matrix/vector_wrapper.h>
 
+#include "mobile_robot_wall_cts.h"
+#include "nonlinearanalyticconditionalgaussianmobile.h"
+
 
 namespace BFL{
+
+/// This is a class simulating a mobile robot 
+/** The state of the mobile robot is represented with a ColumnVector of three
+* elements: the x and y position and the orientation. 
+* The inputs of the robot are the linear velocity and the angular velocity.
+* The mobile robot is equipped with a ultrasonic sensor returning the distance
+* to a wall.
+* The initial position of the mobile robot is read from mobile_robot_wall_cts.h
+* During construction time the measurement model and system model are
+* constructed and their properties are read from mobile_robot_wall_cts.h
+*/
+     
 
   class MobileRobot
     {
@@ -37,14 +52,16 @@ namespace BFL{
       ~MobileRobot();
 
       void Move(MatrixWrapper::ColumnVector inputs);
-
       MatrixWrapper::ColumnVector Measure();
       MatrixWrapper::ColumnVector GetState(); //method only for simulation purposes
 
     private:
-      Gaussian* _sys_noise;
-      Gaussian* _meas_noise;
-      MatrixWrapper::Matrix _meas_model;
+      Gaussian* _system_Uncertainty;
+      NonLinearAnalyticConditionalGaussianMobile* _sys_pdf;
+      AnalyticSystemModelGaussianUncertainty* _sys_model;
+      Gaussian* _measurement_Uncertainty;
+      LinearAnalyticConditionalGaussian* _meas_pdf;
+      LinearAnalyticMeasurementModelGaussianUncertainty* _meas_model;
       MatrixWrapper::ColumnVector _state;
     };
 }

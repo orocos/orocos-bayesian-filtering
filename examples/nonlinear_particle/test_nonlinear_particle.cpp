@@ -33,6 +33,9 @@
 #include <iostream>
 #include <fstream>
 
+// Include file with properties
+#include "../mobile_robot_wall_cts.h"
+
 using namespace MatrixWrapper;
 using namespace BFL;
 using namespace std;
@@ -79,23 +82,24 @@ int main(int argc, char** argv)
    ***************************/
 
   // create gaussian
-  ColumnVector sysNoise_Mu(3);
-  sysNoise_Mu(1) = 0.0;
-  sysNoise_Mu(2) = 0.0;
-  sysNoise_Mu(3) = 0.0;
+  ColumnVector sys_noise_Mu(STATE_SIZE);
+  sys_noise_Mu(1) = MU_SYSTEM_NOISE_X;
+  sys_noise_Mu(2) = MU_SYSTEM_NOISE_Y;
+  sys_noise_Mu(3) = MU_SYSTEM_NOISE_THETA;
 
-  SymmetricMatrix sysNoise_Cov(3);
-  sysNoise_Cov(1,1) = pow(0.01,2);
-  sysNoise_Cov(1,2) = 0.0;
-  sysNoise_Cov(1,3) = 0.0;
-  sysNoise_Cov(2,1) = 0.0;
-  sysNoise_Cov(2,2) = pow(0.01,2);
-  sysNoise_Cov(2,3) = 0.0;
-  sysNoise_Cov(3,1) = 0.0;
-  sysNoise_Cov(3,2) = 0.0;
-  sysNoise_Cov(3,3) = pow(0.03,2);
+  SymmetricMatrix sys_noise_Cov(STATE_SIZE);
+  sys_noise_Cov = 0.0;
+  sys_noise_Cov(1,1) = SIGMA_SYSTEM_NOISE_X;
+  sys_noise_Cov(1,2) = 0.0;
+  sys_noise_Cov(1,3) = 0.0;
+  sys_noise_Cov(2,1) = 0.0;
+  sys_noise_Cov(2,2) = SIGMA_SYSTEM_NOISE_Y;
+  sys_noise_Cov(2,3) = 0.0;
+  sys_noise_Cov(3,1) = 0.0;
+  sys_noise_Cov(3,2) = 0.0;
+  sys_noise_Cov(3,3) = SIGMA_SYSTEM_NOISE_THETA;
 
-  Gaussian system_Uncertainty(sysNoise_Mu, sysNoise_Cov);
+  Gaussian system_Uncertainty(sys_noise_Mu, sys_noise_Cov);
 
   // create the nonlinear system model
   NonlinearSystemPdf sys_pdf(system_Uncertainty);
@@ -106,54 +110,54 @@ int main(int argc, char** argv)
    * NonLinear Measurement model   *
    ********************************/
 
+  // create matrix H for linear measurement model
+  double wall_ct = 2/(sqrt(pow(RICO_WALL,2.0) + 1));
+  Matrix H(MEAS_SIZE,STATE_SIZE);
+  H = 0.0;
+  H(1,1) = wall_ct * RICO_WALL;
+  H(1,2) = 0 - wall_ct;
+  H(1,3) = 0.0;
   // Construct the measurement noise (a scalar in this case)
-  ColumnVector measNoise_Mu(1);
-  measNoise_Mu(1) = 0.0;
+  ColumnVector meas_noise_Mu(MEAS_SIZE);
+  meas_noise_Mu(1) = MU_MEAS_NOISE;
+  SymmetricMatrix meas_noise_Cov(MEAS_SIZE);
+  meas_noise_Cov(1,1) = SIGMA_MEAS_NOISE;
+  Gaussian measurement_Uncertainty(meas_noise_Mu, meas_noise_Cov);
 
-  SymmetricMatrix measNoise_Cov(1);
-  measNoise_Cov(1,1) = pow(0.05,2);
-  Gaussian measurement_Uncertainty(measNoise_Mu, measNoise_Cov);
-
-  // create the model
-  NonlinearMeasurementPdf meas_pdf(measurement_Uncertainty);
-  MeasurementModel<ColumnVector,ColumnVector> meas_model(&meas_pdf);
-
+  // create the measurement model
+  LinearAnalyticConditionalGaussian meas_pdf(H, measurement_Uncertainty);
+  LinearAnalyticMeasurementModelGaussianUncertainty meas_model(&meas_pdf);
 
   /****************************
    * Linear prior DENSITY     *
    ***************************/
-   // Continuous Gaussian prior (for Kalman filters)
-  ColumnVector prior_Mu(3);
-  prior_Mu(1) = -1.0;
-  prior_Mu(2) = 1.0;
-  prior_Mu(3) = 0;
-  SymmetricMatrix prior_Cov(3);
-  prior_Cov(1,1) = 1.0;
+  // Continuous Gaussian prior (for Kalman filters)
+  ColumnVector prior_Mu(STATE_SIZE);
+  prior_Mu(1) = PRIOR_MU_X;
+  prior_Mu(2) = PRIOR_MU_Y;
+  prior_Mu(3) = PRIOR_MU_THETA;
+  SymmetricMatrix prior_Cov(STATE_SIZE);
+  prior_Cov(1,1) = PRIOR_COV_X;
   prior_Cov(1,2) = 0.0;
   prior_Cov(1,3) = 0.0;
   prior_Cov(2,1) = 0.0;
-  prior_Cov(2,2) = 1.0;
+  prior_Cov(2,2) = PRIOR_COV_Y;
   prior_Cov(2,3) = 0.0;
   prior_Cov(3,1) = 0.0;
   prior_Cov(3,2) = 0.0;
-  prior_Cov(3,3) = pow(0.8,2);
+  prior_Cov(3,3) = PRIOR_COV_THETA;
   Gaussian prior_cont(prior_Mu,prior_Cov);
 
-
-   // Discrete prior for Particle filter (using the continuous Gaussian prior)
-   #define NUM_SAMPLES  2000
-   vector<Sample<ColumnVector> > prior_samples(NUM_SAMPLES);
-   MCPdf<ColumnVector> prior_discr(NUM_SAMPLES,3);
-   prior_cont.SampleFrom(prior_samples,NUM_SAMPLES,CHOLESKY,NULL);
-   prior_discr.ListOfSamplesSet(prior_samples);
-
+  // Discrete prior for Particle filter (using the continuous Gaussian prior)
+  vector<Sample<ColumnVector> > prior_samples(NUM_SAMPLES);
+  MCPdf<ColumnVector> prior_discr(NUM_SAMPLES,STATE_SIZE);
+  prior_cont.SampleFrom(prior_samples,NUM_SAMPLES,CHOLESKY,NULL);
+  prior_discr.ListOfSamplesSet(prior_samples);
 
   /******************************
    * Construction of the Filter *
    ******************************/
   BootstrapFilter<ColumnVector,ColumnVector> filter(&prior_discr, 0, NUM_SAMPLES/4.0);
-
-
 
   /***************************
    * initialise MOBILE ROBOT *
@@ -173,7 +177,7 @@ int main(int argc, char** argv)
    *******************/
   cout << "MAIN: Starting estimation" << endl;
   unsigned int time_step;
-  for (time_step = 0; time_step < 200; time_step++)
+  for (time_step = 0; time_step < NUM_TIME_STEPS-1; time_step++)
     {
       // DO ONE STEP WITH MOBILE ROBOT
       mobile_robot.Move(input);

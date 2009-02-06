@@ -52,8 +52,12 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
    * Initialise system model *
    ***************************/
   ColumnVector SysNoise_Mu(STATE_SIZE);
-  SymmetricMatrix SysNoise_Cov(STATE_SIZE);
   SysNoise_Mu = 0.0;
+  SysNoise_Mu(1) = MU_SYSTEM_NOISE_X;
+  SysNoise_Mu(2) = MU_SYSTEM_NOISE_Y;
+  SysNoise_Mu(3) = MU_SYSTEM_NOISE_THETA;
+
+  SymmetricMatrix SysNoise_Cov(STATE_SIZE);
   SysNoise_Cov = 0.0;
   // Uncertainty or Noice (Additive) and Matrix A
   SysNoise_Cov(1,1) = SIGMA_SYSTEM_NOISE_X;
@@ -120,7 +124,7 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
   /***************************
    * initialise MOBILE ROBOT *
    **************************/
-  // Model of mobile robot in world with one wall
+  // Model of mobile robot in world
   // The model is used to simultate the distance measurements.
   MobileRobot mobile_robot;
   ColumnVector input(INPUT_SIZE);
@@ -161,7 +165,7 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
   // ek_check
   Pdf<ColumnVector> * posterior_extendedkalman = my_filter_extendedkalman->PostGet();
   ColumnVector mean_ek_check(STATE_SIZE);
-  mean_ek_check(1) = 7.18713; mean_ek_check(2) = -7.15689; mean_ek_check(3) = -0.783556;
+  mean_ek_check=mobile_robot.GetState();
   SymmetricMatrix cov_ek_check(STATE_SIZE);
   cov_ek_check(1,1) = 0.0599729;   cov_ek_check(1,2) = 0.000291386; cov_ek_check(1,3) = 0.00223255;
   cov_ek_check(2,1) = 0.000291386; cov_ek_check(2,2) = 0.000277528; cov_ek_check(2,3) = 0.000644136;
@@ -172,8 +176,9 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
   // it_check
   Pdf<ColumnVector> * posterior_iteratedextendedkalman = my_filter_iteratedextendedkalman->PostGet();
   ColumnVector mean_it_check(STATE_SIZE);
-  mean_it_check(1) = 7.00657; mean_it_check(2) = -7.28003; mean_it_check(3) = -0.773119;
+  mean_it_check=mobile_robot.GetState();
   SymmetricMatrix cov_it_check(STATE_SIZE);
+  cov_it_check = 0.0;
   cov_it_check(1,1) = 0.0611143;   cov_it_check(1,2) = 0.000315923; cov_it_check(1,3) = 0.00238938;
   cov_it_check(2,1) = 0.000315923; cov_it_check(2,2) = 0.000280736; cov_it_check(2,3) = 0.000665735;
   cov_it_check(3,1) = 0.00238938;  cov_it_check(3,2) = 0.000665735; cov_it_check(3,3) = 0.00775776;
@@ -183,12 +188,11 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
   // bs_check
   Pdf<ColumnVector> * posterior_bootstrap = my_filter_bootstrap->PostGet();
   ColumnVector mean_bs_check(STATE_SIZE);
-  mean_bs_check(1) = 6.64581; mean_bs_check(2) = -7.05499; mean_bs_check(3) = -0.76974;
+  mean_bs_check=mobile_robot.GetState();
   SymmetricMatrix cov_bs_check(STATE_SIZE);
-  cov_bs_check(1,1) = 0.0160492;   cov_bs_check(1,2) = 0.000193798; cov_bs_check(1,3) = 0.0013101;
-  cov_bs_check(2,1) = 0.000193798; cov_bs_check(2,2) = 0.000289425; cov_bs_check(2,3) = 0.000701263;
-  cov_bs_check(3,1) = 0.0013101;   cov_bs_check(3,2) = 0.000701263; cov_bs_check(3,3) = 0.00682061;
-  CPPUNIT_ASSERT_EQUAL(approxEqual(posterior_bootstrap->ExpectedValueGet(), mean_bs_check, epsilon_huge),true);
+  cov_bs_check = 0.0;
+  cov_bs_check(1,1) = PRIOR_COV_X;   
+  CPPUNIT_ASSERT_EQUAL(approxEqual(posterior_bootstrap->ExpectedValueGet(), mean_bs_check, epsilon_large),true);
   CPPUNIT_ASSERT_EQUAL(approxEqual(posterior_bootstrap->CovarianceGet(), cov_bs_check, epsilon),true);
 
   // ep_check
@@ -197,7 +201,8 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
   cout << " Posterior Mean = " << endl << posterior_ekparticle->ExpectedValueGet() << endl
        << " Covariance = " << endl << posterior_ekparticle->CovarianceGet() << "" << endl;
   ColumnVector mean_ep_check(STATE_SIZE);
-  mean_ep_check(1) = 6.64581; mean_ep_check(2) = -7.05499; mean_ep_check(3) = -0.76974;
+  //mean_ep_check(1) = 6.64581; mean_ep_check(2) = -7.05499; mean_ep_check(3) = -0.76974;
+  mean_ep_check=mobile_robot.GetState();
   SymmetricMatrix cov_ep_check(STATE_SIZE);
   cov_ep_check(1,1) = 0.0160492;   cov_ep_check(1,2) = 0.000193798; cov_ep_check(1,3) = 0.0013101;
   cov_ep_check(2,1) = 0.000193798; cov_ep_check(2,2) = 0.000289425; cov_ep_check(2,3) = 0.000701263;
@@ -207,7 +212,6 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
   CPPUNIT_ASSERT_EQUAL(approxEqual(posterior_ekparticle->ExpectedValueGet(), mean_ep_check, epsilon_huge),true);
   CPPUNIT_ASSERT_EQUAL(approxEqual(posterior_ekparticle->CovarianceGet(), cov_ep_check, epsilon_large),true);
   */
-
   // delete the filters
   delete my_filter_extendedkalman;
   delete my_filter_iteratedextendedkalman;
@@ -245,11 +249,11 @@ Complete_FilterTest::testComplete_FilterValue_Discr()
    ********************************/
 
   // Construct the measurement noise (a scalar in this case)
-  ColumnVector measNoise_Mu(1);
-  measNoise_Mu(1) = 0.0;
+  ColumnVector measNoise_Mu(MEAS_SIZE);
+  measNoise_Mu(1) = MU_MEAS_NOISE;
 
-  SymmetricMatrix measNoise_Cov(1);
-  measNoise_Cov(1,1) = pow(1.0,2);
+  SymmetricMatrix measNoise_Cov(MEAS_SIZE);
+  measNoise_Cov(1,1) = SIGMA_MEAS_NOISE;
   Gaussian measurement_uncertainty(measNoise_Mu, measNoise_Cov);
 
   // create the model
@@ -282,23 +286,23 @@ Complete_FilterTest::testComplete_FilterValue_Discr()
    * ESTIMATION LOOP *
    *******************/
   unsigned int time_step;
-  for (time_step = 0; time_step < 100; time_step++)
+  for (time_step = 0; time_step < NUM_TIME_STEPS-1; time_step++)
     {
       // DO ONE STEP WITH MOBILE ROBOT
       mobile_robot.Move(input);
       // DO ONE MEASUREMENT
       ColumnVector measurement = mobile_robot.Measure();
+      // change sign of measurement (measurement model returns negative value)
+      measurement(1) = 0-measurement(1);
       // UPDATE FILTER
       filter.Update(&sys_model,&meas_model,measurement);
     } // estimation loop
 
   DiscretePdf *  posterior = filter.PostGet();
-  cout << "After " << time_step+1 << " timesteps " << endl;
-  cout << " Posterior probabilities = " << endl;
   for (int state=0; state< num_states; state++)
   {
-    cout << state << ": " << posterior->ProbabilityGet(state) << endl;
-    if (state==7) CPPUNIT_ASSERT(posterior->ProbabilityGet(state) >0.9);
+    //cout << state << ": " << posterior->ProbabilityGet(state) << endl;
+    if (state== (int)(mobile_robot.GetState()(2)) ) CPPUNIT_ASSERT(posterior->ProbabilityGet(state) >0.9);
     else CPPUNIT_ASSERT(posterior->ProbabilityGet(state) <0.1);
   }
 }

@@ -1,4 +1,4 @@
-// $Id: test_nonlinear_smoother.cpp 5925 2006-03-14 21:23:49Z tdelaet $
+// $Id: test_kalman_smoother.cpp 5925 2006-03-14 21:23:49Z tdelaet $
 // Copyright (C) 2006 Tinne De Laet <first dot last at mech dot kuleuven dot be>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -37,6 +37,9 @@
 
 #include <iostream>
 #include <fstream>
+
+// Include file with properties
+#include "../examples/mobile_robot_wall_cts.h"
 
 using namespace MatrixWrapper;
 using namespace BFL;
@@ -95,23 +98,25 @@ int main(int argc, char** argv)
    ***************************/
 
   // create gaussian
-  ColumnVector sysNoise_Mu(3);
-  sysNoise_Mu(1) = 0.0;
-  sysNoise_Mu(2) = 0.0;
-  sysNoise_Mu(3) = 0.0;
+  ColumnVector sys_noise_Mu(STATE_SIZE);
+  sys_noise_Mu = 0.0;
+  sys_noise_Mu(1) = MU_SYSTEM_NOISE_X;
+  sys_noise_Mu(2) = MU_SYSTEM_NOISE_Y;
+  sys_noise_Mu(3) = MU_SYSTEM_NOISE_THETA;
 
-  SymmetricMatrix sysNoise_Cov(3);
-  sysNoise_Cov(1,1) = pow(0.01,2);
-  sysNoise_Cov(1,2) = 0.0;
-  sysNoise_Cov(1,3) = 0.0;
-  sysNoise_Cov(2,1) = 0.0;
-  sysNoise_Cov(2,2) = pow(0.01,2);
-  sysNoise_Cov(2,3) = 0.0;
-  sysNoise_Cov(3,1) = 0.0;
-  sysNoise_Cov(3,2) = 0.0;
-  sysNoise_Cov(3,3) = pow(0.03,2);
+  SymmetricMatrix sys_noise_Cov(STATE_SIZE);
+  sys_noise_Cov = 0.0;
+  sys_noise_Cov(1,1) = SIGMA_SYSTEM_NOISE_X;
+  sys_noise_Cov(1,2) = 0.0;
+  sys_noise_Cov(1,3) = 0.0;
+  sys_noise_Cov(2,1) = 0.0;
+  sys_noise_Cov(2,2) = SIGMA_SYSTEM_NOISE_Y;
+  sys_noise_Cov(2,3) = 0.0;
+  sys_noise_Cov(3,1) = 0.0;
+  sys_noise_Cov(3,2) = 0.0;
+  sys_noise_Cov(3,3) = SIGMA_SYSTEM_NOISE_THETA;
 
-  Gaussian system_Uncertainty(sysNoise_Mu, sysNoise_Cov);
+  Gaussian system_Uncertainty(sys_noise_Mu, sys_noise_Cov);
 
   // create the model
   NonLinearAnalyticConditionalGaussianMobile sys_pdf(system_Uncertainty);
@@ -120,19 +125,20 @@ int main(int argc, char** argv)
   /*********************************
    * Initialise measurement model *
    ********************************/
+  // Fill up H
+  double wall_ct = 2/(sqrt(pow(RICO_WALL,2.0) + 1));
+  Matrix H(MEAS_SIZE,STATE_SIZE);
+  H = 0.0;
+  H(1,1) = wall_ct * RICO_WALL;
+  H(1,2) = 0 - wall_ct;
 
-  // create matrix H for linear measurement model
-  Matrix H(1,3);
-  H(1,1) = 0.0;
-  H(1,2) = 2.0;
-  H(1,3) = 0;
-  // Construct the measurement noise (a scalar in this case)
-  ColumnVector measNoise_Mu(1);
-  measNoise_Mu(1) = 0.0;
+   // Construct the measurement noise (a scalar in this case)
+  ColumnVector MeasNoise_Mu(MEAS_SIZE);
+  SymmetricMatrix MeasNoise_Cov(MEAS_SIZE);
+  MeasNoise_Mu(1) = MU_MEAS_NOISE;
+  MeasNoise_Cov(1,1) = SIGMA_MEAS_NOISE;
 
-  SymmetricMatrix measNoise_Cov(1);
-  measNoise_Cov(1,1) = pow(0.05,2);
-  Gaussian measurement_Uncertainty(measNoise_Mu, measNoise_Cov);
+  Gaussian measurement_Uncertainty(MeasNoise_Mu,MeasNoise_Cov);
 
   // create the model
   LinearAnalyticConditionalGaussian meas_pdf(H, measurement_Uncertainty);
@@ -142,22 +148,16 @@ int main(int argc, char** argv)
   /****************************
    * Linear prior DENSITY     *
    ***************************/
-   // Continuous Gaussian prior (for Kalman filters)
-  ColumnVector prior_Mu(3);
-  prior_Mu(1) = 0.0;//-1.0;
-  prior_Mu(2) = 0.0;//1.0;
-  prior_Mu(3) = 0.0;
-  SymmetricMatrix prior_Cov(3);
-  prior_Cov(1,1) = 1.0;
-  prior_Cov(1,2) = 0.0;
-  prior_Cov(1,3) = 0.0;
-  prior_Cov(2,1) = 0.0;
-  prior_Cov(2,2) = 1.0;
-  prior_Cov(2,3) = 0.0;
-  prior_Cov(3,1) = 0.0;
-  prior_Cov(3,2) = 0.0;
-  prior_Cov(3,3) = pow(0.8,2);
-  Gaussian prior_cont(prior_Mu,prior_Cov);
+  // Continuous Gaussian prior (for Kalman filters)
+  ColumnVector prior_mu(STATE_SIZE);
+  SymmetricMatrix prior_sigma(STATE_SIZE);
+  prior_mu(1) = PRIOR_MU_X;
+  prior_mu(2) = PRIOR_MU_Y;
+  prior_sigma = 0.0;
+  prior_sigma(1,1) = PRIOR_COV_X;
+  prior_sigma(2,2) = PRIOR_COV_Y;
+  prior_sigma(3,3) = PRIOR_COV_THETA;
+  Gaussian prior_cont(prior_mu,prior_sigma);
 
 
    cout<< "Prior initialised"<< "" << endl;
@@ -181,16 +181,10 @@ int main(int argc, char** argv)
   input(1) = 0.1;
   input(2) = 0.0;
 
-
-  /***************************
-   * number of timesteps*
-   **************************/
-  unsigned int num_timesteps = 100;
-
   /***************************
    * vector in which all posteriors will be stored*
    **************************/
-  vector<Gaussian> posteriors(num_timesteps);
+  vector<Gaussian> posteriors(NUM_TIME_STEPS);
   vector<Gaussian>::iterator posteriors_it  = posteriors.begin();
 
   /*******************
@@ -198,7 +192,7 @@ int main(int argc, char** argv)
    *******************/
   cout << "MAIN: Starting estimation" << endl;
   unsigned int time_step;
-  for (time_step = 0; time_step < num_timesteps; time_step++)
+  for (time_step = 0; time_step < NUM_TIME_STEPS; time_step++)
     {
       // write date in files
       fout_time << time_step << ";" << endl;
@@ -281,7 +275,7 @@ RauchTungStriebel backwardfilter((Gaussian*)posterior);
        << "Start of the smoother for mobile robot localisation" << endl
        << "======================================================"
        << endl;
-  for (time_step = num_timesteps-1; time_step+1 > 0 ; time_step--)
+  for (time_step = NUM_TIME_STEPS-1; time_step+1 > 0 ; time_step--)
     {
       posteriors_it--;
       // UPDATE  BACKWARDFILTER

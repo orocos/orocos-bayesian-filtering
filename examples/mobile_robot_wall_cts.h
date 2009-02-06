@@ -60,17 +60,29 @@
 #define PRIOR_COV_Y pow(0.2,2)
 #define PRIOR_COV_THETA pow(M_PI/8,2)
 
-// System Noise
+// System Noise of the system model
+#define MU_SYSTEM_NOISE_X pow(0.0,2)
+#define MU_SYSTEM_NOISE_Y pow(0.0,2)
+#define MU_SYSTEM_NOISE_THETA pow(0.0,2)
 #define SIGMA_SYSTEM_NOISE_X pow(0.01,2)
 #define SIGMA_SYSTEM_NOISE_Y pow(0.01,2)
 #define SIGMA_SYSTEM_NOISE_THETA pow(2*M_PI/180,2)
-// System Noise for simulation
-#define SIM_FACTOR 1000 //The system covariance in simulation is SIM_FACTOR
-                        //smaller than the system covariance of the systemmodel
-
+                        
 // Measurement noise
 #define SIGMA_MEAS_NOISE pow(0.05,2)
 #define MU_MEAS_NOISE 0.0
+
+// System Noise for the real robot system 
+#define MU_SYSTEM_NOISE_X_ROB pow(0.0,2)
+#define MU_SYSTEM_NOISE_Y_ROB pow(0.0,2)
+#define MU_SYSTEM_NOISE_THETA_ROB pow(0.0,2)
+#define SIGMA_SYSTEM_NOISE_X_ROB pow(0.001,2)
+#define SIGMA_SYSTEM_NOISE_Y_ROB pow(0.001,2)
+#define SIGMA_SYSTEM_NOISE_THETA_ROB pow(0.1*M_PI/180,2)
+
+// Measurement noise for the real robot system
+#define SIGMA_MEAS_NOISE_ROB pow(0.05,2)
+#define MU_MEAS_NOISE_ROB 0.0
 
 #define NUM_ITERATIONS 3 //number of iterations used for iteraded filters
 

@@ -23,74 +23,78 @@ using namespace MatrixWrapper;
 namespace BFL
 {
 
-    MobileRobot::MobileRobot( )
+    MobileRobot::MobileRobot():
+        _state(STATE_SIZE)
       {
+	// initial state
+	_state(1) = X_0;
+	_state(2) = Y_0;
+	_state(3) = THETA_0;
+
 	// sys noise
-	SymmetricMatrix sys_noise_Cov(3);
-	sys_noise_Cov(1,1) = pow(0.001,2);
+	ColumnVector sys_noise_Mu(STATE_SIZE);
+	sys_noise_Mu(1) = MU_SYSTEM_NOISE_X_ROB;
+	sys_noise_Mu(2) = MU_SYSTEM_NOISE_Y_ROB;
+	sys_noise_Mu(3) = MU_SYSTEM_NOISE_THETA_ROB;
+	SymmetricMatrix sys_noise_Cov(STATE_SIZE);
+    sys_noise_Cov = 0.0;
+	sys_noise_Cov(1,1) = SIGMA_SYSTEM_NOISE_X_ROB;
 	sys_noise_Cov(1,2) = 0.0;
 	sys_noise_Cov(1,3) = 0.0;
 	sys_noise_Cov(2,1) = 0.0;
-	sys_noise_Cov(2,2) = pow(0.001,2);
+	sys_noise_Cov(2,2) = SIGMA_SYSTEM_NOISE_Y_ROB;
 	sys_noise_Cov(2,3) = 0.0;
 	sys_noise_Cov(3,1) = 0.0;
 	sys_noise_Cov(3,2) = 0.0;
-	sys_noise_Cov(3,3) = pow(0.1*3.14/180,2);
-	ColumnVector sys_noise_Mu(3);
-	sys_noise_Mu = 0.0;
-	_sys_noise = new Gaussian(sys_noise_Mu, sys_noise_Cov);
+	sys_noise_Cov(3,3) = SIGMA_SYSTEM_NOISE_THETA_ROB;
+    _system_Uncertainty = new Gaussian(sys_noise_Mu, sys_noise_Cov);
+
+    // create the model
+    _sys_pdf = new NonLinearAnalyticConditionalGaussianMobile(*_system_Uncertainty);
+    _sys_model = new AnalyticSystemModelGaussianUncertainty(_sys_pdf);
 
 	// meas noise
-	SymmetricMatrix meas_noise_Cov(1);
-	meas_noise_Cov(1,1) = pow(0.05,2);
-	ColumnVector meas_noise_Mu(1);
-	meas_noise_Mu(1) = 0.0;
-	_meas_noise = new Gaussian(meas_noise_Mu, meas_noise_Cov);
+	SymmetricMatrix meas_noise_Cov(MEAS_SIZE);
+	meas_noise_Cov(1,1) = SIGMA_MEAS_NOISE_ROB;
+	ColumnVector meas_noise_Mu(MEAS_SIZE);
+	meas_noise_Mu(1) = MU_MEAS_NOISE_ROB;
+	_measurement_Uncertainty = new Gaussian(meas_noise_Mu, meas_noise_Cov);
 
-	_meas_model = Matrix(1,3);
-	_meas_model(1,1) = 0.0;
-	_meas_model(1,2) = 2.0;
-	_meas_model(1,3) = 0.0;
+    // create matrix _meas_model for linear measurement model
+    double wall_ct = 2/(sqrt(pow(RICO_WALL,2.0) + 1));
+	Matrix H(MEAS_SIZE,STATE_SIZE);
+    H = 0.0;
+    H(1,1) = wall_ct * RICO_WALL;
+    H(1,2) = 0 - wall_ct;
+    H(1,3) = 0.0;
 
-	// initial state
-	_state = ColumnVector(3);
-	_state(1) = 0.0;
-	_state(2) = 0.0;
-	_state(3) = 0.8;
+    // create the measurement model
+    _meas_pdf = new LinearAnalyticConditionalGaussian(H, *_measurement_Uncertainty);
+    _meas_model = new LinearAnalyticMeasurementModelGaussianUncertainty(_meas_pdf);
+
       }
 
     MobileRobot::~MobileRobot()
       {
-	delete _sys_noise;
-	delete _meas_noise;
+    delete _system_Uncertainty;
+    delete _sys_pdf;
+	delete _sys_model;
+	delete _measurement_Uncertainty;
+	delete _meas_pdf;
+	delete _meas_model;
       }
 
     void
     MobileRobot::Move(ColumnVector inputs)
     {
-      // exact position
-      _state(1) += cos(_state(3)) * inputs(1);
-      _state(2) += sin(_state(3)) * inputs(1);
-      _state(3) += inputs(2);
-
-      // add uncertainty
-      Sample<ColumnVector> sample;
-      _sys_noise->SampleFrom(sample);
-      _state += sample.ValueGet();
+      _state = _sys_model->Simulate(_state,inputs);
     }
 
 
     ColumnVector
     MobileRobot::Measure()
     {
-      // exact model
-      ColumnVector meas = _meas_model * _state;
-
-      // add uncertainty
-      Sample<ColumnVector> sample;
-      _meas_noise->SampleFrom(sample);
-
-      return meas + sample.ValueGet();
+      return _meas_model->Simulate(_state);
     }
 
 

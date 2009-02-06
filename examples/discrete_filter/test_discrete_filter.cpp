@@ -19,6 +19,8 @@
    Mobile robot localization with respect to wall with different possibilities for filter
 */
 
+// Include file with properties
+#include "../mobile_robot_wall_cts.h"
 
 #include <filter/histogramfilter.h>
 
@@ -84,17 +86,18 @@ int main(int argc, char** argv)
   /*********************************
    * Initialise measurement model *
    ********************************/
-
   // Construct the measurement noise (a scalar in this case)
-  ColumnVector measNoise_Mu(1);
+  ColumnVector measNoise_Mu(MEAS_SIZE);
   measNoise_Mu(1) = 0.0;
 
-  SymmetricMatrix measNoise_Cov(1);
-  measNoise_Cov(1,1) = pow(1.0,2);
-  Gaussian measurement_uncertainty(measNoise_Mu, measNoise_Cov);
+  SymmetricMatrix meas_noise_Cov(MEAS_SIZE);
+  meas_noise_Cov(1,1) = SIGMA_MEAS_NOISE;
+  ColumnVector meas_noise_Mu(1);
+  meas_noise_Mu(1) = MU_MEAS_NOISE;
+  Gaussian measurement_Uncertainty(meas_noise_Mu, meas_noise_Cov);
 
   // create the model
-  ConditionalUniformMeasPdf1d meas_pdf(measurement_uncertainty);
+  ConditionalUniformMeasPdf1d meas_pdf(measurement_Uncertainty);
   MeasurementModel<MatrixWrapper::ColumnVector,int> meas_model(&meas_pdf);
   std::cout << "measurement model created" << std::endl;
 
@@ -127,13 +130,15 @@ int main(int argc, char** argv)
    *******************/
   cout << "MAIN: Starting estimation" << endl;
   unsigned int time_step;
-  for (time_step = 0; time_step < 100; time_step++)
+  for (time_step = 0; time_step < NUM_TIME_STEPS; time_step++)
     {
       // DO ONE STEP WITH MOBILE ROBOT
       mobile_robot.Move(input);
 
       // DO ONE MEASUREMENT
+      // TODO: mobile_robot returns negative measurements
       ColumnVector measurement = mobile_robot.Measure();
+      measurement(1) = -measurement(1);
 
       // UPDATE FILTER
       filter.Update(&sys_model,&meas_model,measurement);

@@ -1,5 +1,5 @@
 IF (BUILD_EXAMPLES)
-  ADD_EXECUTABLE( test_nonlinear_particle test_nonlinear_particle.cpp nonlinearSystemPdf.cpp nonlinearMeasurementPdf.cpp ../mobile_robot.cpp )
+  ADD_EXECUTABLE( test_nonlinear_particle test_nonlinear_particle.cpp nonlinearSystemPdf.cpp nonlinearMeasurementPdf.cpp ../mobile_robot.cpp ../nonlinearanalyticconditionalgaussianmobile.cpp) 
 
   TARGET_LINK_LIBRARIES( test_nonlinear_particle orocos-bfl ${MATRIX_LIBS} ${RNG_LIBS}  ${GINAC_LIBS})
 

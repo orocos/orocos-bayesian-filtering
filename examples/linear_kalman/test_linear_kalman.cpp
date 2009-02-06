@@ -33,6 +33,9 @@
 #include <iostream>
 #include <fstream>
 
+// Include file with properties
+#include "../mobile_robot_wall_cts.h"
+
 using namespace MatrixWrapper;
 using namespace BFL;
 using namespace std;
@@ -96,14 +99,15 @@ int main(int argc, char** argv)
 
   // create gaussian
   ColumnVector sysNoise_Mu(2);
-  sysNoise_Mu(1) = 0.0;
-  sysNoise_Mu(2) = 0.0;
+  sysNoise_Mu(1) = MU_SYSTEM_NOISE_X;
+  sysNoise_Mu(2) = MU_SYSTEM_NOISE_Y;
 
   SymmetricMatrix sysNoise_Cov(2);
-  sysNoise_Cov(1,1) = pow(0.01,2);
+  sysNoise_Cov = 0.0;
+  sysNoise_Cov(1,1) = SIGMA_SYSTEM_NOISE_X;
   sysNoise_Cov(1,2) = 0.0;
   sysNoise_Cov(2,1) = 0.0;
-  sysNoise_Cov(2,2) = pow(0.01,2);
+  sysNoise_Cov(2,2) = SIGMA_SYSTEM_NOISE_Y;
 
   Gaussian system_Uncertainty(sysNoise_Mu, sysNoise_Cov);
 
@@ -118,15 +122,17 @@ int main(int argc, char** argv)
 
   // create matrix H for linear measurement model
   Matrix H(1,2);
-  H(1,1) = 0;
-  H(1,2) = 2;
+  double wall_ct = 2/(sqrt(pow(RICO_WALL,2.0) + 1));
+  H = 0.0;
+  H(1,1) = wall_ct * RICO_WALL;
+  H(1,2) = 0 - wall_ct;
 
   // Construct the measurement noise (a scalar in this case)
   ColumnVector measNoise_Mu(1);
-  measNoise_Mu(1) = 0.0;
+  measNoise_Mu(1) = MU_MEAS_NOISE;
 
   SymmetricMatrix measNoise_Cov(1);
-  measNoise_Cov(1,1) = pow(0.05,2);
+  measNoise_Cov(1,1) = SIGMA_MEAS_NOISE;
   Gaussian measurement_Uncertainty(measNoise_Mu, measNoise_Cov);
 
   // create the model
@@ -139,13 +145,13 @@ int main(int argc, char** argv)
    ***************************/
    // Continuous Gaussian prior (for Kalman filters)
   ColumnVector prior_Mu(2);
-  prior_Mu(1) = -1.0;
-  prior_Mu(2) = 1.0;
+  prior_Mu(1) = PRIOR_MU_X;
+  prior_Mu(2) = PRIOR_MU_Y;
   SymmetricMatrix prior_Cov(2);
-  prior_Cov(1,1) = 1.0;
+  prior_Cov(1,1) = PRIOR_COV_X;
   prior_Cov(1,2) = 0.0;
   prior_Cov(2,1) = 0.0;
-  prior_Cov(2,2) = 1.0;
+  prior_Cov(2,2) = PRIOR_COV_Y;
   Gaussian prior(prior_Mu,prior_Cov);
 
 
@@ -169,15 +175,12 @@ int main(int argc, char** argv)
   input(1) = 0.1;
   input(2) = 0.0;
 
-
-
-
   /*******************
    * ESTIMATION LOOP *
    *******************/
   cout << "MAIN: Starting estimation" << endl;
   unsigned int time_step;
-  for (time_step = 0; time_step < 200; time_step++)
+  for (time_step = 0; time_step < NUM_TIME_STEPS-1; time_step++)
     {
       // DO ONE STEP WITH MOBILE ROBOT
       mobile_robot.Move(input);

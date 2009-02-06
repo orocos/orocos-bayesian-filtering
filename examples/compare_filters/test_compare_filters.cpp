@@ -40,7 +40,7 @@
 #include <string>
 
 // Include file with properties
-#include "mobile_robot_wall_cts.h"
+#include "../mobile_robot_wall_cts.h"
 // Include pdf specific for this example
 #include "nonlinearanalyticconditionalgaussianmobile.h"
 // Include the mobile_robot simulator
@@ -140,17 +140,26 @@ int main(int argc, char** argv)
   /****************************
    * Initialise system model *
    ***************************/
-  ColumnVector SysNoise_Mu(STATE_SIZE);
-  SymmetricMatrix SysNoise_Cov(STATE_SIZE);
-  SysNoise_Mu = 0.0;
-  SysNoise_Cov = 0.0;
-  // Uncertainty or Noice (Additive) and Matrix A
-  SysNoise_Cov(1,1) = SIGMA_SYSTEM_NOISE_X;
-  SysNoise_Cov(2,2) = SIGMA_SYSTEM_NOISE_Y;
-  SysNoise_Cov(3,3) = SIGMA_SYSTEM_NOISE_THETA;
+  ColumnVector sys_noise_Mu(STATE_SIZE);
+  sys_noise_Mu = 0.0;
+  sys_noise_Mu(1) = MU_SYSTEM_NOISE_X;
+  sys_noise_Mu(2) = MU_SYSTEM_NOISE_Y;
+  sys_noise_Mu(3) = MU_SYSTEM_NOISE_THETA;
 
-  Gaussian System_Uncertainty(SysNoise_Mu, SysNoise_Cov);
-  NonLinearAnalyticConditionalGaussianMobile sys_pdf(System_Uncertainty);
+  SymmetricMatrix sys_noise_Cov(STATE_SIZE);
+  sys_noise_Cov = 0.0;
+  sys_noise_Cov(1,1) = SIGMA_SYSTEM_NOISE_X;
+  sys_noise_Cov(1,2) = 0.0;
+  sys_noise_Cov(1,3) = 0.0;
+  sys_noise_Cov(2,1) = 0.0;
+  sys_noise_Cov(2,2) = SIGMA_SYSTEM_NOISE_Y;
+  sys_noise_Cov(2,3) = 0.0;
+  sys_noise_Cov(3,1) = 0.0;
+  sys_noise_Cov(3,2) = 0.0;
+  sys_noise_Cov(3,3) = SIGMA_SYSTEM_NOISE_THETA;
+
+  Gaussian system_Uncertainty(sys_noise_Mu, sys_noise_Cov);
+  NonLinearAnalyticConditionalGaussianMobile sys_pdf(system_Uncertainty);
   AnalyticSystemModelGaussianUncertainty sys_model(&sys_pdf);
 
 

@@ -227,7 +227,15 @@ the inclusion of the BFL header files we'll use
   #include <model/linearanalyticsystemmodel_gaussianuncertainty.h>
   #include <model/linearanalyticmeasurementmodel_gaussianuncertainty.h>
   #include <pdf/linearanalyticsystemmodel_gaussianuncertainty.h>
-  #include <pdf/linearanalyticmeasurementmodel_gaussianuncertainty.h>
+  #include <pdf/linearanalyticmeasurementmodel_gaussianuncertainty.h>,
+\end{verbatim}
+the mobile robot simulator
+\begin{verbatim}
+#include "../mobile_robot.h",
+\end{verbatim}
+the file from which some properties are read (e.g. the initial state estimate)
+\begin{verbatim}
+#include "../mobile_robot_wall_cts.h",
 \end{verbatim}
 and the namespaces that we'll use
 \begin{verbatim}
@@ -267,7 +275,7 @@ We build the matrices ${A}$ and ${B}$:
   B(1,2) = 0.0;
   B(2,1) = sin(0.8);
   B(2,2) = 0.0;
-\end{verbatim}
+\end{verbatim} 
 and we combine these two matrices in a vector ${AB}$:
 \begin{verbatim}
   vector<Matrix> AB(2);
@@ -277,20 +285,20 @@ and we combine these two matrices in a vector ${AB}$:
 Then we create a Gaussian distribution, which is defined by a mean
 (Mu) and a covariance (Cov). This Gaussian distribution represents the
 uncertainty on the predicted position of the mobile robot. The
-mean is chosen to be $0.0$:
+mean is defined by $MU\_SYSTEM\_NOISE\_X$ and $MU\_SYSTEM\_NOISE\_Y$\footnote{$MU\_SYSTEM\_NOISE\_X$ and $MU\_SYSTEM\_NOISE\_Y$ are defined in the file $mobile\_robot\_wall\_cts.h$.  This remarks holds for all constant, indicated with CAPITALS in this tutorial.}:
 \begin{verbatim}
   ColumnVector sysNoise_Mu(2);
-  sysNoise_Mu(1) = 0.0;
-  sysNoise_Mu(2) = 0.0;
+  sysNoise_Mu(1) = MU_SYSTEM_NOISE_X;
+  sysNoise_Mu(2) = MU_SYSTEM_NOISE_Y;
 \end{verbatim}
-and the covariance is chosen as a diagonal matrix, with $0.01^2$ as the
-$\sigma^2$ boundary:
+and the covariance is chosen as a diagonal matrix, with diagonals $SIGMA\_SYSTEM\_NOISE\_X$ and \\ $SIGMA\_SYSTEM\_NOISE\_Y$:
 \begin{verbatim}
   SymmetricMatrix sysNoise_Cov(2);
-  sysNoise_Cov(1,1) = pow(0.01,2);
+  sysNoise_Cov = 0.0;
+  sysNoise_Cov(1,1) = SIGMA_SYSTEM_NOISE_X;
   sysNoise_Cov(1,2) = 0.0;
   sysNoise_Cov(2,1) = 0.0;
-  sysNoise_Cov(2,2) = pow(0.01,2);
+  sysNoise_Cov(2,2) = SIGMA_SYSTEM_NOISE_Y;
 \end{verbatim}
 The mean and covariance together define a two dimensional Gaussian
 distribution:
@@ -329,21 +337,24 @@ the position of the mobile robot.
 We build the matrix ${H}$:
 \begin{verbatim}
   Matrix H(1,2);
-  H(1,1) = 0.0;
-  H(1,2) = 2.0;
+  double wall_ct = 2/(sqrt(pow(RICO_WALL,2.0) + 1));
+  H = 0.0;
+  H(1,1) = wall_ct * RICO_WALL;
+  H(1,2) = 0 - wall_ct;
 \end{verbatim}
+where $wall\_ct$ is a helper constant and $RICO\_WALL$ is the slope of the wall. 
 Then we create a Gaussian distribution, which is defined by a mean
 (Mu) and a covariance (Cov). This Gaussian distribution represents the
-uncertainty on the measured distance to the wall. The mean is $0.0$:
+uncertainty on the measured distance to the wall. The mean is $MU\_MEAS\_NOISE$:
 \begin{verbatim}
   ColumnVector measNoise_Mu(1);
-  measNoise_Mu(1) = 0.0;
+  measNoise_Mu(1) = MU_MEAS_NOISE;
 \end{verbatim}
-and the covariance is diagonal matrix, with $0.05^2$ as the $\sigma^2$
+and the covariance is diagonal matrix, with $SIGMA_MEAS_NOISE$ as the $\sigma^2$
 boundary:
 \begin{verbatim}
   SymmetricMatrix measNoise_Cov(1);
-  measNoise_Cov(1,1) = pow(0.05,2);
+  measNoise_Cov(1,1) = SIGMA_MEAS_NOISE;
 \end{verbatim}
 The mean and covariance together define a two dimensional Gaussian
 distribution:
@@ -357,8 +368,7 @@ defined by the matrix ${H}$ which represents the linear model,
 together with the Gaussian distribution which represents the
 measurement uncertainty.
 \begin{verbatim}
-  LinearAnalyticConditionalGaussian meas_pdf(H,
-measurement_Uncertainty);
+  LinearAnalyticConditionalGaussian meas_pdf(H, measurement_Uncertainty);
 \end{verbatim}
 Finally we create the measurement model from the measurement pdf:
 \begin{verbatim}
@@ -378,17 +388,17 @@ The prior distribution is a Gaussian distribution with mean
 estimated state:
 \begin{verbatim}
   ColumnVector prior_Mu(2);
-  prior_Mu(1) = -1.0;
-  prior_Mu(2) = 1.0;
+  prior_Mu(1) = PRIOR_MU_X;
+  prior_Mu(2) = PRIOR_MU_Y;
 \end{verbatim}
-and the covariance is a diagonal matrix, with $1.0$ as the $\sigma^2$
+and the covariance is a diagonal matrix, with $PRIOR\_COV\_X$ and $PRIOR\_COV\_Y$ as the $\sigma^2$
 boundary:
 \begin{verbatim}
   SymmetricMatrix prior_Cov(2);
-  prior_Cov(1,1) = 1.0;
+  prior_Cov(1,1) = PRIOR_COV_X;
   prior_Cov(1,2) = 0.0;
   prior_Cov(2,1) = 0.0;
-  prior_Cov(2,2) = 1.0;
+  prior_Cov(2,2) = PRIOR_COV_Y;
 \end{verbatim}
 The mean and covariance together define a two dimensional Gaussian
 distribution:
@@ -419,7 +429,9 @@ Therefore, KalmanFilter is not the class which is closest to our needs: Extended
 A mobile robot simulator \emph{MobileRobot} is created to simulate a
 mobile robot driving around in a world with one wall. In a real world
 experiment this simulator is of course replaced by a real mobile
-robot. The mobile robot simulator is created as follows:
+robot. 
+The properties of the mobile robot are defined in $mobile\_robot\_wall\_cts.h$ (e.g. it's initial position, the noise on the simulated system, c\dots)
+The mobile robot simulator is created as follows:
 \begin{verbatim}
   MobileRobot mobile_robot;
 \end{verbatim}
@@ -556,32 +568,31 @@ The noise on the system model is still considered Gaussian and is
 therefore implemented as explained in the first tutorial. We create a
 Gaussian distribution, which is defined by a mean (Mu) and a
 covariance (Cov). This Gaussian distribution represents the
-uncertainty on the predicted position of the mobile robot. The mean is
-chosen to be $0.0$:
+uncertainty on the predicted position of the mobile robot. The mean values are defined in the file $mobile\_robot\_wall\_cts.h$:
 \begin{verbatim}
-  ColumnVector sysNoise_Mu(3);
-  sysNoise_Mu(1) = 0.0;
-  sysNoise_Mu(2) = 0.0;
-  sysNoise_Mu(3) = 0.0;
+  ColumnVector sys_noise_Mu(STATE_SIZE);
+  sys_noise_Mu(1) = MU_SYSTEM_NOISE_X;
+  sys_noise_Mu(2) = MU_SYSTEM_NOISE_Y;
+  sys_noise_Mu(3) = MU_SYSTEM_NOISE_THETA;
 \end{verbatim}
-and the covariance is chosen as a diagonal matrix, with $0.01^2$ as the
-$\sigma^2$ boundary:
+and the covariance is chosen as a diagonal matrix, with the digaonal values defined in the file $mobile\_robot\_wall\_cts.h$:
 \begin{verbatim}
-  SymmetricMatrix sysNoise_Cov(3);
-  sysNoise_Cov(1,1) = pow(0.01,2);
-  sysNoise_Cov(1,2) = 0.0;
-  sysNoise_Cov(1,3) = 0.0;
-  sysNoise_Cov(2,1) = 0.0;
-  sysNoise_Cov(2,2) = pow(0.01,2);
-  sysNoise_Cov(2,3) = 0.0;
-  sysNoise_Cov(3,1) = 0.0;
-  sysNoise_Cov(3,2) = 0.0;
-  sysNoise_Cov(3,3) = pow(0.03,2);
+  SymmetricMatrix sys_noise_Cov(STATE_SIZE);
+  sys_noise_Cov = 0.0;
+  sys_noise_Cov(1,1) = SIGMA_SYSTEM_NOISE_X;
+  sys_noise_Cov(1,2) = 0.0;
+  sys_noise_Cov(1,3) = 0.0;
+  sys_noise_Cov(2,1) = 0.0;
+  sys_noise_Cov(2,2) = SIGMA_SYSTEM_NOISE_Y;
+  sys_noise_Cov(2,3) = 0.0;
+  sys_noise_Cov(3,1) = 0.0;
+  sys_noise_Cov(3,2) = 0.0;
+  sys_noise_Cov(3,3) = SIGMA_SYSTEM_NOISE_THETA;
 \end{verbatim}
 The mean and covariance together define a three dimensional Gaussian
 distribution:
 \begin{verbatim}
-  Gaussian system_Uncertainty(sysNoise_Mu, sysNoise_Cov);
+  Gaussian system_Uncertainty(sys_noise_Mu, sys_noise_Cov);
 \end{verbatim}
 
 Now we have to create a non linear conditional probability density
@@ -705,9 +716,11 @@ example (the Kalman filter), not much changes are needed except adding
 an extra zero to the measurement matrix (for the orientation in the
 state). The matrix ${H}$:
 \begin{verbatim}
-  Matrix H(1,3);
-  H(1,1) = 0.0;
-  H(1,2) = 2.0;
+  double wall_ct = 2/(sqrt(pow(RICO_WALL,2.0) + 1));
+  Matrix H(MEAS_SIZE,STATE_SIZE);
+  H = 0.0;
+  H(1,1) = wall_ct * RICO_WALL;
+  H(1,2) = 0 - wall_ct;
   H(1,3) = 0.0;
 \end{verbatim}
 All other steps are identical to the previous tutorial example.
@@ -720,24 +733,24 @@ As compared to the previous tutorial example we need to add an extra
 state variable, the orientation, to the prior distribution.\\
 The mean which is the initial estimated state therefore becomes:
 \begin{verbatim}
-  ColumnVector prior_Mu(2);
-  prior_Mu(1) = -1.0;
-  prior_Mu(2) = 1.0;
-  prior_Mu(2) = 0.0;
+  ColumnVector prior_Mu(STATE_SIZE);
+  prior_Mu(1) = PRIOR_MU_X;
+  prior_Mu(2) = PRIOR_MU_Y;
+  prior_Mu(3) = PRIOR_MU_THETA;
 \end{verbatim}
 and the covariance is a diagonal matrix, with $1.0$ for the position
 and $0.8^2$ for the orientation as the $\sigma^2$ boundary:
 \begin{verbatim}
-  SymmetricMatrix prior_Cov(2)
-  prior_Cov(1,1) = 1.0;
+  SymmetricMatrix prior_Cov(STATE_SIZE);
+  prior_Cov(1,1) = PRIOR_COV_X;
   prior_Cov(1,2) = 0.0;
   prior_Cov(1,3) = 0.0;
   prior_Cov(2,1) = 0.0;
-  prior_Cov(2,2) = 1.0;
+  prior_Cov(2,2) = PRIOR_COV_Y;
   prior_Cov(2,3) = 0.0;
   prior_Cov(3,1) = 0.0;
   prior_Cov(3,2) = 0.0;
-  prior_Cov(3,3) = 0.8^2;
+  prior_Cov(3,3) = PRIOR_COV_THETA;
 \end{verbatim}
 The mean and covariance together define a three dimensional Gaussian
 distribution:
@@ -830,9 +843,11 @@ you find the source file called
 \end{verbatim}
 The beginning of the file contains the same C++ overhead as the first
 and second tutorial except for the fact we have to include the proper
-filter:
+filter and the nonlinear system model and measurement model we are going to construct in this section:
 \begin{verbatim}
   #include <filter/bootstrapfilter.h>
+  #include "nonlinearSystemPdf.h"
+  #include "nonlinearMeasurementPdf.h"
 \end{verbatim}
 
 
@@ -850,31 +865,32 @@ the previous tutorial examples with Kalman filters). we create a
 Gaussian distribution, which is defined by a mean (Mu) and a
 covariance (Cov).  This Gaussian distribution represents the
 uncertainty on the predicted position of the mobile robot. The mean is
-chosen to be $0.0$:
+chosen to be $MU\_SYSTEM\_NOISE\_X$, $MU\_SYSTEM\_NOISE\_Y$ and  $MU\_SYSTEM\_NOISE\_THETA$ for the $x$, $y$-position and angle respectively :
 \begin{verbatim}
-  ColumnVector sysNoise_Mu(3);
-  sysNoise_Mu(1) = 0.0;
-  sysNoise_Mu(2) = 0.0;
-  sysNoise_Mu(3) = 0.0;
+  ColumnVector sys_noise_Mu(STATE_SIZE);
+  sys_noise_Mu(1) = MU_SYSTEM_NOISE_X;
+  sys_noise_Mu(2) = MU_SYSTEM_NOISE_Y;
+  sys_noise_Mu(3) = MU_SYSTEM_NOISE_THETA;
 \end{verbatim}
 and the covariance is chosen as a diagonal matrix, with $0.01^2$ as the
 $\sigma^2$ boundary:
 \begin{verbatim}
-  SymmetricMatrix sysNoise_Cov(3);
-  sysNoise_Cov(1,1) = pow(0.01,2);
-  sysNoise_Cov(1,2) = 0.0;
-  sysNoise_Cov(1,3) = 0.0;
-  sysNoise_Cov(2,1) = 0.0;
-  sysNoise_Cov(2,2) = pow(0.01,2);
-  sysNoise_Cov(2,3) = 0.0;
-  sysNoise_Cov(3,1) = 0.0;
-  sysNoise_Cov(3,2) = 0.0;
-  sysNoise_Cov(3,3) = pow(0.03,2);
+  SymmetricMatrix sys_noise_Cov(STATE_SIZE);
+  sys_noise_Cov = 0.0;
+  sys_noise_Cov(1,1) = SIGMA_SYSTEM_NOISE_X;
+  sys_noise_Cov(1,2) = 0.0;
+  sys_noise_Cov(1,3) = 0.0;
+  sys_noise_Cov(2,1) = 0.0;
+  sys_noise_Cov(2,2) = SIGMA_SYSTEM_NOISE_Y;
+  sys_noise_Cov(2,3) = 0.0;
+  sys_noise_Cov(3,1) = 0.0;
+  sys_noise_Cov(3,2) = 0.0;
+  sys_noise_Cov(3,3) = SIGMA_SYSTEM_NOISE_THETA;
 \end{verbatim}
 The mean and covariance together define a three dimensional Gaussian
 distribution:
 \begin{verbatim}
-  Gaussian system_Uncertainty(sysNoise_Mu, sysNoise_Cov);
+  Gaussian system_Uncertainty(sys_noise_Mu, sys_noise_Cov);
 \end{verbatim}
 
 Now we have to create a general non linear conditional probability
@@ -961,8 +977,11 @@ Finally we create the system model from the system pdf:
 \end{verbatim}
 
 
-\paragraph{Remark:} The code \begin{verbatim}
-Sample<ColumnVector> noise; \end{verbatim} causes an allocation every time SampleFrom is called and therefore breaks realtime execution. For realtime use noise should be allocated during construction.
+\paragraph{Remark:} The code
+\begin{verbatim}
+Sample<ColumnVector> noise;
+\end{verbatim}
+causes an allocation every time SampleFrom is called and therefore breaks realtime execution. For realtime use noise should be allocated during construction.
 
 
 \subsection{The nonlinear measurement model}
@@ -979,21 +998,21 @@ Gaussian noise like in the previous tutorial examples with Kalman
 filters). we create a Gaussian distribution, which is defined by a
 mean (Mu) and a covariance (Cov).  This Gaussian distribution
 represents the uncertainty on the distance measurement of the mobile
-robot distance sensor. The mean is chosen to be $0.0$:
+robot distance sensor. The mean is chosen to be $MU\_MEAS\_NOISE$:
 \begin{verbatim}
-  ColumnVector measNoise_Mu(1);
-  measNoise_Mu(1) = 0.0;
+  ColumnVector meas_noise_Mu(MEAS_SIZE);
+  meas_noise_Mu(1) = MU_MEAS_NOISE;
 \end{verbatim}
-and the covariance is chosen as a diagonal matrix, with $0.05^2$ as
+and the covariance is chosen as a diagonal matrix, with $SIGMA\_MEAS\_NOISE$ as
 the $\sigma^2$ boundary:
 \begin{verbatim}
-  SymmetricMatrix measNoise_Cov(1);
-  measNoise_Cov(1,1) = pow(0.05,2);
+  SymmetricMatrix meas_noise_Cov(MEAS_SIZE);
+  meas_noise_Cov(1,1) = SIGMA_MEAS_NOISE;
 \end{verbatim}
 The mean and covariance together define a three dimensional Gaussian
 distribution:
 \begin{verbatim}
-  Gaussian measurement_Uncertainty(measNoise_Mu, measNoise_Cov);
+  Gaussian measurement_Uncertainty(meas_noise_Mu, meas_noise_Cov);
 \end{verbatim}
 
 Now we have to create a general non linear conditional probability
@@ -1082,8 +1101,7 @@ Finally we create the system model from the system pdf:
 To use a particle filter, we need a discrete prior distribution which
 is represented by samples. In this case we already have a continuous
 prior distribution of the previous examples and can therefore use it
-to create the discrete distribution.  For convenience we create a
-constant containing the number of samples:
+to create the discrete distribution.  For convenience there is a constant in $mobile\_robot\_wall\_cts.h$ representing the number of samples:
 \begin{verbatim}
   #define NUM_SAMPLES  2000 
 \end{verbatim}
