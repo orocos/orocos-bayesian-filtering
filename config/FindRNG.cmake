@@ -27,7 +27,7 @@ SET(__RNGWRAPPER_SCYTHE__ OFF)
 # install path
 # ------------
 IF(NOT RNG_LIB)
-  SET( RNG_LIB lti CACHE STRING "Which rng library to use: lti, boost or scythe")
+  SET( RNG_LIB boost CACHE STRING "Which rng library to use: lti, boost or scythe")
 ENDIF(NOT RNG_LIB)
 MESSAGE("Searching for rng lib ${RNG_LIB}")
 

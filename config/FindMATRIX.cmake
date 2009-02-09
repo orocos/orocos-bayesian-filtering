@@ -28,7 +28,7 @@ SET(__MATRIXWRAPPER_BOOST__ OFF)
 # install path
 # ------------
 IF(NOT MATRIX_LIB)
-  SET( MATRIX_LIB lti CACHE STRING "Which matrix library to use: lti, newmat or boost")
+  SET( MATRIX_LIB boost CACHE STRING "Which matrix library to use: lti, newmat or boost")
 ENDIF(NOT MATRIX_LIB)
 MESSAGE("Searching for matrix lib ${MATRIX_LIB}")
 
