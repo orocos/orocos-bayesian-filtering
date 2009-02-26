@@ -214,34 +214,26 @@ double MyMatrix::determinant() const
   unsigned int r = this->rows();
   assert(r == this->columns());
   double result = 1.0;
-  if(r==2)
+  const BoostMatrix& A = (*this);
+  switch (r)
   {
-    double result = ( ( (*this)(1,1) * (*this)(2,2)) - ( (*this)(2,1) * (*this)(1,2)) );
-    return result;
+        case 1:
+            return A(0,0);
+        case 2: 
+            return ( ( A(0,0) * A(1,1)) - ( A(1,0) * A(0,1)) );
+        default: 
+            BoostMatrix LU(r,r);
+            boost::numeric::ublas::permutation_matrix<> ndx(r);
+            noalias(LU) = A;
+            int res = lu_factorize(LU,ndx);
+            assert(res == 0);
 
-  }
-  else
-  {
-    if(r==1)
-    {
-        return  (*this)(1,1) ;
-    }
-    else
-    {
-        const BoostMatrix& A = (*this);
-        BoostMatrix LU(r,r);
-        boost::numeric::ublas::permutation_matrix<> ndx(r);
-        noalias(LU) = A;
-        int res = lu_factorize(LU,ndx);
-        assert(res == 0);
-
-        int s = 1;
-        for (boost::numeric::ublas::matrix<double>::size_type i=0;i<LU.size1();++i) {
-          result *= LU(i,i);
-          if (ndx(i)!=i) s = -s;
-        }
-        return result*s;
-    }
+            int s = 1;
+            for (boost::numeric::ublas::matrix<double>::size_type i=0;i<LU.size1();++i) {
+              result *= LU(i,i);
+              if (ndx(i)!=i) s = -s;
+            }
+            return result*s;
   }
 }
 
@@ -251,15 +243,35 @@ MyMatrix MyMatrix::inverse() const
   unsigned int r = this->rows();
   assert(r == this->columns());
   const BoostMatrix& A = (*this);
-  BoostMatrix LU(r,r);
-  boost::numeric::ublas::permutation_matrix<> ndx(r);
-  noalias(LU) = A;
-  int res = lu_factorize(LU,ndx);
-  assert(res == 0);
   BoostMatrix Ai(r,r);
-  noalias(Ai) = boost::numeric::ublas::identity_matrix<double>(r);
-  lu_substitute(LU,ndx,Ai);
-
+  switch (r) 
+  {
+     case 1:
+     {
+        Ai(0,0) = 1/A(0,0);
+        break;
+     }
+     case 2:
+     {
+       double det = A(0,0)*A(1,1)-A(0,1)*A(1,0);
+       Ai(0,0) = A(1,1)/det;
+       Ai(1,1) = A(0,0)/det;
+       Ai(0,1) = -A(0,1)/det;
+       Ai(1,0) = -A(1,0)/det;
+       break;
+     }
+     default:
+     {
+       BoostMatrix LU(r,r);
+       boost::numeric::ublas::permutation_matrix<> ndx(r);
+       noalias(LU) = A;
+       int res = lu_factorize(LU,ndx);
+       assert(res == 0);
+       noalias(Ai) = boost::numeric::ublas::identity_matrix<double>(r);
+       lu_substitute(LU,ndx,Ai);
+       break;
+     }
+  }
   return Ai;
 }
 
@@ -326,15 +338,35 @@ MySymmetricMatrix MySymmetricMatrix::inverse() const
   unsigned int r = this->rows();
   assert(r == this->columns());
   const BoostMatrix& A = (*this);
-  BoostSymmetricMatrix LU(r,r);
-  boost::numeric::ublas::permutation_matrix<> ndx(r);
-  noalias(LU) = A;
-  int res = lu_factorize(LU,ndx);
-  assert(res == 0);
   BoostSymmetricMatrix Ai(r,r);
-  noalias(Ai) = boost::numeric::ublas::identity_matrix<double>(r);
-  lu_substitute(LU,ndx,Ai);
-
+  switch (r) 
+  {
+     case 1:
+     {
+        Ai(0,0) = 1/A(0,0);
+        break;
+     }
+     case 2:
+     {
+       double det = A(0,0)*A(1,1)-A(0,1)*A(1,0);
+       Ai(0,0) = A(1,1)/det;
+       Ai(1,1) = A(0,0)/det;
+       Ai(0,1) = -A(0,1)/det;
+       Ai(1,0) = -A(1,0)/det;
+       break;
+     }
+     default:
+     {
+       BoostSymmetricMatrix LU(r,r);
+       boost::numeric::ublas::permutation_matrix<> ndx(r);
+       noalias(LU) = A;
+       int res = lu_factorize(LU,ndx);
+       assert(res == 0);
+       noalias(Ai) = boost::numeric::ublas::identity_matrix<double>(r);
+       lu_substitute(LU,ndx,Ai);
+       break;
+     }
+  }
   return Ai;
 }
 
@@ -343,19 +375,33 @@ double MySymmetricMatrix::determinant() const
   unsigned int r = this->rows();
   assert(r == this->columns());
   const BoostMatrix& A = (*this);
-  BoostSymmetricMatrix LU(r,r);
-  boost::numeric::ublas::permutation_matrix<> ndx(r);
-  noalias(LU) = A;
-  int res = lu_factorize(LU,ndx);
-  assert(res == 0);
+  switch (r) 
+  {
+     case 1:
+     {
+        return A(0,0);
+     }
+     case 2:
+     {
+       return A(0,0)*A(1,1)-A(0,1)*A(1,0);
+     }
+     default:
+     {
+        BoostSymmetricMatrix LU(r,r);
+        boost::numeric::ublas::permutation_matrix<> ndx(r);
+        noalias(LU) = A;
+        int res = lu_factorize(LU,ndx);
+        assert(res == 0);
 
-  double result = 1.0;
-  int s = 1;
-  for (boost::numeric::ublas::matrix<double>::size_type i=0;i<LU.size1();++i) {
-    result *= LU(i,i);
-    if (ndx(i)!=i) s = -s;
+        double result = 1.0;
+        int s = 1;
+        for (boost::numeric::ublas::matrix<double>::size_type i=0;i<LU.size1();++i) {
+          result *= LU(i,i);
+          if (ndx(i)!=i) s = -s;
+        }
+        return result*s;
+     }
   }
-  return result*s;
 }
 
 

@@ -625,6 +625,48 @@ MatrixwrapperTest::testMatrixwrapperValue()
   A2_svd.SVD(w2_svd,U2_svd,V2_svd);
   for (int i=1; i<=A2_svd.columns() ; i++)  W2_svd(i,i) = w2_svd(i);
   CPPUNIT_ASSERT_EQUAL(approxEqual(A2_svd, U2_svd * W2_svd * V2_svd.transpose(), epsilon),true);
+
+  // TEST SPECIAL CASES
+  // Inverse for 1x1 Matrix
+  Matrix M1(1,1);
+  M1(1,1)= 1.4;
+  Matrix M1_inv = M1.inverse();
+  Matrix I1(1,1);
+  I1(1,1)= 1.0;
+  CPPUNIT_ASSERT_EQUAL(M1_inv * M1, I1);
+  // Inverse for 2x2 Matrix
+  Matrix M2(2,2);
+  M2(1,1)= 1.4;
+  M2(2,2)= 0.4;
+  M2(1,2)= 2.1;
+  M2(2,1)= -0.8;
+  Matrix M2_inv = M2.inverse();
+  Matrix I2(2,2);
+  I2=0.0;
+  I2(1,1)= 1.0;
+  I2(2,2)= 1.0;
+  CPPUNIT_ASSERT_EQUAL(approxEqual(M2_inv * M2, I2,epsilon),true);
+  // Determinant for 1x1 Matrix
+  CPPUNIT_ASSERT_EQUAL(M1.determinant(), M1(1,1));
+  // Determinant for 2x2 Matrix
+  CPPUNIT_ASSERT_EQUAL(M2.determinant(), M2(1,1)*M2(2,2)-M2(1,2)*M2(2,1));
+  // Inverse for 1x1 SymmetricMatrix
+  SymmetricMatrix SM1(1);
+  SM1(1,1)= 1.4;
+  SymmetricMatrix SM1_inv = SM1.inverse();
+  CPPUNIT_ASSERT_EQUAL(Matrix(SM1_inv * SM1), I1);
+  // Inverse for 2x2 Matrix
+  SymmetricMatrix SM2(2);
+  SM2(1,1)= 1.4;
+  SM2(2,2)= 0.4;
+  SM2(1,2)= 2.1;
+  SM2(2,1)= -0.8;
+  SymmetricMatrix SM2_inv = SM2.inverse();
+  CPPUNIT_ASSERT_EQUAL(approxEqual(Matrix(SM2_inv * SM2), I2,epsilon),true);
+  // Determinant for 1x1 Matrix
+  CPPUNIT_ASSERT_EQUAL(SM1.determinant(), SM1(1,1));
+  // Determinant for 2x2 Matrix
+  CPPUNIT_ASSERT_EQUAL(SM2.determinant(), SM2(1,1)*SM2(2,2)-SM2(1,2)*SM2(2,1));
 }
 
 
