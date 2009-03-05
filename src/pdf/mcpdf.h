@@ -83,8 +83,7 @@ namespace BFL
     public:
       /// Constructor
       /** @param num_samples the number of samples this pdf has
-	  @param dimension the dimension of these samples (necessary for
-	  if you want to avoid too much memory allocation at runtime)
+	  @param dimension the dimension of these samples.  You can use this parameter to avoid runtime memory allocation and
       */
       MCPdf(unsigned int num_samples = 0, unsigned int dimension=0);
       /// destructor
@@ -171,9 +170,6 @@ namespace BFL
   // Constructor
   template <typename T> MCPdf<T>::MCPdf(unsigned int num_samples, unsigned int dimension) :
     Pdf<T>(dimension)
-    , _CumSum(dimension)
-    , _mean(dimension)
-    , _diff(dimension)
     , _covariance(dimension)
     , _diffsum(dimension,dimension)
     {
@@ -191,6 +187,8 @@ namespace BFL
 	   << ", _SumWeights = " << _SumWeights << endl;
 #endif // __CONSTRUCTOR__
     }
+
+
 
   // Destructor
   template <typename T>

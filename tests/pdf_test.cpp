@@ -830,6 +830,27 @@ PdfTest::testMcpdf()
   /* ProbabilityGet */
 }
 
+
+
+class MyType
+{
+public:
+  // empty constructor
+  MyType() {};
+
+  // unsigned int constructor
+  //MyType(unsigned int dim) {};
+
+  ~MyType() {};
+};
+
+
+void 
+PdfTest::testMcpdfType()
+{
+  MCPdf<MyType> a_mcpdf(NUM_SAMPLES,DIMENSION);
+}
+
 void
 PdfTest::testMixture()
 {

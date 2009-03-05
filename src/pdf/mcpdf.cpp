@@ -25,6 +25,32 @@ namespace BFL
 
 
   // Template Specialisation for T =ColumnVector
+
+  // Make sure no memory is allocated @runtime
+  // Constructor
+  template <> inline MCPdf<ColumnVector>::MCPdf(unsigned int num_samples, unsigned int dimension) :
+      Pdf<ColumnVector>(dimension)
+      , _CumSum(dimension)
+      , _mean(dimension)
+      , _diff(dimension)
+      , _covariance(dimension)
+      , _diffsum(dimension,dimension)
+      {
+        _SumWeights = 0;
+        WeightedSample<ColumnVector> my_sample(dimension);
+        _listOfSamples.insert(_listOfSamples.begin(),num_samples,my_sample);
+        _CumPDF.insert(_CumPDF.begin(),num_samples+1,0.0);
+
+       _los.assign(num_samples,WeightedSample<ColumnVector>(dimension));
+       _it_los = _los.begin();
+  #ifdef __CONSTRUCTOR__
+        // if (num_samples > 0)
+        cout << "MCPDF Constructor: NumSamples = " << _listOfSamples.size()
+             << ", CumPDF Samples = " << _CumPDF.size()
+             << ", _SumWeights = " << _SumWeights << endl;
+  #endif // __CONSTRUCTOR__
+      }
+
   template <> inline
   ColumnVector MCPdf<ColumnVector>::ExpectedValueGet (  ) const
   {

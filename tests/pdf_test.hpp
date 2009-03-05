@@ -42,6 +42,7 @@ using namespace MatrixWrapper;
 
 class PdfTest : public CppUnit::TestFixture
 {
+  CPPUNIT_TEST( testMcpdfType );
   CPPUNIT_TEST_SUITE( PdfTest );
   CPPUNIT_TEST( testUniform );
   CPPUNIT_TEST( testDiscretePdf );
@@ -55,7 +56,8 @@ class PdfTest : public CppUnit::TestFixture
   ColumnVector _mu;
   SymmetricMatrix _sigma;
   ColumnVector _width;
-
+  void testMcpdfType();
+  
 public:
   void setUp();
   void tearDown();
