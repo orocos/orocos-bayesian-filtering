@@ -42,8 +42,8 @@ using namespace MatrixWrapper;
 
 class PdfTest : public CppUnit::TestFixture
 {
-  CPPUNIT_TEST( testMcpdfType );
   CPPUNIT_TEST_SUITE( PdfTest );
+  CPPUNIT_TEST( testMcpdfType );
   CPPUNIT_TEST( testUniform );
   CPPUNIT_TEST( testDiscretePdf );
   CPPUNIT_TEST( testLinearAnalyticConditionalGaussian );
