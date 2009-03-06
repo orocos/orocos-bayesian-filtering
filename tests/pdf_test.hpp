@@ -57,7 +57,7 @@ class PdfTest : public CppUnit::TestFixture
   SymmetricMatrix _sigma;
   ColumnVector _width;
   void testMcpdfType();
-  
+
 public:
   void setUp();
   void tearDown();
