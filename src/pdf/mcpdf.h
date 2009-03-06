@@ -202,9 +202,6 @@ namespace BFL
   // Copy constructor
   template <typename T>
     MCPdf<T>::MCPdf(const MCPdf & pdf) : Pdf<T>(pdf)
-    , _CumSum(pdf.DimensionGet())
-    , _mean(pdf.DimensionGet())
-    , _diff(pdf.DimensionGet())
     , _covariance(pdf.DimensionGet())
     , _diffsum(pdf.DimensionGet(),pdf.DimensionGet())
     {
