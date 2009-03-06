@@ -91,11 +91,11 @@ namespace BFL
     AllocateMeasModel(z.rows());
 
     (_mapMeasUpdateVariables_it->second)._postHT =   (Matrix)(_post->CovarianceGet()) * H.transpose() ;
-    (_mapMeasUpdateVariables_it->second)._S =  H * (_mapMeasUpdateVariables_it->second)._postHT;
-    (_mapMeasUpdateVariables_it->second)._S += (Matrix)R;
+    (_mapMeasUpdateVariables_it->second)._S_Matrix =  H * (_mapMeasUpdateVariables_it->second)._postHT;
+    (_mapMeasUpdateVariables_it->second)._S_Matrix += (Matrix)R;
 
     // _K = covariance * H' * S(-1)
-    (_mapMeasUpdateVariables_it->second)._K =  (_mapMeasUpdateVariables_it->second)._postHT * ( (_mapMeasUpdateVariables_it->second)._S.inverse());
+    (_mapMeasUpdateVariables_it->second)._K =  (_mapMeasUpdateVariables_it->second)._postHT * ( (_mapMeasUpdateVariables_it->second)._S_Matrix.inverse());
 
     // calcutate new state gaussian
     // Mu = expectedValue + K*(z-Z)

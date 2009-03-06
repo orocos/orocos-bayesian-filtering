@@ -101,7 +101,7 @@ namespace BFL
       ColumnVector _innovation;
       Matrix    _F;
       SymmetricMatrix _Q;
-      SymmetricMatrix _P;
+      SymmetricMatrix _P_Matrix;
       Matrix          _S_i;
       std::map<unsigned int, MeasUpdateVariablesIExt> _mapMeasUpdateVariablesIExt;
       std::map<unsigned int, MeasUpdateVariablesIExt>::iterator _mapMeasUpdateVariablesIExt_it;

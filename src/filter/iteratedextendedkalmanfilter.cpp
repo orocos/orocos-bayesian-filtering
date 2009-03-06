@@ -39,7 +39,7 @@ namespace BFL
     , _innovation(prior->DimensionGet())
     , _F(prior->DimensionGet(),prior->DimensionGet())
     , _Q(prior->DimensionGet())
-    , _P(prior->DimensionGet())
+    , _P_Matrix(prior->DimensionGet())
   {}
 
   IteratedExtendedKalmanFilter::~IteratedExtendedKalmanFilter()
@@ -104,7 +104,7 @@ namespace BFL
     AllocateMeasModelIExt(z.rows());
 
     _x = _post->ExpectedValueGet();
-    _P = _post->CovarianceGet();
+    _P_Matrix = _post->CovarianceGet();
     _x_i = _post->ExpectedValueGet();
 
     bool            test_innovation = true;
@@ -114,8 +114,8 @@ namespace BFL
     _x_i_prev = _x_i;
 	(_mapMeasUpdateVariablesIExt_it->second)._H_i  = ((AnalyticMeas*)measmodel)->df_dxGet(s,_x_i);
 	(_mapMeasUpdateVariablesIExt_it->second)._R_i  = ((AnalyticMeas*)measmodel)->CovarianceGet(s,_x_i);
-	_S_i  = ( (_mapMeasUpdateVariablesIExt_it->second)._H_i * (Matrix)_P * ((_mapMeasUpdateVariablesIExt_it->second)._H_i.transpose()) ) + (Matrix)((_mapMeasUpdateVariablesIExt_it->second)._R_i);
-	(_mapMeasUpdateVariablesIExt_it->second)._K_i  = (Matrix)_P * ((_mapMeasUpdateVariablesIExt_it->second)._H_i.transpose()) * (_S_i.inverse());
+	_S_i  = ( (_mapMeasUpdateVariablesIExt_it->second)._H_i * (Matrix)_P_Matrix * ((_mapMeasUpdateVariablesIExt_it->second)._H_i.transpose()) ) + (Matrix)((_mapMeasUpdateVariablesIExt_it->second)._R_i);
+	(_mapMeasUpdateVariablesIExt_it->second)._K_i  = (Matrix)_P_Matrix * ((_mapMeasUpdateVariablesIExt_it->second)._H_i.transpose()) * (_S_i.inverse());
 	(_mapMeasUpdateVariablesIExt_it->second)._Z_i  = ((AnalyticMeas*)measmodel)->PredictionGet(s,_x_i) + ( (_mapMeasUpdateVariablesIExt_it->second)._H_i * (_x - _x_i) );
 	_x_i  = _x + (_mapMeasUpdateVariablesIExt_it->second)._K_i * (z - (_mapMeasUpdateVariablesIExt_it->second)._Z_i);
     _innovation = (_x_i - _x_i_prev);

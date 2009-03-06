@@ -78,13 +78,13 @@ public:
 private:
   struct MeasUpdateVariables
   {
-    Matrix _S;
+    Matrix _S_Matrix;
     Matrix _K;
     ColumnVector _innov;
     Matrix _postHT;
     MeasUpdateVariables() {};
     MeasUpdateVariables(unsigned int meas_dimension, unsigned int state_dimension):
-      _S(meas_dimension,meas_dimension)
+      _S_Matrix(meas_dimension,meas_dimension)
     , _K(state_dimension,meas_dimension)
     , _innov(meas_dimension)
     , _postHT(state_dimension,meas_dimension)
@@ -97,7 +97,7 @@ protected:
   SymmetricMatrix _Sigma_new;
   Matrix _Sigma_temp;
   Matrix _Sigma_temp_par;
-  Matrix _S;
+  Matrix _SMatrix;
   Matrix _K;
   std::map<unsigned int, MeasUpdateVariables> _mapMeasUpdateVariables;
   std::map<unsigned int, MeasUpdateVariables>::iterator _mapMeasUpdateVariables_it;
