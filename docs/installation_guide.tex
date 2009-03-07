@@ -85,8 +85,8 @@ started:
   Windows.
 \item BFL compiles without warnings with g++ 2.95.0 up to g++ 4.1.2
   However, it is preferred to use the latest g++ version.
-\item We use cmake in the build system of BFL. You'll need cmake 2.2
-  or 2.4.
+\item We use cmake in the build system of BFL. You'll need cmake 2.4
+  or later.
 \item To download the latest version from our subversion server, you
   will need a subversion client.
 \end{enumerate}
@@ -319,6 +319,17 @@ available from our subversion server, or as a tarbal.
   mkdir ~/sources/bfl/build
   cd ~/sources/bfl/build
 \end{verbatim}
+\item If you've installed one of the dependencies in a non-standard
+  (where your compiler doesn't look by default) location, set the
+  following environment variables to point to the appropriate
+  directories (\textbf{Don't bluntly copy the statements below})
+\begin{verbatim}
+  export CMAKE_INCLUDE_PATH=/path/to/installed/library/include
+  export CMAKE_LIBRARY_PATH=/path/to/installed/library/lib
+\end{verbatim}
+  See
+  \url{http://www.cmake.org/Wiki/CMake_Useful_Variables#Environment_Variables}
+  for more information
 \item Run ccmake:
 \begin{verbatim}
   ccmake ..
@@ -331,13 +342,9 @@ available from our subversion server, or as a tarbal.
  \item BUILD\_TESTS: ON if building the cppunit tests is desired,
  \item CMAKE\_BUILD\_TYPE: Debug or e.g. Release,
  \item CMAKE\_INSTALL\_PREFIX: directory where to install bfl, e.g. \texttt{~/install}, 
- \item CPPUNIT\_INSTALL: directory where the CPPUNIT is installed, e.g. \texttt{/usr},
- \item GINAC\_INSTALL: directory where GINAC is installed, e.g. \texttt{/usr},
  \item GINAC\_SUPPORT: OFF if you don't want to use GINAC support,
  \item LIBRARY\_TYPE: type of library build, shared or static,
- \item MATRIX\_INSTALL: directory where the matrix library is installed: e.g. \texttt{/usr},
  \item MATRIX\_LIB: matrix library used: boost, lti or newmat,
- \item RNG\_INSTALL: directory where the random number generator is installed: e.g. \texttt{/usr},
  \item RNG\_LIB: random number generator used: boost, lti or scythe.
 \end{itemize}
 Now repeat the 'c' configure and 'e' exit cycle, until you get no more
