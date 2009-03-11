@@ -31,6 +31,7 @@
 #define MIXTURE_H
 
 #include "pdf.h"
+#include "discretepdf.h"
 #include "../wrappers/matrix/vector_wrapper.h"
 #include "../wrappers/matrix/matrix_wrapper.h"
 #include "../wrappers/rng/rng.h"
@@ -75,12 +76,12 @@ namespace BFL
       /// Constructor: An equal weight is set for all components
       /** @param dimension the dimension of the state space
        */
-      Mixture(unsigned int dimension=0);
+      Mixture(const unsigned int dimension=0);
 
       /// Constructor: An equal weights is set for all components
       /** @param componentVector vector of components (Pdf<T>*)
        */
-      template <typename U> Mixture(U &componentVector);
+      template <typename U> Mixture(const U &componentVector);
 
       /// Copy Constructor
 
@@ -178,7 +179,7 @@ namespace BFL
 // Constructor
 //TODO: is this usefull because pointers to components point to nothing!
 template<typename T>
-Mixture<T>::Mixture( unsigned int dimension):
+Mixture<T>::Mixture(const unsigned int dimension):
   Pdf<T>(dimension)
   , _numComponents(0)
   , _cumWeights(_numComponents+1)
@@ -195,7 +196,7 @@ Mixture<T>::Mixture( unsigned int dimension):
 
 // Constructor
 template<typename T> template <typename U>
-Mixture<T>::Mixture(U &componentVector): Pdf<T>(componentVector[0]->DimensionGet() )
+Mixture<T>::Mixture(const U &componentVector): Pdf<T>(componentVector[0]->DimensionGet() )
     , _numComponents(componentVector.size())
 {
     //create pointer to vector of component weights
@@ -221,7 +222,7 @@ Mixture<T>::Mixture(U &componentVector): Pdf<T>(componentVector[0]->DimensionGet
 #endif // __CONSTRUCTOR__
 }
 
-template<typename T>
+template<typename T > 
 Mixture<T>::Mixture(const Mixture & my_mixture):Pdf<T>(my_mixture.DimensionGet() )
         ,_numComponents(my_mixture.NumComponentsGet())
   {
@@ -233,14 +234,8 @@ Mixture<T>::Mixture(const Mixture & my_mixture):Pdf<T>(my_mixture.DimensionGet()
 
     //create pointer to vector of pointers to weights
     _componentPdfs = new vector< Pdf<T>* >(NumComponentsGet());
-    //TODO: should we copy the components???
-    //(*_componentPdfs) = my_mixture.ComponentsGet();
     for (int i=0; i<NumComponentsGet();i++)
     {
-        //(*_componentPdfs)[i] = componentVector[i];
-        //TODO: will this call the constructor of e.g. Gaussian or always the
-        //general one?
-        //(*_componentPdfs)[i] = new Pdf<T>(my_mixture.ComponentGet(i));
         (*_componentPdfs)[i] = (my_mixture.ComponentGet(i))->Clone();
     }
 #ifdef __CONSTRUCTOR__

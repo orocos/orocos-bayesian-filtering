@@ -53,8 +53,8 @@ namespace BFL
 #ifdef __DCPDFDEBUG__
     cout << "DCPdf Destructor:" << endl;
 #endif // __DCPDFDEBUG__
-    delete _probability_p;
-    delete _cond_arg_dims_p;
+    //delete _probability_p;
+    //delete _cond_arg_dims_p;
   }
 
 

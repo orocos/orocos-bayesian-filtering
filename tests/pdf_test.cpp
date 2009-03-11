@@ -1155,7 +1155,8 @@ PdfTest::testMixture()
   vector<Probability> probs1(NUM_DS);
   disc1.ProbabilitySet(1,0.8);
 
-  Mixture<int> mixture_int(1);
+  unsigned int dim_int = 1;
+  Mixture<int> mixture_int(dim_int);
   w1 = 0.5;
   CPPUNIT_ASSERT_EQUAL(true, mixture_int.AddComponent(disc1,w1));
   CPPUNIT_ASSERT_EQUAL(1.0, (double)mixture_int.WeightGet(0));
