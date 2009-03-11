@@ -51,6 +51,28 @@ namespace BFL
   #endif // __CONSTRUCTOR__
       }
 
+  // Make sure no memory is allocated @runtime
+  // Copy constructor
+  template <> inline
+    MCPdf<ColumnVector>::MCPdf(const MCPdf & pdf) : Pdf<ColumnVector>(pdf)
+    , _CumSum(pdf.DimensionGet())
+    , _mean(pdf.DimensionGet())
+    , _diff(pdf.DimensionGet())
+    , _covariance(pdf.DimensionGet())
+    , _diffsum(pdf.DimensionGet(),pdf.DimensionGet())
+    {
+      this->_listOfSamples = pdf._listOfSamples;
+      this->_CumPDF = pdf._CumPDF;
+      _SumWeights = pdf._SumWeights;
+      this->_los = pdf._listOfSamples;
+     _it_los = _los.begin();
+#ifdef __CONSTRUCTOR__
+      cout << "MCPDF Copy Constructor: NumSamples = " << _listOfSamples.size()
+	   << ", CumPDF Samples = " << _CumPDF.size()
+	   << ", SumWeights = " << _SumWeights << endl;
+#endif // __CONSTRUCTOR__
+    }
+
   template <> inline
   ColumnVector MCPdf<ColumnVector>::ExpectedValueGet (  ) const
   {
