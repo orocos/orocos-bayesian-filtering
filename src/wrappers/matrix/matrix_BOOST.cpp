@@ -187,7 +187,7 @@ MyRowVector MyMatrix::rowCopy(unsigned int r) const
   unsigned int cols = columns();
   BoostRowVector temp(cols);
   for (unsigned int i=0; i<cols; i++)
-    temp(i) = (*this)(r,i);
+    temp(i) = (*this)(r,i+1);
   return (MyRowVector) temp;
 }
 
@@ -196,7 +196,7 @@ MyColumnVector MyMatrix::columnCopy(unsigned int c) const
   unsigned int ro = rows();
   BoostColumnVector temp(ro);
   for (unsigned int i=0; i<ro; i++)
-    temp(i) = (*this)(ro,i);
+    temp(i) = (*this)(i+1,c);
   return (MyColumnVector) temp;
 }
 

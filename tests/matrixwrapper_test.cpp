@@ -110,6 +110,7 @@ MatrixwrapperTest::testMatrixwrapperValue()
       CPPUNIT_ASSERT_EQUAL(Bm(i+1,j+1), REF[i][j]);
     }
   }
+
   // SYMMETRICMATRIX
   SymmetricMatrix Bs(r);
   for (unsigned int i=0; i<r; i++){ // fill in upper triangle
@@ -667,6 +668,56 @@ MatrixwrapperTest::testMatrixwrapperValue()
   CPPUNIT_ASSERT_EQUAL(SM1.determinant(), SM1(1,1));
   // Determinant for 2x2 Matrix
   CPPUNIT_ASSERT_EQUAL(SM2.determinant(), SM2(1,1)*SM2(2,2)-SM2(1,2)*SM2(2,1));
+
+  Matrix M3(3,3);
+  M3(1,1)=1;
+  M3(1,2)=2;
+  M3(1,3)=3;
+  M3(2,1)=4;
+  M3(2,2)=5;
+  M3(2,3)=6;
+  M3(3,1)=7;
+  M3(3,2)=8;
+  M3(3,3)=9;
+  // test rowCopy()
+  RowVector rcopy1 = M3.rowCopy(1);
+  RowVector rcopy1test(3);
+  rcopy1test(1) = M3(1,1);
+  rcopy1test(2) = M3(1,2);
+  rcopy1test(3) = M3(1,3);
+  CPPUNIT_ASSERT_EQUAL(rcopy1,rcopy1test);
+  RowVector rcopy2 = M3.rowCopy(2);
+  RowVector rcopy2test(3);
+  rcopy2test(1) = M3(2,1);
+  rcopy2test(2) = M3(2,2);
+  rcopy2test(3) = M3(2,3);
+  CPPUNIT_ASSERT_EQUAL(rcopy2,rcopy2test);
+  RowVector rcopy3 = M3.rowCopy(3);
+  RowVector rcopy3test(3);
+  rcopy3test(1) = M3(3,1);
+  rcopy3test(2) = M3(3,2);
+  rcopy3test(3) = M3(3,3);
+  CPPUNIT_ASSERT_EQUAL(rcopy3,rcopy3test);
+
+  // test columnCopy()
+  ColumnVector copy1 = M3.columnCopy(1);
+  ColumnVector copy1test(3);
+  copy1test(1) = M3(1,1);
+  copy1test(2) = M3(2,1);
+  copy1test(3) = M3(3,1);
+  CPPUNIT_ASSERT_EQUAL(copy1,copy1test);
+  ColumnVector copy2 = M3.columnCopy(2);
+  ColumnVector copy2test(3);
+  copy2test(1) = M3(1,2);
+  copy2test(2) = M3(2,2);
+  copy2test(3) = M3(3,2);
+  CPPUNIT_ASSERT_EQUAL(copy2,copy2test);
+  ColumnVector copy3 = M3.columnCopy(3);
+  ColumnVector copy3test(3);
+  copy3test(1) = M3(1,3);
+  copy3test(2) = M3(2,3);
+  copy3test(3) = M3(3,3);
+  CPPUNIT_ASSERT_EQUAL(copy3,copy3test);
 }
 
 
