@@ -46,7 +46,6 @@ namespace BFL
       // helper variables for resampleing to prevent memory allocation on the heap
       const int _dimension;
       const int _num_samples;
-      std::vector<WeightedSample<ColumnVector> > _old_samples;
       std::vector<WeightedSample<ColumnVector> >::iterator _oit;
       std::vector<WeightedSample<ColumnVector> > _result_samples;
       std::vector<WeightedSample<ColumnVector> >::iterator _rit;
