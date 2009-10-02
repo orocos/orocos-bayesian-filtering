@@ -44,7 +44,7 @@ Complete_FilterTest::tearDown()
 void
 Complete_FilterTest::testComplete_FilterValue_Cont()
 {
-  double epsilon       = 0.01;
+  double epsilon       = 0.015;
   double epsilon_large = 0.5;
   double epsilon_huge  = 2.0;
 
@@ -110,6 +110,74 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
   prior_cont.SampleFrom(prior_samples,NUM_SAMPLES,CHOLESKY,NULL);
   prior_discr.ListOfSamplesSet(prior_samples);
 
+  // Mixture prior for the Mixture Boostrap filter
+  ColumnVector prior_mu1(STATE_SIZE);
+  SymmetricMatrix prior_sigma1(STATE_SIZE);
+  prior_mu1(1) = PRIOR_MU_X1;
+  prior_mu1(2) = PRIOR_MU_Y1;
+  prior_mu1(STATE_SIZE) = PRIOR_MU_THETA1;
+  prior_sigma1 = 0.0;
+  prior_sigma1(1,1) = PRIOR_COV_X1;
+  prior_sigma1(2,2) = PRIOR_COV_Y1;
+  prior_sigma1(3,3) = PRIOR_COV_THETA1;
+  Gaussian prior_cont1(prior_mu1,prior_sigma1);
+
+  MCPdf<ColumnVector> mixcomp1(NUM_SAMPLES,STATE_SIZE);
+  prior_cont1.SampleFrom(prior_samples,NUM_SAMPLES,CHOLESKY,NULL);
+  mixcomp1.ListOfSamplesSet(prior_samples);
+
+  ColumnVector prior_mu2(STATE_SIZE);
+  SymmetricMatrix prior_sigma2(STATE_SIZE);
+  prior_mu2(1) = PRIOR_MU_X2;
+  prior_mu2(2) = PRIOR_MU_Y2;
+  prior_mu2(STATE_SIZE) = PRIOR_MU_THETA2;
+  prior_sigma2 = 0.0;
+  prior_sigma2(1,1) = PRIOR_COV_X2;
+  prior_sigma2(2,2) = PRIOR_COV_Y2;
+  prior_sigma2(3,3) = PRIOR_COV_THETA2;
+  Gaussian prior_cont2(prior_mu2,prior_sigma2);
+
+  MCPdf<ColumnVector> mixcomp2(NUM_SAMPLES,STATE_SIZE);
+  prior_cont2.SampleFrom(prior_samples,NUM_SAMPLES,CHOLESKY,NULL);
+  mixcomp2.ListOfSamplesSet(prior_samples);
+
+  ColumnVector prior_mu3(STATE_SIZE);
+  SymmetricMatrix prior_sigma3(STATE_SIZE);
+  prior_mu3(1) = PRIOR_MU_X3;
+  prior_mu3(2) = PRIOR_MU_Y3;
+  prior_mu3(STATE_SIZE) = PRIOR_MU_THETA3;
+  prior_sigma3 = 0.0;
+  prior_sigma3(1,1) = PRIOR_COV_X3;
+  prior_sigma3(2,2) = PRIOR_COV_Y3;
+  prior_sigma3(3,3) = PRIOR_COV_THETA3;
+  Gaussian prior_cont3(prior_mu3,prior_sigma3);
+
+  MCPdf<ColumnVector> mixcomp3(NUM_SAMPLES,STATE_SIZE);
+  prior_cont3.SampleFrom(prior_samples,NUM_SAMPLES,CHOLESKY,NULL);
+  mixcomp3.ListOfSamplesSet(prior_samples);
+
+  ColumnVector prior_mu4(STATE_SIZE);
+  SymmetricMatrix prior_sigma4(STATE_SIZE);
+  prior_mu4(1) = PRIOR_MU_X4;
+  prior_mu4(2) = PRIOR_MU_Y4;
+  prior_mu4(STATE_SIZE) = PRIOR_MU_THETA3;
+  prior_sigma4 = 0.0;
+  prior_sigma4(1,1) = PRIOR_COV_X4;
+  prior_sigma4(2,2) = PRIOR_COV_Y4;
+  prior_sigma4(3,3) = PRIOR_COV_THETA4;
+  Gaussian prior_cont4(prior_mu4,prior_sigma4);
+
+  MCPdf<ColumnVector> mixcomp4(NUM_SAMPLES,STATE_SIZE);
+  prior_cont4.SampleFrom(prior_samples,NUM_SAMPLES,CHOLESKY,NULL);
+  mixcomp4.ListOfSamplesSet(prior_samples);
+
+  vector<Pdf<ColumnVector>*> mixVec(3);
+  mixVec[0] = &mixcomp1;
+  mixVec[1] = &mixcomp2;
+  mixVec[2] = &mixcomp3;
+  //mixVec[3] = &mixcomp4;
+  Mixture<ColumnVector> prior_mix(mixVec);
+
   // check
   ColumnVector mean_check(STATE_SIZE);
   mean_check(1) = PRIOR_MU_X; mean_check(2) = PRIOR_MU_Y; mean_check(3) = PRIOR_MU_THETA;
@@ -135,15 +203,25 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
   /******************************
    * Construction of the Filter *
    ******************************/
-  Filter<ColumnVector,ColumnVector> *my_filter_extendedkalman, *my_filter_iteratedextendedkalman, *my_filter_bootstrap, *my_filter_ekparticle;
+  Filter<ColumnVector,ColumnVector> *my_filter_extendedkalman, *my_filter_iteratedextendedkalman, *my_filter_bootstrap, *my_filter_ekparticle, *my_filter_mixtureBootstrap;
   my_filter_extendedkalman = new ExtendedKalmanFilter(&prior_cont);
   my_filter_iteratedextendedkalman = new IteratedExtendedKalmanFilter(&prior_cont,NUM_ITERATIONS);
   my_filter_bootstrap = new BootstrapFilter<ColumnVector,ColumnVector> (&prior_discr, RESAMPLE_PERIOD, RESAMPLE_THRESHOLD);
   my_filter_ekparticle = new EKParticleFilter(&prior_discr, 0, RESAMPLE_THRESHOLD);
+  my_filter_mixtureBootstrap = new MixtureBootstrapFilter<ColumnVector,ColumnVector> (&prior_mix, RESAMPLE_PERIOD, RESAMPLE_THRESHOLD);
 
   /*******************
    * ESTIMATION LOOP *
    *******************/
+  ColumnVector measurement ;
+  ColumnVector mobile_robot_state ;
+  Pdf<ColumnVector> * posterior_mixtureBootstrap;
+  ofstream mixtureFile;
+  if(OUTPUT_MIXTURE)
+  {
+    mixtureFile.open("mixtureOutput.txt");
+  }
+
   cout << "Running 4 different filters. This may take a few minutes... " << endl;
   unsigned int time_step;
   for (time_step = 0; time_step < NUM_TIME_STEPS-1; time_step++)
@@ -152,20 +230,68 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
       mobile_robot.Move(input);
 
       // DO ONE MEASUREMENT
-      ColumnVector measurement = mobile_robot.Measure();
+      measurement = mobile_robot.Measure();
+      mobile_robot_state = mobile_robot.GetState();
 
+      if(OUTPUT_MIXTURE)
+      {
+        posterior_mixtureBootstrap = my_filter_mixtureBootstrap->PostGet();
+        vector<WeightedSample<ColumnVector> > los;
+        vector<WeightedSample<ColumnVector> >::iterator los_it;
+        int numComp = dynamic_cast<Mixture<ColumnVector> *>(posterior_mixtureBootstrap)->NumComponentsGet();
+        mixtureFile << time_step << " " << numComp << " ";  
+        mixtureFile << mobile_robot_state(1) << " " << mobile_robot_state(2) << " " << mobile_robot_state(3) << " ";  
+        for(int i = 0 ; i<numComp ; i++ )
+        {   
+            double componentWeight = ( dynamic_cast<Mixture<ColumnVector> *>(posterior_mixtureBootstrap)->WeightGet(i)) ;
+            los = dynamic_cast<MCPdf<ColumnVector> *>( dynamic_cast<Mixture<ColumnVector> *>(posterior_mixtureBootstrap)->ComponentGet(i))->ListOfSamplesGet(); 
+            mixtureFile << i << " " << componentWeight << " " << los.size()<< " " << STATE_SIZE << " ";  
+            for ( los_it=los.begin(); los_it != los.end() ; los_it++)
+            {
+                for (int j=0; j<STATE_SIZE ; j++)
+                    mixtureFile << los_it->ValueGet()[j] << " ";
+                mixtureFile<< los_it->WeightGet() << " ";  
+            } 
+        }
+        mixtureFile<<endl;
+       }
       // UPDATE FILTER
       my_filter_extendedkalman->Update(&sys_model,input,&meas_model, measurement);
       my_filter_iteratedextendedkalman->Update(&sys_model,input,&meas_model, measurement);
       my_filter_bootstrap->Update(&sys_model,input,&meas_model, measurement);
       //my_filter_ekparticle->Update(&sys_model,input,&meas_model, measurement);
+      my_filter_mixtureBootstrap->Update(&sys_model,input,&meas_model, measurement);
     }
+
+    if(OUTPUT_MIXTURE)
+    {
+      posterior_mixtureBootstrap = my_filter_mixtureBootstrap->PostGet();
+      vector<WeightedSample<ColumnVector> > los;
+      vector<WeightedSample<ColumnVector> >::iterator los_it;
+      int numComp = dynamic_cast<Mixture<ColumnVector> *>(posterior_mixtureBootstrap)->NumComponentsGet();
+      mixtureFile << time_step << " " << numComp << " ";  
+      mixtureFile << mobile_robot_state(1) << " " << mobile_robot_state(2) << " " << mobile_robot_state(3) << " ";  
+      for(int i = 0 ; i<numComp ; i++ )
+      {   
+          double componentWeight = ( dynamic_cast<Mixture<ColumnVector> *>(posterior_mixtureBootstrap)->WeightGet(i)) ;
+          los = dynamic_cast<MCPdf<ColumnVector> *>( dynamic_cast<Mixture<ColumnVector> *>(posterior_mixtureBootstrap)->ComponentGet(i))->ListOfSamplesGet(); 
+          mixtureFile << i << " " << componentWeight << " " << los.size()<< " " << STATE_SIZE << " ";  
+          for ( los_it=los.begin(); los_it != los.end() ; los_it++)
+          {
+              for (int j=0; j<STATE_SIZE ; j++)
+                  mixtureFile << los_it->ValueGet()[j] << " ";
+              mixtureFile<< los_it->WeightGet() << " ";  
+          } 
+      }
+      mixtureFile<<endl;
+     }
 
 
   // ek_check
   Pdf<ColumnVector> * posterior_extendedkalman = my_filter_extendedkalman->PostGet();
   ColumnVector mean_ek_check(STATE_SIZE);
   mean_ek_check=mobile_robot.GetState();
+  //mean_ek_check(1) = mobile_robot_state(1); mean_ek_check(2) = mobile_robot_state(2); mean_ek_check(3) = mobile_robot_state(3);
   SymmetricMatrix cov_ek_check(STATE_SIZE);
   cov_ek_check(1,1) = 0.0599729;   cov_ek_check(1,2) = 0.000291386; cov_ek_check(1,3) = 0.00223255;
   cov_ek_check(2,1) = 0.000291386; cov_ek_check(2,2) = 0.000277528; cov_ek_check(2,3) = 0.000644136;
@@ -177,6 +303,7 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
   Pdf<ColumnVector> * posterior_iteratedextendedkalman = my_filter_iteratedextendedkalman->PostGet();
   ColumnVector mean_it_check(STATE_SIZE);
   mean_it_check=mobile_robot.GetState();
+  //mean_it_check(1) = mobile_robot_state(1); mean_it_check(2) = mobile_robot_state(2); mean_it_check(3) = mobile_robot_state(3);
   SymmetricMatrix cov_it_check(STATE_SIZE);
   cov_it_check = 0.0;
   cov_it_check(1,1) = 0.0611143;   cov_it_check(1,2) = 0.000315923; cov_it_check(1,3) = 0.00238938;
@@ -189,6 +316,7 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
   Pdf<ColumnVector> * posterior_bootstrap = my_filter_bootstrap->PostGet();
   ColumnVector mean_bs_check(STATE_SIZE);
   mean_bs_check=mobile_robot.GetState();
+  //mean_bs_check(1) = mobile_robot_state(1); mean_bs_check(2) = mobile_robot_state(2); mean_bs_check(3) = mobile_robot_state(3);
   SymmetricMatrix cov_bs_check(STATE_SIZE);
   cov_bs_check = 0.0;
   cov_bs_check(1,1) = PRIOR_COV_X;   
@@ -212,11 +340,36 @@ Complete_FilterTest::testComplete_FilterValue_Cont()
   CPPUNIT_ASSERT_EQUAL(approxEqual(posterior_ekparticle->ExpectedValueGet(), mean_ep_check, epsilon_huge),true);
   CPPUNIT_ASSERT_EQUAL(approxEqual(posterior_ekparticle->CovarianceGet(), cov_ep_check, epsilon_large),true);
   */
+  // mixtureBoostrapFilter check
+  posterior_mixtureBootstrap = my_filter_mixtureBootstrap->PostGet();
+  ColumnVector mean_mbs_check(STATE_SIZE);
+  //mean_mbs_check(1) = 6.64581; mean_mbs_check(2) = -7.05499; mean_mbs_check(3) = -0.76974;
+  mean_mbs_check(1) = mobile_robot_state(1); mean_mbs_check(2) = mobile_robot_state(2); mean_mbs_check(3) = mobile_robot_state(3);
+  //cout << "mixture weights:" << endl;
+  vector<Probability> weights= dynamic_cast<Mixture<ColumnVector> *>(posterior_mixtureBootstrap)->WeightsGet();
+  ColumnVector exp;
+  for(int i = 0 ; i< dynamic_cast<Mixture<ColumnVector> *>(posterior_mixtureBootstrap)->NumComponentsGet(); i++ )
+  {
+        //cout << "weight component " << i << ": " << weights[i] << endl;
+        exp= dynamic_cast<Mixture<ColumnVector> *>(posterior_mixtureBootstrap)->ComponentGet(i)->ExpectedValueGet();
+        //cout << "expected value component " << i << ": " << exp << endl;
+  }
+  //cout << "expected value total: " << posterior_mixtureBootstrap->ExpectedValueGet() << endl;
+  //cout << "should be : " << mean_mbs_check << endl;
+  CPPUNIT_ASSERT_EQUAL(approxEqual(posterior_mixtureBootstrap->ExpectedValueGet(), mean_mbs_check, epsilon_huge),true);
+
+  // closing file stream
+  if(OUTPUT_MIXTURE)
+  {
+    mixtureFile.close();
+  }
+
   // delete the filters
   delete my_filter_extendedkalman;
   delete my_filter_iteratedextendedkalman;
   delete my_filter_bootstrap;
   delete my_filter_ekparticle;
+  delete my_filter_mixtureBootstrap;
 }
 
 void

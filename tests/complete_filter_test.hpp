@@ -29,6 +29,7 @@
 #include <filter/asirfilter.h>
 #include <filter/EKparticlefilter.h>
 #include <filter/histogramfilter.h>
+#include <filter/mixtureBootstrapFilter.h>
 
 #include <model/analyticsystemmodel_gaussianuncertainty.h>
 #include <model/linearanalyticmeasurementmodel_gaussianuncertainty.h>

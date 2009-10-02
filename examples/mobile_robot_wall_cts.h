@@ -60,30 +60,73 @@
 #define PRIOR_COV_Y pow(0.2,2)
 #define PRIOR_COV_THETA pow(M_PI/8,2)
 
-// System Noise of the system model
-#define MU_SYSTEM_NOISE_X pow(0.0,2)
-#define MU_SYSTEM_NOISE_Y pow(0.0,2)
-#define MU_SYSTEM_NOISE_THETA pow(0.0,2)
+// FOR MIXTURE
+// Initial estimate of position and orientation
+#define PRIOR_MU_X1 0.1
+#define PRIOR_MU_Y1 -0.1
+#define PRIOR_MU_THETA1 M_PI/4	//M_PI/4
+// Initial covariances of position and orientation
+#define PRIOR_COV_X1 pow(0.2,2)
+#define PRIOR_COV_Y1 pow(0.2,2)
+#define PRIOR_COV_THETA1 pow(M_PI/8,2)
+// Initial estimate of position and orientation
+#define PRIOR_MU_X2 -0.1
+#define PRIOR_MU_Y2 0.1
+#define PRIOR_MU_THETA2 M_PI/4	//M_PI/4
+// Initial covariances of position and orientation
+#define PRIOR_COV_X2 pow(0.2,2)
+#define PRIOR_COV_Y2 pow(0.2,2)
+#define PRIOR_COV_THETA2 pow(M_PI/8,2)
+// Initial estimate of position and orientation
+#define PRIOR_MU_X3 0.1
+#define PRIOR_MU_Y3 0.1
+#define PRIOR_MU_THETA3 M_PI/4	//M_PI/4
+// Initial covariances of position and orientation
+#define PRIOR_COV_X3 pow(0.2,2)
+#define PRIOR_COV_Y3 pow(0.2,2)
+#define PRIOR_COV_THETA3 pow(M_PI/8,2)
+// Initial estimate of position and orientation
+#define PRIOR_MU_X4 -0.1
+#define PRIOR_MU_Y4 0.1
+#define PRIOR_MU_THETA4 M_PI/4	//M_PI/4
+// Initial covariances of position and orientation
+#define PRIOR_COV_X4 pow(0.2,2)
+#define PRIOR_COV_Y4 pow(0.2,2)
+#define PRIOR_COV_THETA4 pow(M_PI/8,2)
+
+// System Noise
+#define MU_SYSTEM_NOISE_X 0.0 
+#define MU_SYSTEM_NOISE_Y 0.0 
+#define MU_SYSTEM_NOISE_THETA 0.0
 #define SIGMA_SYSTEM_NOISE_X pow(0.01,2)
 #define SIGMA_SYSTEM_NOISE_Y pow(0.01,2)
 #define SIGMA_SYSTEM_NOISE_THETA pow(2*M_PI/180,2)
-                        
-// Measurement noise
-#define SIGMA_MEAS_NOISE pow(0.05,2)
-#define MU_MEAS_NOISE 0.0
 
-// System Noise for the real robot system 
-#define MU_SYSTEM_NOISE_X_ROB pow(0.0,2)
-#define MU_SYSTEM_NOISE_Y_ROB pow(0.0,2)
-#define MU_SYSTEM_NOISE_THETA_ROB pow(0.0,2)
+
+// System Noise for mobile robot simulator
+#define MU_SYSTEM_NOISE_X_ROB 0.0 
+#define MU_SYSTEM_NOISE_Y_ROB 0.0 
+#define MU_SYSTEM_NOISE_THETA_ROB 0.0
 #define SIGMA_SYSTEM_NOISE_X_ROB pow(0.001,2)
 #define SIGMA_SYSTEM_NOISE_Y_ROB pow(0.001,2)
 #define SIGMA_SYSTEM_NOISE_THETA_ROB pow(0.1*M_PI/180,2)
 
-// Measurement noise for the real robot system
+// System Noise for simulation
+#define SIM_FACTOR 1000 //The system covariance in simulation is SIM_FACTOR
+                        //smaller than the system covariance of the systemmodel
+
+// Measurement noise
+#define SIGMA_MEAS_NOISE pow(0.05,2)
+#define MU_MEAS_NOISE 0.0
+
+// Measurement noise for mobile robot simulator 
 #define SIGMA_MEAS_NOISE_ROB pow(0.05,2)
 #define MU_MEAS_NOISE_ROB 0.0
 
 #define NUM_ITERATIONS 3 //number of iterations used for iteraded filters
+
+
+//Write output of mixture filter to file
+#define OUTPUT_MIXTURE true
 
 #endif //__MOBILE_ROBOT_CTS
