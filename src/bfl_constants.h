@@ -34,29 +34,53 @@
 
 namespace BFL
 {
+  using namespace std;
   /// Class representing a probability (a double between 0 and 1)
   class Probability
-    {
+  {
     public:
       Probability(){};
       Probability(double p)
-	{
+    {
           #ifndef _MSC_VER
-	   assert(std::isfinite(p) != 0);
+       assert(std::isfinite(p) != 0);
          #endif
-	  assert( p >= 0 );
-	  _prob = p;
-	}
-      virtual ~Probability(){};
-
-      operator double(){return _prob;}
-      Probability operator *(Probability p)
-	{ return ((Probability) (this->_prob * (double) p));}
-      Probability operator /(Probability p)
-	{ return ((Probability) (this->_prob / (double) p));}
-    private:
-      double _prob;
+      assert( p >= 0 );
+      _prob = p;
     };
+    virtual ~Probability(){};
+/*
+    ostream & operator<< (ostream & stream)
+    {
+      stream << this->getValue() << endl;
+      return stream;
+    };
+
+  istream & operator>> (istream & stream)
+    {
+        double value;
+        stream >> value;
+        _prob = Probability(value);
+        return stream; 
+    };
+*/
+    friend ostream & operator<< (ostream & stream,Probability& prob);
+
+    friend istream & operator>> (istream & stream,Probability& prob);
+
+    double getValue() const { return _prob;} ;
+
+      operator double(){return _prob;};
+      Probability operator *(Probability p)
+    { return ((Probability) (this->_prob * (double) p));};
+      Probability operator /(Probability p)
+    { return ((Probability) (this->_prob / (double) p));};
+
+
+  private:
+    double _prob;
+  };
+
 } // End namespace
 
 /*!\mainpage BFL
@@ -74,3 +98,5 @@ namespace BFL
  */
 
 #endif
+
+

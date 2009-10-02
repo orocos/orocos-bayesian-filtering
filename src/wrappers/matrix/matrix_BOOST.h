@@ -60,10 +60,15 @@ class Matrix : public BoostMatrix, public Matrix_Wrapper
   Matrix (const MyMatrix& a);
   Matrix(const BoostMatrix & a);
 
+  Matrix(int num_rows,const RowVector& v);
+
+  
   virtual unsigned int rows() const;
   virtual unsigned int columns() const;
   virtual double& operator()(unsigned int,unsigned int);
   virtual const double operator()(unsigned int,unsigned int) const;
+  virtual RowVector operator[](unsigned int)const;
+
   virtual const bool operator==(const MyMatrix& a) const;
 
   virtual MyMatrix& operator =(double a);
@@ -112,6 +117,8 @@ class SymmetricMatrix : public BoostSymmetricMatrix, public SymmetricMatrix_Wrap
   SymmetricMatrix(const MySymmetricMatrix& a);
   SymmetricMatrix(const BoostSymmetricMatrix & a);
 
+  SymmetricMatrix(int num_rows,const RowVector& v);
+
   // Destructor
   virtual ~SymmetricMatrix();
 
@@ -123,6 +130,7 @@ class SymmetricMatrix : public BoostSymmetricMatrix, public SymmetricMatrix_Wrap
 
   virtual double& operator()(unsigned int,unsigned int);
   virtual const double operator()(unsigned int,unsigned int) const;
+  virtual RowVector operator[](unsigned int)const;
   virtual const bool operator==(const MySymmetricMatrix& a) const;
 
   virtual MySymmetricMatrix& operator=(double a);
@@ -135,6 +143,8 @@ class SymmetricMatrix : public BoostSymmetricMatrix, public SymmetricMatrix_Wrap
   virtual MySymmetricMatrix  operator - (double b) const;
   virtual MySymmetricMatrix  operator * (double b) const;
   virtual MySymmetricMatrix  operator / (double b) const;
+
+  virtual MyRowVector rowCopy(unsigned int r) const;
 
   virtual MyMatrix& operator +=(const MyMatrix& a);
   virtual MyMatrix& operator -=(const MyMatrix& a);

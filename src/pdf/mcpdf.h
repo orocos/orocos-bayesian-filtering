@@ -440,7 +440,7 @@ namespace BFL
   template <typename T> bool
     MCPdf<T>::ListOfSamplesUpdate(const vector<Sample<T> > & los)
     {
-      int numsamples;
+      unsigned int numsamples = _listOfSamples.size();
       if ((numsamples = los.size()) == _listOfSamples.size())
 	{
 	  assert (numsamples != 0);

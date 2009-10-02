@@ -60,10 +60,18 @@ public:
   virtual MyColumnVector vectorAdd(const MyColumnVector& v2) const = 0;
 
   /// element indexing
-  virtual const double operator()(unsigned int) const = 0;
+  virtual const double operator()(unsigned int i) const = 0;
 
   /// element indexing
-  virtual double& operator()(unsigned int) = 0;
+  virtual double& operator()(unsigned int i) = 0;
+
+  /// element indexing STARTING FROM 0
+  virtual const double operator[](unsigned int i) const
+    { return (*this)(i+1);}
+
+  /// element indexing STARTING FROM 0
+  virtual double& operator[](unsigned int i) 
+    { return (*this)(i+1);}
 
   /// Operator ==
   virtual const bool operator==(const MyColumnVector& a) const = 0;

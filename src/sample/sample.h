@@ -89,6 +89,9 @@ namespace BFL
       */
       template <typename S> friend ostream & operator<< (ostream & stream,
 							 Sample<S> & my_sample);
+
+      template <typename S> friend istream & operator>> (istream & stream,
+							 Sample<S> & my_sample);
       /// Operator =
       Sample & operator= (const Sample & my_sample);
 
@@ -153,6 +156,14 @@ namespace BFL
     {
       stream << my_sample.ValueGet() << endl;
       return stream;
+    }
+
+  template <typename S> istream & operator>> (istream & stream, Sample<S> & my_sample)
+    {
+        S value;
+        stream >> value;
+        my_sample.ValueSet(value);
+        return stream; 
     }
 
   // operator =

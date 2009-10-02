@@ -307,6 +307,7 @@ RauchTungStriebel backwardfilter((Gaussian*)posterior);
        << "End of the Kalman smoother for mobile robot localisation" << endl
        << "======================================================"
        << endl;
+  return 0;
 
   /****************************
    * CLOSE FILESTREAMS
@@ -319,6 +320,4 @@ RauchTungStriebel backwardfilter((Gaussian*)posterior);
   fout_time_smooth.close();
   fout_E_smooth.close();
   fout_cov_smooth.close();
-
-  return 0;
 }
