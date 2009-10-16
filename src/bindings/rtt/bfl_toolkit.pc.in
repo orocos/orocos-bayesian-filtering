@@ -1,0 +1,22 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+libdir=${prefix}/lib/rtt/@OROCOS_TARGET@/plugins
+includedir=${prefix}/include
+
+Name: orocos-bfl_toolkit-@OROCOS_TARGET@
+Description: The Orocos Bayesian Filtering Library RTT Plugin 
+Requires: orocos-bfl orocos-rtt-@OROCOS_TARGET@
+Version: @KDL_VERSION@
+Libs: -L${libdir} -lorocos-bfl_toolkit-@OROCOS_TARGET@
+Cflags: -I${includedir}
+
+prefix=@CMAKE_INSTALL_PREFIX@
+libdir=${prefix}/lib/rtt/@OROCOS_TARGET@/plugins
+includedir=${prefix}/include
+
+Name: orocos-bfl_toolkit-@OROCOS_TARGET@
+Description: The Orocos Bayesian Filtering Library RTT Plugin 
+Requires: orocos-bfl orocos-rtt-@OROCOS_TARGET@
+Version: @KDL_VERSION@
+Libs: -L${libdir} -lorocos-bfl_toolkit-@OROCOS_TARGET@
+Cflags: -I${includedir}
+
