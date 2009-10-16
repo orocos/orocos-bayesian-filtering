@@ -47,6 +47,7 @@ public:
 
   /// Constructor
   ColumnVector(int nrows);
+  ColumnVector(int nrows,double value);
 
   /// Constructor
   ColumnVector(const MyColumnVector& a, const MyColumnVector& b);
@@ -81,6 +82,25 @@ public:
   virtual MyColumnVector operator* (double b) const;
   virtual MyColumnVector operator/ (double b) const;
 
+  /// element indexing STARTING FROM 0
+  virtual const double operator[](unsigned int i) const
+  { 
+  //std::cout << "(BOOSTVECTOR) operator[] called " << i << std::endl;
+   // if (i==0)
+   //     std::cout << "(BOOSTVECTOR) operator[0]" << std::endl;
+    
+   return (*this)(i+1);
+  }
+
+  /// element indexing STARTING FROM 0
+  virtual double& operator[](unsigned int i) 
+  { 
+  //std::cout << "(BOOSTVECTOR) operator[] called " << i << std::endl;
+  //  if (i==0)
+  //      std::cout << "(BOOSTVECTOR) operator[0]" << std::endl;
+     return (*this)(i+1);
+  }
+
   virtual const double operator()(unsigned int) const;
   virtual const bool operator==(const MyColumnVector& a) const;
   virtual double& operator()(unsigned int);
@@ -100,6 +120,7 @@ class RowVector : public BoostRowVector, public RowVector_Wrapper
  public:
   RowVector();
   RowVector(int ncols);
+  RowVector(int ncols,double value);
   // If you have another constructor in the matrix library you
   // want to use, you'll have to redefine it yourself
 

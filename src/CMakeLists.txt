@@ -11,6 +11,9 @@ ADD_SUBDIRECTORY( filter )
 ADD_SUBDIRECTORY( smoother )
 ADD_SUBDIRECTORY( dataAssociation )
 
+IF( OROCOS_PLUGIN )
+  ADD_SUBDIRECTORY( bindings/rtt )
+ENDIF( OROCOS_PLUGIN )
 
 # examples will be linked with orocos-bfl, so when building both static and shared, examples will link with shared
 IF (LIBRARY_TYPE STREQUAL "shared")

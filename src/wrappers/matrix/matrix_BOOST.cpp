@@ -21,6 +21,9 @@
 #ifdef __MATRIXWRAPPER_BOOST__
 
 #include "matrix_BOOST.h"
+#include "vector_BOOST.h"
+
+#include <boost/numeric/ublas/matrix_proxy.hpp>
 
 using namespace std;
 
@@ -37,6 +40,17 @@ MyMatrix::Matrix(const MyMatrix& a) : BoostMatrix(a){}
 
 // ill-designed
 MyMatrix::Matrix(const BoostMatrix & a) : BoostMatrix(a){}
+
+MyMatrix::Matrix(int num_rows,const RowVector& v):BoostMatrix(num_rows,v.size()){
+  BoostMatrix & m = *this;
+  for(unsigned int i=0;i<num_rows;i++)
+    row(m,i).assign(v);
+}
+
+MyRowVector MyMatrix::operator[](unsigned int i) const{
+  return this->rowCopy(i);
+}
+
 
 // Number of Rows/Cols
 unsigned int MyMatrix::rows() const { return this->size1();}
@@ -306,6 +320,17 @@ MyMatrix MyMatrix::sub(int i_start, int i_end, int j_start , int j_end) const
 
 MySymmetricMatrix::SymmetricMatrix() : BoostSymmetricMatrix() {}
 MySymmetricMatrix::SymmetricMatrix(int n) : BoostSymmetricMatrix(n) {}
+MySymmetricMatrix::SymmetricMatrix(int num_rows,const RowVector& v):BoostSymmetricMatrix(num_rows,v.size()){
+  BoostSymmetricMatrix & m = *this;
+  for(unsigned int i=0;i<num_rows;i++)
+    row(m,i).assign(v);
+}
+
+MyRowVector MySymmetricMatrix::operator[](unsigned int i) const{
+  return this->rowCopy(i);
+}
+
+
 
 // Copy constructor
 MySymmetricMatrix::SymmetricMatrix(const SymmetricMatrix& a) : BoostSymmetricMatrix(a){}
@@ -318,6 +343,16 @@ MySymmetricMatrix::~SymmetricMatrix(){}
 unsigned int MySymmetricMatrix::rows() const { return this->size1();}
 unsigned int MySymmetricMatrix::columns() const { return this->size2();}
 
+
+MyRowVector MySymmetricMatrix::rowCopy(unsigned int r) const
+{
+  
+  unsigned int cols = columns();
+  BoostRowVector temp(cols);
+  for (unsigned int i=0; i<cols; i++)
+    temp(i) = (*this)(r,i+1);
+  return (MyRowVector) temp;
+}
 
 MySymmetricMatrix MySymmetricMatrix::transpose() const {return (*this);}
 

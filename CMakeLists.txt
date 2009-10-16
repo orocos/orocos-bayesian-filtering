@@ -75,6 +75,23 @@ INCLUDE (${PROJ_SOURCE_DIR}/config/FindCppUnit.cmake)
 DEPENDENT_OPTION( BUILD_TESTS "Turn me off to disable the BFL functionality testing" ON "CPPUNIT_FOUND" OFF)
 OPTION( BUILD_EXAMPLES "Turn me off to disable the compilation of the BFL examples" ON )
 
+# options to build rtt bindings
+# -----------------------------------
+OPTION( OROCOS_PLUGIN "Build Orocos-plugin?" OFF)
+IF( OROCOS_PLUGIN )
+  SET( RTT_VVERSION "v1.4.x" )
+  IF(NOT OROCOS_INSTALL)
+    SET( OROCOS_INSTALL /usr CACHE PATH "The RTT installation directory.")
+  ENDIF(NOT OROCOS_INSTALL)
+  INCLUDE (${PROJ_SOURCE_DIR}/config/FindOrocosRTT.cmake)
+  IF (OROCOS_RTT_1.4)
+    SET( CMAKE_C_FLAGS_RTT "-O2 -DNDEBUG ${OROCOS_RTT_DEFINES}")
+    SET( CMAKE_CXX_FLAGS_RTT "-O2 -DNDEBUG ${OROCOS_RTT_DEFINES}")
+    MESSAGE( "CMAKE_CXX_FLAGS_RTT are : ${CMAKE_CXX_FLAGS_RTT}" )
+  ENDIF (OROCOS_RTT_1.4)
+ENDIF( OROCOS_PLUGIN )
+
+INCLUDE (${PROJ_SOURCE_DIR}/config/DependentOption.cmake)
 
 # Uninstall target
 # ----------------

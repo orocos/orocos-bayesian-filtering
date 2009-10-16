@@ -21,11 +21,15 @@
 #ifdef __MATRIXWRAPPER_BOOST__
 
 #include "vector_BOOST.h"
+#include <iostream>
 
 
 // Constructors
 MyColumnVector::ColumnVector() : BoostColumnVector() {}
 MyColumnVector::ColumnVector(int num_rows) : BoostColumnVector(num_rows){}
+MyColumnVector::ColumnVector(int num_rows,double value) : BoostColumnVector(num_rows){
+  this->assign(boost::numeric::ublas::scalar_vector<double>(num_rows,value));
+}
 MyColumnVector::ColumnVector(const MyColumnVector& a, const MyColumnVector& b) : BoostColumnVector(a.rows() + b.rows()) 
 {
   BoostColumnVector& opl = (*this);
@@ -233,6 +237,9 @@ MyColumnVector MyColumnVector::sub(int j_start , int j_end) const
 // Constructors
 MyRowVector::RowVector() : BoostRowVector() {}
 MyRowVector::RowVector(int num_cols) : BoostRowVector(num_cols){}
+MyRowVector::RowVector(int num_cols,double value) : BoostRowVector(num_cols){
+  this->assign(boost::numeric::ublas::scalar_vector<double>(num_cols,value));
+}
 
 // Destructor
 MyRowVector::~RowVector(){}

@@ -85,7 +85,7 @@ namespace BFL
       /** @param ConditionalArguments an STL-vector of type <pre>T</pre>
 	  containing the condtional arguments
       */
-      void ConditionalArgumentsSet(std::vector<CondArg> ConditionalArguments);
+      virtual void ConditionalArgumentsSet(std::vector<CondArg> ConditionalArguments);
 
       /// Get the n-th argument of the list
       /** @return The current value of the n-th conditional argument
@@ -98,7 +98,7 @@ namespace BFL
 
 	  @param argument value of the n-th argument
       */     
-      void ConditionalArgumentSet(unsigned int n_argument, const CondArg& argument);
+      virtual void ConditionalArgumentSet(unsigned int n_argument, const CondArg& argument);
 
     private:
       /// # of conditional arguments (# of args after the | sign)
