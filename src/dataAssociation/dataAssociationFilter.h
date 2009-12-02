@@ -323,8 +323,8 @@ namespace BFL
 
       _maxFilters = 20; //maximum number of filters
       _maxFeatures = 20; //maximum number of features
-      _maxAssociations = 2000; //maximum number of associations
-      _maxCalls = 2000; //maximum number of associations
+      _maxAssociations = 4000; //maximum number of associations
+      _maxCalls = 4000; //maximum number of getAssociation calls
       _probs.resize(_maxFilters,_maxFeatures);
       _probs = 0.0;
       _posts.resize(_maxFilters);
@@ -647,9 +647,13 @@ namespace BFL
       int number_features = z.size();
       int number_objects = this->NumFiltersGet();
 
+#ifndef NDEBUG
       //cout << "Get meas probabilities " << endl;
+#endif
       this->GetMeasProbs(measmodel , z , s);
+#ifndef NDEBUG
       std::cout << "_probs" << _probs << std::endl;
+#endif
       // stores result in _probs
 
       // get associations
@@ -707,30 +711,55 @@ namespace BFL
     template<typename SVar, typename MVar> vector<vector<double> > 
     DataAssociationFilter<SVar,MVar>::GetAssociationProbs(MeasurementModel<MeasVar,StateVar>* const measmodel , const vector<MeasVar> &z, const StateVar& s)
     {
+#ifndef NDEBUG
+      cout << "(DataAssociationFilter) entered GetAssociationProbs " << endl;
+#endif
       int number_features = z.size();
       int number_objects = this->NumFiltersGet();
 
-      //cout << "Get meas probabilities " << endl;
+#ifndef NDEBUG
+      cout << "Get meas probabilities " << endl;
+#endif
       this->GetMeasProbs(measmodel , z , s);
+#ifndef NDEBUG
+      cout << "Got meas probabilities " << endl;
+#endif
+#ifndef NDEBUG
       //std::cout << "_probs" << _probs << std::endl;
+#endif
+#ifndef NDEBUG
       //std::cout << "_gamma" << _gamma << std::endl;
+#endif
+#ifndef NDEBUG
       //std::cout << "_treshold" << _treshold << std::endl;
+#endif
       // stores result in _probs
 
       // get associations
-      //cout << "Get associations " << endl;
+#ifndef NDEBUG
+      cout << "Get associations " << endl;
+#endif
       this->GetAssociations(_probs,z.size());
+#ifndef NDEBUG
+      cout << "Got associations jeeej" << endl;
+#endif
       // stores result in _associations
       // number of associations in _num_ass
       //for (int k = 0 ; k< _num_ass; k++)
       //{
+#ifndef NDEBUG
       //  std::cout << "_association[" << k << "]" << std::endl;
+#endif
       //  for(int l = 0 ; l<number_features; l++) 
+#ifndef NDEBUG
       //      std::cout<< _associations[k][l] << std::endl;
+#endif
 
       //}
 
-      //cout << "Get assocation probs " << endl;
+#ifndef NDEBUG
+      cout << "Get assocation probs " << endl;
+#endif
       // find most probable association prob_ass[k] is probability of
       // association k
       vector<double> prob_ass(_num_ass);
@@ -754,9 +783,13 @@ namespace BFL
             best_association = k;
           }
       }
+#ifndef NDEBUG
       //cout << "best_association " << best_association << endl;
+#endif
       //for(int l = 0 ; l<number_features; l++) 
+#ifndef NDEBUG
       //      std::cout<< _associations[best_association][l] << std::endl;
+#endif
 
       int k = best_association;
 
@@ -790,8 +823,12 @@ namespace BFL
         // probs: matrix of probabilities p(zj|xi), probability of measurement zj given object xi
         // size probs: [number of objects x number of features]
 
+#ifndef NDEBUG
         //std::cout << "*****************************"  <<std::endl;
+#endif
+#ifndef NDEBUG
         //std::cout << "number_features " << number_features <<std::endl;
+#endif
         vector<vector<int> > associations(1);
 
         vector<int> objects_ass(1);  // vector of possible objects associated with the considered feature
@@ -804,7 +841,9 @@ namespace BFL
         // base case: number_features = 1;
         if (number_features == 1)
         {
+#ifndef NDEBUG
             //std::cout << "Base case" << std::endl;
+#endif
             vector<int> objects_vec(1);
             for (int objects = 1; objects <= number_objects; objects++)
             {
@@ -907,8 +946,17 @@ namespace BFL
         // restricted associations: a feature can only belong to one object and each object only has one feature.
         // probs: matrix of probabilities p(zj|xi), probability of measurement zj given object xi
         // size probs: [number of objects x number of features]
+#ifndef NDEBUG
+        cout << "(DataAssociationFilter) entered GetAssociations " << endl;
+#endif
 
         int number_objects = this->NumFiltersGet();
+#ifndef NDEBUG
+        cout << "number of objects " << number_objects << endl;
+#endif
+#ifndef NDEBUG
+        cout << "number of features " << number_features << endl;
+#endif
         assert(probs.rows() > number_objects -1);
         // probs must have the correct size
 
@@ -918,11 +966,20 @@ namespace BFL
         // in this call _vec_associations[numberCall- 1] will be
         // filled in
 
+#ifndef NDEBUG
         //std::cout << "*****************************"  <<std::endl;
+#endif
+#ifndef NDEBUG
         //std::cout << "Called GetAssociations the  " <<  numberCall << "'th time"  <<std::endl;
+#endif
+#ifndef NDEBUG
         //std::cout << "number_features " << number_features <<std::endl;
+#endif
+#ifndef NDEBUG
         //std::cout << "probs " << probs <<std::endl;
+#endif
         
+        //_objects_ass
         _objects_ass[0] = 0;         // 0: feature is not caused by any of the objects
         _associations[0][0] = 0;
         _num_objects_ass = 1;
@@ -931,16 +988,23 @@ namespace BFL
         // base case: number_features = 1;
         if (number_features == 1)
         {
-            //std::cout << "Base case" << std::endl;
+#ifndef NDEBUG
+            std::cout << "Base case" << std::endl;
+#endif
             for (int objects = 1; objects <= number_objects; objects++)
             {
-               //std::cout << "Base case" << std::endl;
+#ifndef NDEBUG
+                std::cout << "object "  << objects << std::endl;
+#endif
+#ifndef NDEBUG
+                std::cout << "probs(objects,1) "  << probs(objects,1) << std::endl;
+#endif
                 if(probs(objects,1) > _treshold) // if feature is probably caused by object
                 {
                     _objects_ass[_num_objects_ass] = objects; // add object to object association list
                     _vec_objects_ass[numberCall-1] = _objects_ass;
                     _vec_ass[numberCall-1][_num_ass][0] = objects;
-                    if (numberCall == 1)
+                    if (numberCall == 1) // the loop ended!!!!
                     {
                         _associations[_num_ass][0] = objects;
                     }
@@ -951,24 +1015,42 @@ namespace BFL
             _vec_objects_ass[numberCall-1] = _objects_ass;
             _vec_num_objects_ass[numberCall-1] = _num_objects_ass;
 
-            //std::cout << "Calculated associations " << std::endl;
+#ifndef NDEBUG
+            std::cout << "Calculated associations " << std::endl;
+#endif
+#ifndef NDEBUG
             //std::cout << "numberCall " << numberCall << std::endl;
+#endif
            // for (int i =0 ; i < _num_ass ; i++)
            // {
+#ifndef NDEBUG
            //      std::cout << "Association " << i+1 << std::endl;
+#endif
            //      for (int j=0 ; j < number_features ; j++)
+#ifndef NDEBUG
            //           std::cout << _vec_ass[numberCall-1][i][j] << std::endl;
+#endif
            // }
+#ifndef NDEBUG
             //std::cout << "_vec_ass.size() " << _vec_ass.size() <<  std::endl;
-            //std::cout << "number associations " << _num_ass <<  std::endl;
+#endif
+#ifndef NDEBUG
             //std::cout << "numberCall " << numberCall << std::endl;
+#endif
             _vec_number_associations[numberCall-1] = _num_ass;
+#ifndef NDEBUG
+            std::cout << "number associations " << _num_ass <<  std::endl;
+#endif
             if(numberCall == 1)
             {
-                //cout << "RESETTING" << endl;
+#ifndef NDEBUG
+                cout << "RESETTING" << endl;
+#endif
                 _numberGetAssociationsCalls = 0;
             }
-            //std::cout << "END *****************************"  <<std::endl;
+#ifndef NDEBUG
+            std::cout << "end basecase"  <<std::endl;
+#endif
             //return _associations;
         }
         else // not yet in base case
@@ -980,31 +1062,49 @@ namespace BFL
                 {
                     _objects_ass[_num_objects_ass] = objects; // add object to object association list
                     _num_objects_ass ++;
+#ifndef NDEBUG
                     //std::cout << "object " << objects << "added"  <<std::endl;
+#endif
                 }
             }
             _vec_objects_ass[numberCall-1] = _objects_ass;
             _vec_num_objects_ass[numberCall-1] = _num_objects_ass;
+#ifndef NDEBUG
             //std::cout << "Number associations for first feature " << number_ass << std::endl;
+#endif
             int counter = 0;
             int object;
+#ifndef NDEBUG
            // std::cout << "Number of considered objects " << _vec_num_objects_ass[numberCall-1]<< std::endl;
+#endif
             //for (int i=0 ; i < _objects_ass[numberCall-1]; i++)
             for (int i=0 ; i < _vec_num_objects_ass[numberCall-1]; i++)
             {
+#ifndef NDEBUG
                //std::cout << "Number of considered objects " << _vec_num_objects_ass[numberCall-1]<< std::endl;
+#endif
                // for (int teller=0 ; teller < _vec_num_objects_ass[numberCall-1]; teller++)
                // {
+#ifndef NDEBUG
                //     std::cout << _vec_objects_ass[numberCall-1][teller]<< std::endl;
+#endif
                // }
                object = _vec_objects_ass[numberCall-1][i];
+#ifndef NDEBUG
                //std::cout << "Considering object " << object << std::endl;
+#endif
                // delete object from other possibilities if object !=0
                // probs_rest = probabilities for features if object for feature
                // 1 is chosen
+#ifndef NDEBUG
                //std::cout << "probs " << probs << std::endl;
+#endif
+#ifndef NDEBUG
                //std::cout << "_vec_probs[numberCall-1] " << _vec_probs[numberCall-1] << std::endl;
+#endif
+#ifndef NDEBUG
                //std::cout << "numberCall " << numberCall << std::endl;
+#endif
                for (int teller_objects_probs = 1 ; teller_objects_probs <=number_objects ; teller_objects_probs ++ )
                {
                    for (int teller_features_probs = 1 ; teller_features_probs <=number_features-1 ; teller_features_probs ++ )
@@ -1015,11 +1115,23 @@ namespace BFL
                    }
                    
                }   
+#ifndef NDEBUG
                //std::cout << "probs_rest " << _probs_rest << std::endl;
+#endif
+#ifndef NDEBUG
                //std::cout << "calculated from probs  " << probs << std::endl;
+#endif
+#ifndef NDEBUG
                //std::cout << "probs " << probs << std::endl;
+#endif
+#ifndef NDEBUG
                //std::cout << "_vec_probs[numberCall-1] " << _vec_probs[numberCall-1] << std::endl;
-               //std::cout << "numberCall " << numberCall << std::endl;
+#endif
+#ifndef NDEBUG
+               std::cout << "numberCall " << numberCall << std::endl;
+#endif
+               // object can only be associated with one feature => put
+               // _probs_rest to zero
                if (object != 0)
                {
                    for (int k = 1 ; k<=number_features - 1 ; k++)
@@ -1028,39 +1140,63 @@ namespace BFL
                    }
                }
                // will fill in _vec_ass[numberGetAssociationsCalls]
-               //std::cout << "_numberGetAssociationsCalls  " << _numberGetAssociationsCalls << std::endl;
+#ifndef NDEBUG
+               std::cout << "_numberGetAssociationsCalls  " << _numberGetAssociationsCalls << std::endl;
+#endif
                int call_send = _numberGetAssociationsCalls + 1;
+               if(call_send > _maxCalls -1)
+                  cerr << "DATA ASSOCIATION ERROR: increase the number of _maxNumberCalls" << endl;
+#ifndef NDEBUG
                //std::cout << "call_send  " << call_send << " for probs " << _probs_rest<< std::endl;
+#endif
+#ifndef NDEBUG
                //std::cout << "calculated from probs  " << probs << std::endl;
+#endif
                //std::cout << "_vec_probs[numberCall-1] " << _vec_probs[numberCall-1] << std::endl;
-               //std::cout << "numberCall " << numberCall << std::endl;
-               //std::cout << "call get associations for _probs_rest" << std::endl;
+#ifndef NDEBUG
+               std::cout << "numberCall " << numberCall << std::endl;
+#endif
+#ifndef NDEBUG
+               std::cout << "call get associations for _probs_rest" << std::endl;
+#endif
                GetAssociations(_probs_rest,number_features-1);
-               //std::cout << "gotassociations" << std::endl;
+#ifndef NDEBUG
+               std::cout << "gotassociations" << std::endl;
+#endif
                //int num_associations_other = _vec_number_associations[numberCall];
                int num_associations_other = _vec_number_associations[call_send-1];
-               //std::cout << "num_associations_other " << num_associations_other << std::endl;
-               //std::cout << "associations for numberCall " << numberCall << std::endl;
-               //std::cout << "vec_ass.size() " << _vec_ass.size() << std::endl;
+#ifndef NDEBUG
+               std::cout << "num_associations_other " << num_associations_other << std::endl;
+               std::cout << "associations for numberCall " << numberCall << std::endl;
+               std::cout << "vec_ass.size() " << _vec_ass.size() << std::endl;
+#endif
                for (int teller_other = 0 ; teller_other < num_associations_other ; teller_other ++)
                {
-                   //cout << "teller_other " << teller_other << endl;
-                   if(counter+teller_other > _maxAssociations)
-                       cout << "DATA ASSOCIATION ERROR: increase the number of maximumAssociations" << endl;
-                   if(numberCall > _maxCalls)
-                       cout << "DATA ASSOCIATION ERROR: increase the number of _maxNumberCalls" << endl;
+#ifndef NDEBUG
+                   cout << "teller_other " << teller_other << endl;
+                   cout << "counter + teller_other " << counter + teller_other << endl;
+                   cout << "_maxAssociations " << _maxAssociations << endl;
+#endif
+                   if(counter+teller_other > _maxAssociations-1)
+                       cerr << "DATA ASSOCIATION ERROR: increase the number of maximumAssociations" << endl;
                    _vec_ass[numberCall-1][counter + teller_other][0] = object;
                    if(numberCall == 1)
                    {
                        _associations[counter + teller_other][0] = object;
                    }
-                   //_associations[counter + teller_other][0] = object;
+                   _associations[counter + teller_other][0] = object;
+#ifndef NDEBUG
                    //cout << "associations[" << counter+teller_other << "][ 0] " << _vec_ass[numberCall-1][counter + teller_other][0] << endl;
+#endif
                    for (int teller_features = 1 ; teller_features <= number_features-1 ; teller_features++ )
                    {
-                       //cout << "teller_features " << teller_features << endl;
+#ifndef NDEBUG
+                       cout << "teller_features " << teller_features << endl;
+#endif
                        _vec_ass[numberCall-1][counter + teller_other][teller_features] = _vec_ass[call_send-1][teller_other][teller_features-1];
+#ifndef NDEBUG
                        //cout << "associations[" << counter+teller_other << " ][ " << teller_features << "] " << _vec_ass[numberCall-1][counter + teller_other][teller_features] << endl;
+#endif
                        if(numberCall == 1)
                        {
                            _associations[counter + teller_other][teller_features] = _vec_ass[call_send-1][teller_other][teller_features-1];
@@ -1069,23 +1205,33 @@ namespace BFL
                }
                counter = counter + num_associations_other;
             }
+#ifndef NDEBUG
             //std::cout << "Calculated " << counter << " associations " << std::endl;
             //std::cout << "numberCall " << numberCall << std::endl;
+#endif
             //for (int i =0 ; i < counter ; i++)
             //{
+#ifndef NDEBUG
             //     std::cout << "Association " << i+1 << std::endl;
+#endif
             //     for (int j=0 ; j < number_features ; j++)
+#ifndef NDEBUG
             //          std::cout << _vec_ass[numberCall-1][i][j] << std::endl;
+#endif
             //}
             _vec_number_associations[numberCall-1] = counter;
             if(numberCall == 1)
             {
                 _num_ass = counter;
+#ifndef NDEBUG
                 //cout << "RESETTING" << endl;
+#endif
                 _numberGetAssociationsCalls = 0;
             }
+#ifndef NDEBUG
             //cout << "number associations " << _num_ass << endl;
             //std::cout << "END *****************************"  <<std::endl;
+#endif
             //return _associations;
         }
     }
