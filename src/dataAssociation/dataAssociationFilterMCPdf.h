@@ -55,21 +55,20 @@ namespace BFL
     {
 
     protected:
-      // vector of pointers to posteriors of filters
+      /// vector of pointers to posteriors of filters
       std::vector< MCPdf<StateVar>* > _posts; 
-      // iterator for vector of pointers to posteriors of filters
+      /// iterator for vector of pointers to posteriors of filters
       typename std::vector<MCPdf<StateVar>* >::iterator _iter_posts; 
-      // vector containing prob(z|particle) for all particles
+      /// vector containing prob(z|particle) for all particles
       vector<Matrix> _prob_particles;
+      /// bool indicated of measurement probabilities were already calculated or not
       bool  _measProbsCalculated; 
+      /// The measurement probabilities
       vector<MeasVar> _measMeasProbsCalculated;
-
+      /// The maximum number of particles
       int _maxParticles; 
 
-
-
-      /// Implementation of Update
-      // calls update on the underlying filters
+      /// Implementation of Update: calls update on the underlying filters
       /** @param sysmodel pointer to the used system model
 	  @param u input param for proposal density
 	  @param measmodel pointer to the used measurementmodel
@@ -85,9 +84,16 @@ namespace BFL
     public:
       /// Constructor
       /** @pre you created the prior
-	  @param prior pointer to the prior Pdf
+	  @param filters pointer to the prior vector of filters
+	  @param gamma probability of a false positive (measurement is not caused by any of the objects)
+	  @param treshold threshold on the probability of a association from which the association is taken into account 
+	  @param maxFilters the maximum number of filters (for allocation)
+	  @param maxFeatures the maximum number of features (for allocation)
+	  @param maxAssociations the maximum number of associations (for allocation)
+	  @param maxCalls the maximum number of calls of getAssociations (for allocation)
       */
-      DataAssociationFilterMCPdf (vector<Filter<StateVar,MeasVar> *> filters, double gamma=0.0, double treshold=0.0);
+//      DataAssociationFilterMCPdf (vector<Filter<StateVar,MeasVar> *> filters, double gamma=0.0, double treshold=0.0);
+      DataAssociationFilterMCPdf (vector<Filter<StateVar,MeasVar> *> filters, double gamma = 0.0, double treshold= 0.0, int maxFilters =20, int maxFeatures=20, int maxAssociations=2000,int maxCalls=2000);
 
       /// copy constructor
       DataAssociationFilterMCPdf (const DataAssociationFilterMCPdf<StateVar,MeasVar> & filters);
@@ -95,8 +101,11 @@ namespace BFL
       /// destructor
       virtual ~DataAssociationFilterMCPdf();
 
-      // Get the probabilities of the measurements for each of the
-      // filters TODO: set protected again
+      /// Get the probabilities of the measurements for each of the filters 
+      /** @param measmodel the measurement model
+      @param z the vector of measurements
+      @param s the sensor parameters
+      */
       MatrixWrapper::Matrix GetMeasProbs(MeasurementModel<MeasVar,StateVar>* const measmodel , const vector<MeasVar>& z, const StateVar& s);
 
       /// Add a filter
@@ -121,8 +130,8 @@ namespace BFL
 
     // Constructor
     template<typename SVar, typename MVar> 
-    DataAssociationFilterMCPdf<SVar,MVar>::DataAssociationFilterMCPdf(vector< Filter<SVar,MVar> * > filters, double gamma, double treshold)
-      : DataAssociationFilter<SVar,MVar>(filters,gamma,treshold)
+    DataAssociationFilterMCPdf<SVar,MVar>::DataAssociationFilterMCPdf(vector<Filter<SVar,MVar> * > filters, double gamma, double treshold, int maxFilters, int maxFeatures, int maxAssociations, int maxCalls)
+      :DataAssociationFilter<SVar,MVar>(filters,gamma,treshold,maxFilters,maxFeatures,maxAssociations,maxCalls)
     {
       typename std::vector< Filter<StateVar,MeasVar>* >::iterator iter_filters; 
       _posts.resize(this->_maxFilters);
@@ -213,9 +222,9 @@ namespace BFL
         //cout << "enter GetMeasProbs" << endl;
         int number_features = z.size();
         int number_objects = this->NumFiltersGet();
-        //cout << "number objects " << number_objects << endl;
-        //cout << "number features " << number_features << endl;
-        //cout << "size posts " << _posts.size() << endl;
+        cout << "number objects " << number_objects << endl;
+        cout << "number features " << number_features << endl;
+        cout << "size posts " << _posts.size() << endl;
 
         //if (!( (_probs.columns()== number_features) && (_probs.rows()==number_objects) ))
         //{ 
@@ -233,10 +242,10 @@ namespace BFL
         _iter_posts = _posts.begin();
         for(int object = 1 ; object != this->NumFiltersGet() + 1 ; object++) 
         {
-          //cout << "object " << object << endl;
+          cout << "object " << object << endl;
           // loop over the different filters (i.e. different objects)
           num_particles =  (*_iter_posts)->NumSamplesGet();
-          //cout << "number particles  " << num_particles << endl;
+          cout << "number particles  " << num_particles << endl;
           los = (*_iter_posts)->ListOfSamplesGet() ;
 
           // do only assignement if necessary
@@ -249,31 +258,58 @@ namespace BFL
           for (int feature = 1 ; feature<=number_features ; feature ++ )
           {
               inter = 0.0;
-              //cout << "feature " << z[feature-1] << endl;
+#ifndef NDEBUG
+              cout << "feature " << z[feature-1] << endl;
+#endif
               for (int teller_part = 0; teller_part < num_particles; teller_part++)
               {
-                  //cout << "particle " << los[teller_part].ValueGet()<< endl;
-                  //cout << "weight " << los[teller_part].WeightGet()<< endl;
+#ifndef NDEBUG
+                  cout << "particle " << los[teller_part].ValueGet()<< endl;
+                  cout << "weight " << los[teller_part].WeightGet()<< endl;
+#endif
                   if (measmodel->SystemWithoutSensorParams())
-                      prob =  measmodel->ProbabilityGet(z[feature-1], los[teller_part].ValueGet());
+                  {
+#ifndef NDEBUG
+                        cout << "without sensor params" << endl;
+                        cout << "measurement simulation " << measmodel->Simulate(los[teller_part].ValueGet() ) << endl;
+                        cout << "measurement pdf covariance " << measmodel->MeasurementPdfGet()->CovarianceGet() << endl;
+                        cout << "measurement pdf expected value " << measmodel->MeasurementPdfGet()->ExpectedValueGet() << endl;
+#endif
+                        prob =  measmodel->ProbabilityGet(z[feature-1], los[teller_part].ValueGet());
+#ifndef NDEBUG
+                        cout << "prob " << (double)prob << endl;
+#endif
+                  }
                   else
-                      prob =  measmodel->ProbabilityGet(z[feature-1], los[teller_part].ValueGet(), s);
+                        prob =  measmodel->ProbabilityGet(z[feature-1], los[teller_part].ValueGet(), s);
                   _prob_particles[object-1](teller_part+1,feature) = prob;
-                  //cout << "prob " << prob << endl;
+#ifndef NDEBUG
+                  cout << "prob " << (double)prob << endl;
+#endif
                   inter = inter + (double)prob * los[teller_part].WeightGet();
-                  //cout << "inter " << inter << endl;
+#ifndef ndebug
+                  cout << "inter " << inter << endl;
+#endif
               }
-              //cout << "inter " << inter << endl;
+#ifndef ndebug
+              cout << "inter " << inter << endl;
+#endif
               this->_probs(object,feature) = inter ;
-              //cout << "prob " << _probs(object,feature) << endl;
+#ifndef ndebug
+              cout << "prob " << this->_probs(object,feature) << endl;
+#endif
           }
-          //cout << "prob_particles " << _prob_particles[object-1] << endl;
+#ifndef ndebug
+          cout << "prob_particles " << _prob_particles[object-1] << endl;
+#endif
           _iter_posts++;
           this->_iter_filters++;
         }
         _measProbsCalculated = true; 
         _measMeasProbsCalculated = z;
-        //cout << "PROBS " << probs << endl;
+#ifndef ndebug
+        cout << "PROBS " << this->_probs << endl;
+#endif
       }
       else
       {

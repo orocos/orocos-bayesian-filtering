@@ -211,6 +211,7 @@ DataAssociationFilterTest::testDataAssociationFilterMCPdf()
  measNoise_Mu(2) = 0.0;
 
  SymmetricMatrix measNoise_Cov(2);
+ measNoise_Cov = 0.0;
  measNoise_Cov(1,1) = pow(0.1,2);
  measNoise_Cov(2,2) = pow(0.1,2);
 

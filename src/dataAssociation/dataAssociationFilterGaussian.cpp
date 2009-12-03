@@ -6,8 +6,8 @@ namespace BFL
   using namespace MatrixWrapper;
 
     // Constructor
-    DataAssociationFilterGaussian::DataAssociationFilterGaussian(vector< Filter<ColumnVector,ColumnVector> * > filters, double gamma, double treshold)
-      : DataAssociationFilter<ColumnVector,ColumnVector>(filters,gamma,treshold)
+    DataAssociationFilterGaussian::DataAssociationFilterGaussian(vector<Filter<ColumnVector,ColumnVector>* > filters, double gamma, double treshold, int maxFilters, int maxFeatures, int maxAssociations, int maxCalls)
+      :DataAssociationFilter<ColumnVector,ColumnVector>(filters,gamma,treshold,maxFilters,maxFeatures,maxAssociations,maxCalls)
     {
 #ifndef NDEBUG
         cout<< "DataAssociationFilterGaussian Constructor" << endl;

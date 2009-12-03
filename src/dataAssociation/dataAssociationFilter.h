@@ -56,13 +56,13 @@ namespace BFL
       /// Vector of pointers to filters
       std::vector< Filter<StateVar,MeasVar>* > _filters; 
 
-      // iterator for vector of pointers to filters
+      /// iterator for vector of pointers to filters
       typename std::vector< Filter<StateVar,MeasVar>* >::iterator _iter_filters; 
 
       /// Vector of filter numbers
       std::vector< int > _filterID; 
 
-      // iterator for vector of filterID
+      /// iterator for vector of filterID
       std::vector< int >::iterator _iter_filterID; 
     
       int _timestep;
@@ -76,37 +76,51 @@ namespace BFL
       /// The effective number of filters
       int _numFilters;
 
-      // vector of pointers to posteriors of filters
+      /// vector of pointers to posteriors of filters
       std::vector< Pdf<StateVar>* > _posts; 
 
-      // iterator for vector of pointers to posteriors of filters
+      /// iterator for vector of pointers to posteriors of filters
       typename std::vector<Pdf<StateVar>* >::iterator _iter_posts; 
 
-      // vector containing prob(z|object) 
+      /// vector containing prob(z|object) 
       Matrix _probs;
     
-      // helper variable for probabilities
+      /// helper variable for probabilities
       Matrix _probs_rest;
 
-      int _maxFilters ; //maximum number of filters
-      int _maxFeatures; //maximum number of features
-      int _maxAssociations; //maximum number of associations
-      int _maxCalls; //maximum calls of GetAssociations to calculate associations
+      /// maximum number of filters
+      int _maxFilters ; 
+      /// maximum number of features
+      int _maxFeatures; 
+      /// maximum number of associations
+      int _maxAssociations; 
+      /// maximum calls of GetAssociations to calculate associations
+      int _maxCalls; 
+      /// counter for the number of different filters used so far to obtain filterID
+      int _filterCounter; 
 
-      int _filterCounter; //counts the number of different filters used to have filterID
-
-      vector< vector<vector<int> >  > _vec_ass; // vector of genest associations
-      vector< int > _vec_number_associations; // vector of genest number associations
-      vector<vector<int> > _associations; // vector of associations
-      vector<int> _objects_ass;  // vector of possible objects associated with the considered feature
-      vector<vector<int> > _vec_objects_ass;  // vector of genest possible objects associated with the considered feature
-      vector< int > _vec_num_objects_ass; // vector of genest number associations
-      vector< Matrix > _vec_probs; // vector of genest probabilities
-      int _num_objects_ass ; // number of associated objects
-      int _num_ass ; // number of assocations
-      int _numberGetAssociationsCalls; // the number of times GetAssociations is called
-
-      vector<vector<double> > _association_probs;  //the probabilites that the data is associated with each of the filters
+      /// vector genest associations
+      vector< vector<vector<int> >  > _vec_ass; 
+      /// vector of genest number of associations
+      vector< int > _vec_number_associations;
+      /// Vector of associations
+      vector<vector<int> > _associations; 
+      /// Vector of possible objects associated with the considered feature
+      vector<int> _objects_ass;  
+      /// Vector of genest possible objects associated with the considered feature
+      vector<vector<int> > _vec_objects_ass;   
+      /// Vector of genest number associations
+      vector< int > _vec_num_objects_ass; 
+      /// Vector of genest probabilities
+      vector< Matrix > _vec_probs; 
+      /// number of associated objects
+      int _num_objects_ass ; 
+      /// number of assocations
+      int _num_ass ; 
+      /// The number of times GetAssociations is called
+      int _numberGetAssociationsCalls; 
+      /// The probabilites that the data is associated with each of the filters
+      vector<vector<double> > _association_probs;  
     
       /// Implementation of Update
       // calls update on the underlying filters
@@ -132,17 +146,41 @@ namespace BFL
     public:
       /// Constructor
       /** @pre you created the prior
-	  @param prior pointer to the prior vector of filters
+	  @param filters pointer to the prior vector of filters
 	  @param gamma probability of a false positive (measurement is not caused by any of the objects)
-	  @param treshold on the probability of a association from which the association is taken into account 
+	  @param treshold threshold on the probability of a association from which the association is taken into account 
+	  @param maxFilters the maximum number of filters (for allocation)
+	  @param maxFeatures the maximum number of features (for allocation)
+	  @param maxAssociations the maximum number of associations (for allocation)
+	  @param maxCalls the maximum number of calls of getAssociations (for allocation)
       */
-      DataAssociationFilter (vector<Filter<StateVar,MeasVar> *> filters, double gamma = 0.0, double treshold= 0.0);
+      DataAssociationFilter (vector<Filter<StateVar,MeasVar> *> filters, double gamma = 0.0, double treshold= 0.0, int maxFilters =20, int maxFeatures=20, int maxAssociations=2000,int maxCalls=2000);
 
       /// copy constructor
       /** @pre you have another DataAssociationFilter 
 	  @param DataAssociationFilter you want to copy 
       */
       DataAssociationFilter (const DataAssociationFilter<StateVar,MeasVar> & filters);
+
+      /// Get the maximum number of filters
+      /** @return the maximum number of filters
+      */
+      int GetMaxFilters(){return _maxFilters;};
+
+      /// Get the maximum number of features
+      /** @return the maximum number of features
+      */
+      int GetMaxFeatures(){return _maxFeatures;};
+
+      /// Get the maximum number of associations
+      /** @return the maximum number of associations
+      */
+      int GetMaxAssociations(){return _maxAssociations;};
+
+      /// Get the maximum number of getAssociation calls
+      /** @return the maximum number of getAssociation calls
+      */
+      int GetMaxCalls(){return _maxCalls;};
 
       /// destructor
       virtual ~DataAssociationFilter();
@@ -314,17 +352,17 @@ namespace BFL
 
     // Constructor
     template<typename SVar, typename MVar> 
-    DataAssociationFilter<SVar,MVar>::DataAssociationFilter(vector< Filter<SVar,MVar> * > filters, double gamma, double treshold)
+    DataAssociationFilter<SVar,MVar>::DataAssociationFilter(vector<Filter<SVar,MVar> * > filters, double gamma, double treshold, int maxFilters, int maxFeatures, int maxAssociations, int maxCalls)
       : _timestep(0),
         _gamma(gamma),
-        _treshold(treshold)
+        _treshold(treshold),
+        _maxFilters(maxFilters),
+        _maxFeatures(maxFeatures),
+        _maxAssociations(maxAssociations),
+        _maxCalls(maxCalls)
     {
       _numFilters = filters.size();
 
-      _maxFilters = 20; //maximum number of filters
-      _maxFeatures = 20; //maximum number of features
-      _maxAssociations = 4000; //maximum number of associations
-      _maxCalls = 4000; //maximum number of getAssociation calls
       _probs.resize(_maxFilters,_maxFeatures);
       _probs = 0.0;
       _posts.resize(_maxFilters);
@@ -384,10 +422,10 @@ namespace BFL
     DataAssociationFilter<SVar,MVar>::DataAssociationFilter(const DataAssociationFilter& filters)
         : _timestep(0)
     {   
-        _maxFilters = 20; //maximum number of filters
-        _maxFeatures = 20; //maximum number of features
-        _maxAssociations = 2000; //maximum number of associations
-        _maxCalls = 2000; //maximum number of associations
+        _maxFilters = filters.GetMaxFilters();
+        _maxFeatures = filters.GetMaxFeatures();
+        _maxAssociations = filters.GetMaxAssociations();
+        _maxCalls = filters.GetMaxCalls();
         _probs.resize(_maxFilters,_maxFeatures);
         _probs = 0.0;
         _posts.resize(_maxFilters);

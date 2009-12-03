@@ -47,33 +47,49 @@ namespace BFL
 {
   using namespace std;
   using namespace MatrixWrapper;
+  /**
+    Struct containing measurement update variables
+  */
   struct MeasUpdateVariables
   {
-     Matrix _S;
-     Matrix _postHT;
-     Matrix _K;
-     Matrix _Hmeas;
-     ColumnVector _innov;
-     ColumnVector _zpred;
-     SymmetricMatrix _Covmeas;
-     ColumnVector          _pyMu;
-     SymmetricMatrix       _pySigma;
-     MeasUpdateVariables() {};
-     MeasUpdateVariables(unsigned int meas_dimension, unsigned int state_dimension):
-       _S(meas_dimension,meas_dimension)
-     , _K(state_dimension,meas_dimension)
-     , _innov(meas_dimension)
-     , _zpred(meas_dimension)
-     , _pyMu(meas_dimension)
-     , _postHT(state_dimension,meas_dimension)
-     , _Hmeas(meas_dimension,state_dimension)
-     , _Covmeas(meas_dimension)
-     , _pySigma(meas_dimension)
-        {};
+        /// Covariance matrix
+        Matrix _S;
+        Matrix _postHT;
+        /// Kalman Gain
+        Matrix _K;
+        /// Measurement matrix
+        Matrix _Hmeas;
+        /// Innovation
+        ColumnVector _innov;
+        /// Measurement prediction
+        ColumnVector _zpred;
+        /// Covariance of the measurement
+        SymmetricMatrix _Covmeas;
+        /// Helper variable for mean
+        ColumnVector          _pyMu;
+        /// Helper variable for covariance
+        SymmetricMatrix       _pySigma;
+        /// Constructor
+        MeasUpdateVariables() {};
+        /// Constructor: allocates necessary memory for measurement update
+        /** 
+	    @param meas_dimension the dimension of the measurement
+	    @param state_dimension  the dimension of the state 
+        */
+        MeasUpdateVariables(unsigned int meas_dimension, unsigned int state_dimension):
+          _S(meas_dimension,meas_dimension)
+        , _K(state_dimension,meas_dimension)
+        , _innov(meas_dimension)
+        , _zpred(meas_dimension)
+        , _pyMu(meas_dimension)
+        , _postHT(state_dimension,meas_dimension)
+        , _Hmeas(meas_dimension,state_dimension)
+        , _Covmeas(meas_dimension)
+        , _pySigma(meas_dimension)
+           {};
   }; //struct
 
-  /// Class for data association filters in which the underlying filters are
-  //Kalman filters
+  /// Class for data association filters in which the underlying filters are Kalman filters
   /** This is a class that defines the data association filters
       These filters are all related to an underlying set of filters
   */
@@ -81,23 +97,32 @@ namespace BFL
     {
 
     protected:
-      // vector of pointers to posteriors of filters
+      /// vector of pointers to posteriors of filters
       std::vector< Gaussian* > _posts; 
-      // iterator for vector of pointers to posteriors of filters
+      /// iterator for vector of pointers to posteriors of filters
       std::vector<Gaussian* >::iterator _iter_posts; 
+      /// bool indicated of measurement probabilities were already calculated or not
       bool                  _measProbsCalculated; 
+      /// The measurement probabilities
       vector<ColumnVector>  _measMeasProbsCalculated;
+      /// Helper variable for Gaussian during measurement update 
       Gaussian              _py;
+      /// Helper variable for state during measurement update 
       ColumnVector          _x;
+      /// Helper variable for mean during measurement update 
       ColumnVector          _Mu_new;
+      /// Helper variable for covariance during measurement update 
       Matrix                _Sigma_temp;
+      /// Helper variable for covariance during measurement update 
       Matrix                _Sigma_temp2;
+      /// Helper variable for covariance during measurement update 
       Matrix                _Sigma_temp_par;
+      /// Helper variable for covariance during measurement update 
       SymmetricMatrix       _Sigma_new;
-
+      /// Map to help memory allocation during measurement update (prevents re-allocation of already availabe memory)
       std::map<unsigned int, MeasUpdateVariables> _mapMeasUpdateVariables;
+      /// Iterator for map to help memory allocation during measurement update (prevents re-allocation of already availabe memory)
       std::map<unsigned int, MeasUpdateVariables>::iterator _mapMeasUpdateVariables_it;
-
 
 
       /// Implementation of Update
@@ -114,15 +139,27 @@ namespace BFL
 				  const vector<ColumnVector>& z,
 				  const ColumnVector& s);
 
+      /// Function to allocate necessary memory during measurement update
+      /** @param meas_dimensions the vector with dimensions of the measurements to allocate    
+      */
       void AllocateMeasModel(const vector<unsigned int>& meas_dimensions);
+      /// Function to allocate necessary memory during measurement update
+      /** @param meas_dimensions the dimension of the measurements to allocate    
+      */
       void AllocateMeasModel(const unsigned int& meas_dimension);
 
     public:
       /// Constructor
       /** @pre you created the prior
-	  @param prior pointer to the prior Pdf
+	  @param filters pointer to the prior vector of filters
+	  @param gamma probability of a false positive (measurement is not caused by any of the objects)
+	  @param treshold threshold on the probability of a association from which the association is taken into account 
+	  @param maxFilters the maximum number of filters (for allocation)
+	  @param maxFeatures the maximum number of features (for allocation)
+	  @param maxAssociations the maximum number of associations (for allocation)
+	  @param maxCalls the maximum number of calls of getAssociations (for allocation)
       */
-      DataAssociationFilterGaussian (vector<Filter<ColumnVector,ColumnVector> *> filters, double gamma=0.0, double treshold=0.0);
+      DataAssociationFilterGaussian (vector<Filter<ColumnVector,ColumnVector> *> filters, double gamma = 0.0, double treshold= 0.0, int maxFilters =20, int maxFeatures=20, int maxAssociations=2000,int maxCalls=2000);
 
       /// copy constructor
       //DataAssociationFilterGaussian (const DataAssociationFilterGaussian & filters);
