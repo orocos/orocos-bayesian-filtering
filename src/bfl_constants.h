@@ -83,16 +83,18 @@ namespace BFL
 
 } // End namespace
 
-/*!\mainpage BFL
+/*!\mainpage BFL-DataAssociationBranch
  *
  * <img
  * src="http://www.orocos.org/files/images/particles.img_assist_custom.png"
  * alt="Pallet localization with a Sick Scanner and BFL particle filter" width="550">
  *
  * \section Introduction
- *
- * Please see <a href="http://www.orocos.org/bfl">this
- * page</a> for more information on this software, as well as
+ * The Data Association branch of BFL contains data association filters
+ * supporting the research on multitarget tracking and localization.
+
+ * Please see <a href="http://www.orocos.org/bfl">the main BFL
+ * page</a> for more information on BFL, as well as
  * download/installation/getting started instructions...
  *
  */
