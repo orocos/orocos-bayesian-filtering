@@ -16,8 +16,13 @@ namespace MatrixWrapper
         a = (*(MySymmetricMatrix*)this);
         int sz = a.rows();
           for (int k=1; k<sz+1; ++k) {
-           if (a(k,k) < std::numeric_limits<double>::epsilon()) {
+           // check if close to zero => put to zero
+           if (a(k,k)< std::numeric_limits<double>::epsilon() && a(k,k)> -std::numeric_limits<double>::epsilon()){
+                   a(k,k) = 0.0; //set to zero, matrix is semidefinite
+           }
+           if (a(k,k) < 0.0) {
                  std::cout<< "Warning: matrix of which cholesky decomposition is asked, is negative definite!: returning zero matrix" << std::endl;
+                 std::cout<< "a(" << k << "," << k << ")=" << a(k,k)  << std::endl;
                  a = 0.0; return false;//matrix is negative definite
            }
            else  a(k,k)=sqrt(a(k,k));
