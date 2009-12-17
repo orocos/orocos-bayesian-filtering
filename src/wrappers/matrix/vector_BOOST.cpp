@@ -87,7 +87,7 @@ double& MyColumnVector::operator()(unsigned int i)
   return op1(i-1);
 }
 
-const double MyColumnVector::operator()(unsigned int i) const
+double MyColumnVector::operator()(unsigned int i) const
 {
   //std::cout << "(BOOSTVECTOR) operator() called" << std::endl;
   const BoostColumnVector op1 = (*this);
@@ -95,7 +95,7 @@ const double MyColumnVector::operator()(unsigned int i) const
 }
 
 
-const bool MyColumnVector::operator==(const MyColumnVector& a) const
+bool MyColumnVector::operator==(const MyColumnVector& a) const
 {
   if (this->rows() != a.rows()) return false;
   return(norm_inf((BoostColumnVector)(*this)-(BoostColumnVector)a) == 0);
@@ -285,14 +285,14 @@ double& MyRowVector::operator()(unsigned int i)
   return op1(i-1);
 }
 
-const double MyRowVector::operator()(unsigned int i) const
+double MyRowVector::operator()(unsigned int i) const
 {
   //std::cout << "(BOOSTVECTOR) operator() called" << std::endl;
   BoostRowVector op1 = (*this);
   return op1(i-1);
 }
 
-const bool MyRowVector::operator==(const MyRowVector& a) const
+bool MyRowVector::operator==(const MyRowVector& a) const
 {
   if (this->columns() != a.columns()) return false;
   return(norm_inf((BoostRowVector)(*this)-(BoostRowVector)a) == 0);

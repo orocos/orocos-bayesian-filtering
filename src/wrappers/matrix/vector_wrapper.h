@@ -60,13 +60,13 @@ public:
   virtual MyColumnVector vectorAdd(const MyColumnVector& v2) const = 0;
 
   /// element indexing
-  virtual const double operator()(unsigned int i) const = 0;
+  virtual double operator()(unsigned int i) const = 0;
 
   /// element indexing
   virtual double& operator()(unsigned int i) = 0;
 
   /// element indexing STARTING FROM 0
-  virtual const double operator[](unsigned int i) const
+  virtual double operator[](unsigned int i) const
     { return (*this)(i+1);}
 
   /// element indexing STARTING FROM 0
@@ -74,7 +74,7 @@ public:
     { return (*this)(i+1);}
 
   /// Operator ==
-  virtual const bool operator==(const MyColumnVector& a) const = 0;
+  virtual bool operator==(const MyColumnVector& a) const = 0;
 
   /// operator =
   virtual MyColumnVector& operator =(const MyColumnVector& a) = 0;
@@ -160,13 +160,13 @@ public:
   virtual MyRowVector vectorAdd(const MyRowVector& v2) const = 0;
 
   /// element indexing
-  virtual const double operator()(unsigned int) const = 0;
+  virtual double operator()(unsigned int) const = 0;
 
   /// element indexing
   virtual double& operator()(unsigned int) = 0;
 
   /// Operator ==
-  virtual const bool operator==(const MyRowVector& a) const = 0;
+  virtual bool operator==(const MyRowVector& a) const = 0;
 
   /// operator =
   virtual MyRowVector& operator =(const MyRowVector& a) = 0;

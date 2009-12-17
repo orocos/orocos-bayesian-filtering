@@ -56,10 +56,10 @@ public:
   virtual double& operator()(unsigned int,unsigned int) = 0;
 
   /// Operator ()
-  virtual const double operator()(unsigned int,unsigned int) const = 0;
+  virtual double operator()(unsigned int,unsigned int) const = 0;
 
   /// Operator ==
-  virtual const bool operator==(const MyMatrix& a) const = 0;
+  virtual bool operator==(const MyMatrix& a) const = 0;
 
 
   /// Set all elements of the Matrix equal to a
@@ -177,10 +177,10 @@ public:
   virtual double& operator()(unsigned int,unsigned int) = 0;
 
   /// Operator ()
-  virtual const double operator()(unsigned int,unsigned int) const = 0;
+  virtual double operator()(unsigned int,unsigned int) const = 0;
 
   /// Operator ==
-  virtual const bool operator==(const MySymmetricMatrix& a) const = 0;
+  virtual bool operator==(const MySymmetricMatrix& a) const = 0;
 
   /// Set all elements of the Matrix equal to a
   virtual MySymmetricMatrix& operator =(double a) = 0;
