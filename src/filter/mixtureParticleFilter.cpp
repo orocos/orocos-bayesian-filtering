@@ -151,6 +151,16 @@ MixtureParticleFilter<SV,MV>::MixtureParticleFilter(const MixtureParticleFilter<
 }
 
 template <typename SV, typename MV> void
+MixtureParticleFilter<SV,MV>::Reset(Mixture<SV> * prior)
+{
+    this->_prior = prior;
+    delete this->_post;
+    this->_post = prior->Clone();
+    this->_newMixtureWeights.resize(dynamic_cast<Mixture<SV> *>(this->_post)->NumComponentsGet());
+    this->_sumWeights.resize(dynamic_cast<Mixture<SV> *>(this->_post)->NumComponentsGet());
+}
+
+template <typename SV, typename MV> void
 MixtureParticleFilter<SV,MV>::ProposalSet(ConditionalPdf<SV,SV> * const cpdf)
 {
   _proposal = cpdf;
@@ -426,7 +436,7 @@ MixtureParticleFilter<SV,MV>::UpdateInternal(SystemModel<StateVar>* const sysmod
 
   // Mixture Computation: recompute mixture representation to take into account
   // possibly varying number of modes.
-      result = result && this->MaintainMixture();
+  result = result && this->MaintainMixture();
 
   return result;
 }

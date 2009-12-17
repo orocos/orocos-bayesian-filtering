@@ -352,6 +352,9 @@ namespace BFL
        */
       MixtureParticleFilter(const MixtureParticleFilter<StateVar,MeasVar> & filt);
 
+      /// Reset Filter
+      virtual void Reset(Mixture<StateVar> * prior);
+
       /// Set the proposal density
       /** @param cpdf the new proposal density.  The order of the
 	  conditional arguments is fixed and should be: x (state), u
