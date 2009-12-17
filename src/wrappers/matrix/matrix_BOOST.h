@@ -66,10 +66,10 @@ class Matrix : public BoostMatrix, public Matrix_Wrapper
   virtual unsigned int rows() const;
   virtual unsigned int columns() const;
   virtual double& operator()(unsigned int,unsigned int);
-  virtual const double operator()(unsigned int,unsigned int) const;
+  virtual double operator()(unsigned int,unsigned int) const;
   virtual RowVector operator[](unsigned int)const;
 
-  virtual const bool operator==(const MyMatrix& a) const;
+  virtual bool operator==(const MyMatrix& a) const;
 
   virtual MyMatrix& operator =(double a);
 
@@ -129,9 +129,9 @@ class SymmetricMatrix : public BoostSymmetricMatrix, public SymmetricMatrix_Wrap
   virtual double determinant() const;
 
   virtual double& operator()(unsigned int,unsigned int);
-  virtual const double operator()(unsigned int,unsigned int) const;
+  virtual double operator()(unsigned int,unsigned int) const;
   virtual RowVector operator[](unsigned int)const;
-  virtual const bool operator==(const MySymmetricMatrix& a) const;
+  virtual bool operator==(const MySymmetricMatrix& a) const;
 
   virtual MySymmetricMatrix& operator=(double a);
 

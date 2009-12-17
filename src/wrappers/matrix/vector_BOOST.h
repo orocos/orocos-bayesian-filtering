@@ -83,7 +83,7 @@ public:
   virtual MyColumnVector operator/ (double b) const;
 
   /// element indexing STARTING FROM 0
-  virtual const double operator[](unsigned int i) const
+  virtual double operator[](unsigned int i) const
   { 
   //std::cout << "(BOOSTVECTOR) operator[] called " << i << std::endl;
    // if (i==0)
@@ -101,8 +101,8 @@ public:
      return (*this)(i+1);
   }
 
-  virtual const double operator()(unsigned int) const;
-  virtual const bool operator==(const MyColumnVector& a) const;
+  virtual double operator()(unsigned int) const;
+  virtual bool operator==(const MyColumnVector& a) const;
   virtual double& operator()(unsigned int);
   virtual MyMatrix operator* (const MyRowVector &a) const;
   virtual MyColumnVector sub(int j_start , int j_end) const;
@@ -152,8 +152,8 @@ class RowVector : public BoostRowVector, public RowVector_Wrapper
   virtual MyRowVector operator* (double b) const;
   virtual MyRowVector operator/ (double b) const;
 
-  virtual const double operator()(unsigned int) const;
-  virtual const bool operator==(const MyRowVector& a) const;
+  virtual double operator()(unsigned int) const;
+  virtual bool operator==(const MyRowVector& a) const;
   virtual double& operator()(unsigned int);
   virtual MyRowVector sub(int j_start , int j_end) const;
   virtual MyColumnVector transpose() const;

@@ -172,13 +172,13 @@ double& MyMatrix::operator()(unsigned int a, unsigned int b)
   return op1(a-1,b-1);
 }
 
-const double MyMatrix::operator()(unsigned int a, unsigned int b) const
+double MyMatrix::operator()(unsigned int a, unsigned int b) const
 {
   BoostMatrix  op1(*this);
   return op1(a-1,b-1);
 }
 
-const bool MyMatrix::operator==(const MyMatrix& a) const
+bool MyMatrix::operator==(const MyMatrix& a) const
 {
   if (this->rows() != a.rows()) return false;
   if (this->columns() != a.columns()) return false;
@@ -619,13 +619,13 @@ double& MySymmetricMatrix::operator()(unsigned int a, unsigned int b)
   return op1(a-1,b-1);
 }
 
-const double MySymmetricMatrix::operator()(unsigned int a, unsigned int b) const
+double MySymmetricMatrix::operator()(unsigned int a, unsigned int b) const
 {
   BoostSymmetricMatrix op1(*this);
   return op1(a-1,b-1);
 }
 
-const bool MySymmetricMatrix::operator==(const MySymmetricMatrix& a) const
+bool MySymmetricMatrix::operator==(const MySymmetricMatrix& a) const
 {
   if (this->rows() != a.rows()) return false;
   if (this->columns() != a.columns()) return false;
