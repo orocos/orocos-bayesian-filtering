@@ -20,7 +20,7 @@ IF( OROCOS_PLUGIN )
   INSTALL_FILES( /include/bfl/bindings/rtt FILES ${HPPS})
   TARGET_LINK_LIBRARIES(orocos-bfl_toolkit-${OROCOS_TARGET} orocos-bfl orocos-rtt-${OROCOS_TARGET})
 
-  CONFIGURE_FILE( bfl_toolkit.pc.in src/bindings/rtt/orocos-bfl_toolkit-${OROCOS_TARGET}.pc @ONLY)
+  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/bfl_toolkit.pc.in ${CMAKE_CURRENT_BINARY_DIR}/orocos bfl_toolkit-${OROCOS_TARGET}.pc @ONLY)
   INSTALL_FILES( /lib/pkgconfig FILES orocos-bfl_toolkit-${OROCOS_TARGET}.pc)
 
   INCLUDE_DIRECTORIES( $ENV{GLOBAL_INCLUDE_DIRS} )
@@ -48,7 +48,7 @@ IF( OROCOS_PLUGIN )
   INSTALL_FILES( /include/bfl/bindings/rtt FILES ${HPPS})
   TARGET_LINK_LIBRARIES(orocos-bfl_toolkit-${OROCOS_TARGET} orocos-bfl orocos-rtt-${OROCOS_TARGET})
 
-  CONFIGURE_FILE( bfl_toolkit.pc.in src/bindings/rtt/orocos-bfl_toolkit-${OROCOS_TARGET}.pc @ONLY)
+  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/bfl_toolkit.pc.in ${CMAKE_CURRENT_BINARY_DIR}/orocos-bfl_toolkit-${OROCOS_TARGET}.pc @ONLY)
   INSTALL_FILES( /lib/pkgconfig FILES orocos-bfl_toolkit-${OROCOS_TARGET}.pc)
 
   INCLUDE_DIRECTORIES( $ENV{GLOBAL_INCLUDE_DIRS} )
