@@ -91,6 +91,7 @@ ExtendedKalmanFilter::MeasUpdate(MeasurementModel<ColumnVector,ColumnVector>* co
   // allocate measurement for z.rows() if needed
   AllocateMeasModelExt(z.rows());
   
+  _x = _post->ExpectedValueGet();
   (_mapMeasUpdateVariablesExt_it->second)._Z = ((AnalyticMeas*)measmodel)->PredictionGet(s,_x); 
   (_mapMeasUpdateVariablesExt_it->second)._H = ((AnalyticMeas*)measmodel)->df_dxGet(s,_x);
   (_mapMeasUpdateVariablesExt_it->second)._R = ((AnalyticMeas*)measmodel)->CovarianceGet(s,_x);
