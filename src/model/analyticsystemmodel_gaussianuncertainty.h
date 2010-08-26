@@ -55,13 +55,13 @@ namespace BFL
 	  model!  There should be a class between this one and system
 	  model tout court, not assuming gaussian uncertainty!
       */
-      MatrixWrapper::Matrix df_dxGet(const MatrixWrapper::ColumnVector& u, const MatrixWrapper::ColumnVector& x);
+      virtual MatrixWrapper::Matrix df_dxGet(const MatrixWrapper::ColumnVector& u, const MatrixWrapper::ColumnVector& x);
 
       /// Returns prediction of state
-      MatrixWrapper::ColumnVector PredictionGet(const MatrixWrapper::ColumnVector& u, const MatrixWrapper::ColumnVector& x);
+      virtual MatrixWrapper::ColumnVector PredictionGet(const MatrixWrapper::ColumnVector& u, const MatrixWrapper::ColumnVector& x);
 
       /// Covariance of system noise
-      MatrixWrapper::SymmetricMatrix CovarianceGet(const MatrixWrapper::ColumnVector& u, const MatrixWrapper::ColumnVector& x);
+      virtual MatrixWrapper::SymmetricMatrix CovarianceGet(const MatrixWrapper::ColumnVector& u, const MatrixWrapper::ColumnVector& x);
     };
 
 } // End namespace BFL
