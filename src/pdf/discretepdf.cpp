@@ -1,20 +1,20 @@
 // $Id$
 // Copyright (C) 2002 Klaas Gadeyne <first dot last at gmail dot com>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 #include "discretepdf.h"
 #include "../bfl_err.h"
 #include "../wrappers/rng/rng.h"
@@ -26,7 +26,7 @@ namespace BFL
 {
   using namespace std;
   using namespace MatrixWrapper;
-  
+
 
   DiscretePdf::DiscretePdf(unsigned int num_states): Pdf<int>(1)
         ,_num_states(num_states)
@@ -46,7 +46,7 @@ namespace BFL
 
   DiscretePdf::DiscretePdf(const DiscretePdf & my_dpdf):Pdf<int>(my_dpdf)
         ,_num_states(my_dpdf.NumStatesGet())
-  { 
+  {
     _Values_p = new vector<Probability>(this->NumStatesGet());
     (*_Values_p) = my_dpdf.ProbabilitiesGet();
     _CumPDF.insert(_CumPDF.begin(),NumStatesGet()+1,0.0);
@@ -64,25 +64,30 @@ namespace BFL
     // Release memory!
     delete _Values_p;
   }
-  
+
+  //Clone function
+  DiscretePdf* DiscretePdf::Clone() const
+  {
+      return new DiscretePdf(*this);
+  }
+
   unsigned int DiscretePdf::NumStatesGet()const
   {
     return _num_states;
   }
 
 
-  Probability DiscretePdf::ProbabilityGet(const unsigned int& state) const
+  Probability DiscretePdf::ProbabilityGet(const int& state) const
   {
     assert((int)state >= 0 && state < NumStatesGet());
-
     return (*_Values_p)[state];
   }
 
-  bool DiscretePdf::ProbabilitySet(unsigned int state, Probability a) 
+  bool DiscretePdf::ProbabilitySet(int state, Probability a)
   {
     assert((int)state >= 0 && state < NumStatesGet());
     assert(a<=1);
-    
+
     // renormalize other probabilities such that sum of probabilities will be
     // one after the probability of state is set to a
     // This should keep the probabilities normalized
@@ -122,7 +127,7 @@ namespace BFL
   bool
   DiscretePdf::SampleFrom (vector<Sample<int> >& list_samples,
 			   const unsigned int num_samples,
-			   int method, 
+			   int method,
 			   void * args) const
   {
     switch(method)
@@ -160,7 +165,7 @@ namespace BFL
 	  	index++; CumPDFit++;
 	        }
           int a = index - 1;
-	      sit->ValueSet(a); 
+	      sit->ValueSet(a);
 	      sit++;
 	      }
 	    return true;
@@ -193,7 +198,7 @@ namespace BFL
 	  return true;
 	}
       default:
-	cerr << "DiscretePdf::Samplefrom(int, void *): No such sampling method" 
+	cerr << "DiscretePdf::Samplefrom(int, void *): No such sampling method"
 	     << endl;
 	return false;
       }
@@ -201,10 +206,10 @@ namespace BFL
 
   bool DiscretePdf::NormalizeProbs()
   {
-    double SumOfProbs = 0.0; 
+    double SumOfProbs = 0.0;
     for ( unsigned int i = 0; i < NumStatesGet() ; i++){
         SumOfProbs += (*_Values_p)[i];
-    } 
+    }
     if (SumOfProbs > 0){
       for ( unsigned int i = 0; i < NumStatesGet() ; i++){
           (*_Values_p)[i] = (Probability)( (double) ( (*_Values_p)[i]) /SumOfProbs);
@@ -220,9 +225,9 @@ namespace BFL
   bool DiscretePdf::CumPDFUpdate()
   {
     // precondition: sum of probabilities should be 1
-    double CumSum=0.0; 
+    double CumSum=0.0;
     static vector<double>::iterator CumPDFit;
-    CumPDFit = _CumPDF.begin(); 
+    CumPDFit = _CumPDF.begin();
     *CumPDFit = 0.0;
 
     // Calculate the Cumulative PDF
@@ -240,7 +245,7 @@ namespace BFL
     _CumPDF[NumStatesGet()]=1;
 
     return true;
-  } 
+  }
 
   int DiscretePdf::MostProbableStateGet()
   {
@@ -255,7 +260,7 @@ namespace BFL
        }
     }
     return index_mostProbableState;
-  } 
+  }
 
-  
+
 } // End namespace

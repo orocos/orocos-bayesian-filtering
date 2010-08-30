@@ -26,7 +26,7 @@
  *   Foundation, Inc., 59 Temple Place,                                    *
  *   Suite 330, Boston, MA  02111-1307  USA                                *
  *                                                                         *
- ***************************************************************************/ 
+ ***************************************************************************/
 #ifndef __CONDITIONAL_PDF__
 #define __CONDITIONAL_PDF__
 
@@ -38,7 +38,7 @@ namespace BFL
 
   /// Abstract Class representing conditional Pdfs P(x | ...)
   /** This class inherits from Pdf Virtual public because of the multiple
-      inheritance that follows 
+      inheritance that follows
       Two templates are here to allow a mixture of discrete and continu
       variables in the Pdf!
       @bug All conditional arguments should be of the same type T for now!
@@ -51,7 +51,7 @@ namespace BFL
     public:
       /// Constructor
       /** @param dimension int representing the number of rows of the state
-	  vector 
+	  vector
 	  @param num_conditional_arguments the number of arguments behind
 	  the |
       */
@@ -61,7 +61,10 @@ namespace BFL
 
       /// Destructor
       virtual ~ConditionalPdf();
-  
+
+      ///Clone function
+      virtual ConditionalPdf<Var,CondArg>* Clone() const;
+
       ///Get the Number of conditional arguments
       /**@return the number of conditional arguments
        */
@@ -69,7 +72,7 @@ namespace BFL
 
       /// Set the Number of conditional arguments
       /** @param numconditionalarguments the number of
-	  conditionalarguments 
+	  conditionalarguments
 	  @bug will probably give rise to memory allocation problems
 	  if you herit from this class and do not redefine this method.
       */
@@ -97,7 +100,7 @@ namespace BFL
       /** @param n_argument which one of the conditional arguments
 
 	  @param argument value of the n-th argument
-      */     
+      */
       virtual void ConditionalArgumentSet(unsigned int n_argument, const CondArg& argument);
 
     private:
@@ -109,27 +112,33 @@ namespace BFL
 
 
   // constructor
-  template<typename Var, typename CondArg> 
-    ConditionalPdf<Var,CondArg>::ConditionalPdf(int dim, unsigned int num_args) 
+  template<typename Var, typename CondArg>
+    ConditionalPdf<Var,CondArg>::ConditionalPdf(int dim, unsigned int num_args)
     : Pdf<Var>(dim)
     , _NumConditionalArguments(num_args)
     , _ConditionalArguments(num_args)
     {}
 
   // destructor
-  template<typename Var, typename CondArg> 
+  template<typename Var, typename CondArg>
     ConditionalPdf<Var,CondArg>::~ConditionalPdf()
     {}
 
+  //Clone function
+  template<typename Var, typename CondArg>
+    ConditionalPdf<Var,CondArg>* ConditionalPdf<Var,CondArg>::Clone() const
+  {
+      return new ConditionalPdf(*this);
+  }
 
-  template<typename Var, typename CondArg> inline unsigned int 
+  template<typename Var, typename CondArg> inline unsigned int
     ConditionalPdf<Var,CondArg>::NumConditionalArgumentsGet() const
     {
       return _NumConditionalArguments;
     }
 
-  template<typename Var, typename CondArg> inline void 
-    ConditionalPdf<Var,CondArg>::NumConditionalArgumentsSet(unsigned int numconditionalarguments) 
+  template<typename Var, typename CondArg> inline void
+    ConditionalPdf<Var,CondArg>::NumConditionalArgumentsSet(unsigned int numconditionalarguments)
     {
       if (numconditionalarguments != _NumConditionalArguments)
 	{
@@ -145,13 +154,13 @@ namespace BFL
       return _ConditionalArguments;
     }
 
-  template<typename Var, typename CondArg> void 
+  template<typename Var, typename CondArg> void
     ConditionalPdf<Var,CondArg>::ConditionalArgumentsSet(std::vector<CondArg> condargs)
     {
       assert (condargs.size() == _NumConditionalArguments);
       this->_ConditionalArguments = condargs;
     }
-  
+
   template<typename Var, typename CondArg> const CondArg&
     ConditionalPdf<Var,CondArg>::ConditionalArgumentGet(unsigned int n_argument) const
     {
@@ -159,9 +168,9 @@ namespace BFL
       // index of conditional arguments of ConditionalPdf out of range
       return _ConditionalArguments[n_argument];
     }
-  
-  template<typename Var, typename CondArg> void 
-    ConditionalPdf<Var,CondArg>::ConditionalArgumentSet(unsigned int n_argument, 
+
+  template<typename Var, typename CondArg> void
+    ConditionalPdf<Var,CondArg>::ConditionalArgumentSet(unsigned int n_argument,
 							const CondArg& argument)
     {
       assert ( n_argument < _NumConditionalArguments );

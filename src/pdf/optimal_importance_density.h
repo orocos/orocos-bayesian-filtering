@@ -1,20 +1,20 @@
 // $Id$
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #ifndef __OPTIMAL_IMPORTANCE_DENSITY__
 #define __OPTIMAL_IMPORTANCE_DENSITY__
@@ -34,7 +34,7 @@ namespace BFL
      AnalyticConditionalGaussian Class and a measurement equation that uses a
      LinearAnalyticConditionalGaussian class
   */
-  class OptimalImportanceDensity : public AnalyticConditionalGaussian 
+  class OptimalImportanceDensity : public AnalyticConditionalGaussian
     {
     public:
       /// Constructor
@@ -45,7 +45,7 @@ namespace BFL
 			       LinearAnalyticConditionalGaussian * MeasPdf);
 
       // Default copy constructor
-  
+
       /// Destructor
       virtual ~OptimalImportanceDensity();
 
@@ -57,11 +57,11 @@ namespace BFL
     private:
       AnalyticConditionalGaussian * _SystemPdf;
       LinearAnalyticConditionalGaussian * _MeasPdf;
-      
+
     };
 
 } // End namespace BFL
 
 #include "optimal_importance_density.cpp"
- 
+
 #endif //  __OPTIMAL_IMPORTANCE_DENSITY__

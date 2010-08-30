@@ -1,21 +1,21 @@
 // $Id$
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
 // Copyright (C) 2008 Tinne De Laet <first dot last at mech dot kuleuven dot be>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #include "linearanalyticconditionalgaussian.h"
 #include "../wrappers/rng/rng.h" // Wrapper around several rng
@@ -24,9 +24,9 @@
 namespace BFL
 {
   using namespace MatrixWrapper;
-  
 
-  LinearAnalyticConditionalGaussian::LinearAnalyticConditionalGaussian(const vector<Matrix> & ratio, 
+
+  LinearAnalyticConditionalGaussian::LinearAnalyticConditionalGaussian(const vector<Matrix> & ratio,
 						       const Gaussian& additiveNoise)
     : AnalyticConditionalGaussianAdditiveNoise(additiveNoise,ratio.size())
     , _ratio(ratio)
@@ -44,7 +44,7 @@ namespace BFL
   }
 
   // Only one conditional argument
-  LinearAnalyticConditionalGaussian::LinearAnalyticConditionalGaussian(const Matrix& a, 
+  LinearAnalyticConditionalGaussian::LinearAnalyticConditionalGaussian(const Matrix& a,
 						       const Gaussian& additiveNoise)
     : AnalyticConditionalGaussianAdditiveNoise(additiveNoise,1)
     , _mean_temp(DimensionGet())
@@ -59,9 +59,15 @@ namespace BFL
 
   LinearAnalyticConditionalGaussian::~LinearAnalyticConditionalGaussian(){}
 
+  //Clone function
+  LinearAnalyticConditionalGaussian* LinearAnalyticConditionalGaussian::Clone() const
+  {     
+      return new LinearAnalyticConditionalGaussian(*this);
+  }
+
   ColumnVector
   LinearAnalyticConditionalGaussian::ExpectedValueGet() const
-  { 
+  {
     _mean_temp = 0.0;
     for (unsigned int i=0; i < NumConditionalArgumentsGet() ; i++)
       {
@@ -79,14 +85,14 @@ namespace BFL
     return _ratio[i];
   }
 
-  void 
+  void
   LinearAnalyticConditionalGaussian::NumConditionalArgumentsSet(unsigned int numconditionalarguments)
   {
     ConditionalPdf<ColumnVector,ColumnVector>::NumConditionalArgumentsSet(numconditionalarguments);
     _ratio.resize(numconditionalarguments);
   }
-  
-  void 
+
+  void
   LinearAnalyticConditionalGaussian::MatrixSet(unsigned int i, const Matrix & m)
   {
     assert(i < NumConditionalArgumentsGet());

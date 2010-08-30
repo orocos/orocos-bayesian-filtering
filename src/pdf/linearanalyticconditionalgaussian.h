@@ -2,21 +2,21 @@
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
 //                    Wim Meeussen  <wim dot meeussen at mech dot kuleuven dot be>
 //                    Tinne De Laet  <tinne dot delaet at mech dot kuleuven dot be>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #ifndef __LINEAR_SYSTEM_CONDITIONAL_GAUSSIAN__
 #define __LINEAR_SYSTEM_CONDITIONAL_GAUSSIAN__
@@ -57,9 +57,12 @@ namespace BFL
       LinearAnalyticConditionalGaussian(const MatrixWrapper::Matrix& a, const Gaussian& additiveNoise);
 
       // Default copy constructor will do
-  
+
       /// Destructor
       virtual ~LinearAnalyticConditionalGaussian();
+
+      ///Clone function
+      virtual LinearAnalyticConditionalGaussian* Clone() const;
 
       // implement virtual functions
       virtual MatrixWrapper::ColumnVector    ExpectedValueGet() const;
@@ -72,14 +75,14 @@ namespace BFL
 	       certainly result in a segfault.  Anyway, why would you
 	       need this?
       */
-      virtual void NumConditionalArgumentsSet(unsigned int numconditionalarguments);  
+      virtual void NumConditionalArgumentsSet(unsigned int numconditionalarguments);
 
       /// Set the i-th Matrix for calculation of \f$ \mu \f$
       /** Set the i-th Matrix of the \f$ \mu \f$ calculation in the
 	  conditonal gaussian class
 	  @pre i < Numconditionalarg
 	  @param i index determining which conditional Arg. will be
-	  multiplied with the given matrix 
+	  multiplied with the given matrix
 	  @param m Matrix for calculation of \f$ \mu \f$:
 	  \f$ \mu = ... m . ConditionalArguments[i] + ... \f$
       */
@@ -94,14 +97,14 @@ namespace BFL
       const MatrixWrapper::Matrix& MatrixGet(unsigned int i) const;
 
     private:
-   
+
       vector<MatrixWrapper::Matrix> _ratio;
-      // variables to avoid allocation during expectedValueGet call      
+      // variables to avoid allocation during expectedValueGet call
       mutable MatrixWrapper::ColumnVector _mean_temp;
       mutable MatrixWrapper::ColumnVector _arg;
 
     };
 
 } // End namespace BFL
- 
+
 #endif //  __LINEAR_SYSTEM_CONDITIONAL_GAUSSIAN__

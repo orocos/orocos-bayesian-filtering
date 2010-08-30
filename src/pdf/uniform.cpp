@@ -1,32 +1,32 @@
 // $Id: uniform.cpp tdelaet$
 // Copyright (C) 2007 Tinne De Laet <first dot last at gmail dot com>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 #include "uniform.h"
 
 #include "../wrappers/rng/rng.h" // Wrapper around several rng libraries
 
-#include <cmath> 
+#include <cmath>
 #include <cassert>
 
 namespace BFL
 {
   using namespace MatrixWrapper;
 
-  Uniform::Uniform (const ColumnVector& center, const ColumnVector& width) 
+  Uniform::Uniform (const ColumnVector& center, const ColumnVector& width)
     : Pdf<ColumnVector> ( center.rows() )
     , _samples(DimensionGet())
   {
@@ -58,13 +58,19 @@ namespace BFL
     return os;
   }
 
+  //Clone function
+  Uniform* Uniform::Clone() const
+  {
+      return new Uniform(*this);
+  }
+
   Probability Uniform::ProbabilityGet(const ColumnVector& input) const
   {
     // test if input is located in area of Uniform distribution
-    for (int i=1; i<input.rows()+1; i++) 
+    for (int i=1; i<input.rows()+1; i++)
     {
         if ( ( input(i)>_Higher(i) ) || ( input(i) < _Lower(i) ) ) return 0;
-    }    
+    }
     return _Height;
   }
 
@@ -76,11 +82,11 @@ namespace BFL
     vector<Sample<ColumnVector> >::iterator rit = list_samples.begin();
     switch(method)
       {
-         case DEFAULT: 
+         case DEFAULT:
          {
         	  while (rit != list_samples.end())
         	   {
-                 for (unsigned int j=1; j < DimensionGet()+1; j++) _samples(j) = runif(_Lower(j) , _Higher(j) ); 
+                 for (unsigned int j=1; j < DimensionGet()+1; j++) _samples(j) = runif(_Lower(j) , _Higher(j) );
         	     rit->ValueSet(_samples);
         	     rit++;
         	   }
@@ -96,9 +102,9 @@ namespace BFL
   {
     switch(method)
     {
-      case DEFAULT: 
+      case DEFAULT:
       {
-         for (unsigned int j=1; j < DimensionGet()+1; j++) _samples(j) = runif(_Lower(j) , _Higher(j) ); 
+         for (unsigned int j=1; j < DimensionGet()+1; j++) _samples(j) = runif(_Lower(j) , _Higher(j) );
 	     one_sample.ValueSet(_samples);
 	     return true;
       }
@@ -108,8 +114,8 @@ namespace BFL
   }
 
   ColumnVector
-  Uniform::CenterGet (  ) const 
-  { 
+  Uniform::CenterGet (  ) const
+  {
     return (_Higher+_Lower)/2.0;
   }
 
@@ -119,9 +125,9 @@ namespace BFL
     return (_Higher-_Lower);
   }
 
-  void 
+  void
   Uniform::UniformSet (const ColumnVector& center,const ColumnVector& width)
-  { 
+  {
     assert(center.rows() == width.rows());
     _Lower = center - width/2.0;
     _Higher = center + width/2.0;

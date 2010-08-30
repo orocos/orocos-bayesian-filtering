@@ -2,21 +2,21 @@
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
 //                    Wim Meeussen  <wim dot meeussen at mech dot kuleuven dot be>
 //                    Tinne De Laet  <tinne dot delaet at mech dot kuleuven dot be>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 #include "kalmanfilter.h"
 #include <cmath>
 
@@ -41,7 +41,7 @@ namespace BFL
     delete _post;
   }
 
-  void 
+  void
   KalmanFilter::AllocateMeasModel(const vector<unsigned int>& meas_dimensions)
   {
     unsigned int meas_dimension;
@@ -58,7 +58,7 @@ namespace BFL
          }
      }
   }
- 
+
   void
   KalmanFilter::AllocateMeasModel(const unsigned int& meas_dimension)
   {
@@ -72,35 +72,35 @@ namespace BFL
       }
   }
 
-  void 
+  void
   KalmanFilter::CalculateSysUpdate(const ColumnVector& J, const Matrix& F, const SymmetricMatrix& Q)
   {
     _Sigma_temp = F * ( (Matrix)_post->CovarianceGet() * F.transpose());
     _Sigma_temp += (Matrix)Q;
     _Sigma_temp.convertToSymmetricMatrix(_Sigma_new);
- 
+
     // set new state gaussian
-    PostMuSet   ( J );    
+    PostMuSet   ( J );
     PostSigmaSet( _Sigma_new );
   }
 
-  void 
+  void
   KalmanFilter::CalculateMeasUpdate(const ColumnVector& z, const ColumnVector& Z, const Matrix& H, const SymmetricMatrix& R)
   {
     // allocate measurement for z.rows() if needed
     AllocateMeasModel(z.rows());
-  
+
     (_mapMeasUpdateVariables_it->second)._postHT =   (Matrix)(_post->CovarianceGet()) * H.transpose() ;
-    (_mapMeasUpdateVariables_it->second)._S =  H * (_mapMeasUpdateVariables_it->second)._postHT;
-    (_mapMeasUpdateVariables_it->second)._S += (Matrix)R;
+    (_mapMeasUpdateVariables_it->second)._S_Matrix =  H * (_mapMeasUpdateVariables_it->second)._postHT;
+    (_mapMeasUpdateVariables_it->second)._S_Matrix += (Matrix)R;
 
     // _K = covariance * H' * S(-1)
-    (_mapMeasUpdateVariables_it->second)._K =  (_mapMeasUpdateVariables_it->second)._postHT * ( (_mapMeasUpdateVariables_it->second)._S.inverse());
-    
+    (_mapMeasUpdateVariables_it->second)._K =  (_mapMeasUpdateVariables_it->second)._postHT * ( (_mapMeasUpdateVariables_it->second)._S_Matrix.inverse());
+
     // calcutate new state gaussian
     // Mu = expectedValue + K*(z-Z)
     (_mapMeasUpdateVariables_it->second)._innov = z-Z;
-     _Mu_new  =  (_mapMeasUpdateVariables_it->second)._K * (_mapMeasUpdateVariables_it->second)._innov  ;  
+     _Mu_new  =  (_mapMeasUpdateVariables_it->second)._K * (_mapMeasUpdateVariables_it->second)._innov  ;
      _Mu_new  +=  _post->ExpectedValueGet() ;
     // Sigma = post - K*H*post
     _Sigma_temp = (_post->CovarianceGet());
@@ -108,11 +108,11 @@ namespace BFL
     _Sigma_temp -=  _Sigma_temp_par * (Matrix)(_post->CovarianceGet());
     // convert to symmetric matrix
     _Sigma_temp.convertToSymmetricMatrix(_Sigma_new);
-  
+
     // set new state gaussian
     PostMuSet   ( _Mu_new );
     PostSigmaSet( _Sigma_new );
-  
+
     /*
       cout << "H:\n" << H << endl;
       cout << "R:\n" << R << endl;
@@ -126,7 +126,7 @@ namespace BFL
     */
   }
 
-  bool 
+  bool
   KalmanFilter::UpdateInternal(SystemModel<ColumnVector>* const sysmodel,
 			       const ColumnVector& u,
 			       MeasurementModel<ColumnVector,ColumnVector>* const measmodel,
@@ -161,5 +161,5 @@ namespace BFL
   {
     return (Gaussian*)Filter<ColumnVector,ColumnVector>::PostGet();
   }
-  
+
 }

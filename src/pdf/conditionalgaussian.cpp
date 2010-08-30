@@ -1,21 +1,21 @@
 // $Id$
 // Copyright (C) 2003 Klaas Gadeyne <first dot last at gmail dot com>
 // Copyright (C) 2008 Tinne De Laet <first dot last at mech dot kuleuven dot be>
-//  
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2.1 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU Lesser General Public License for more details.
-//  
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//  
+//
 
 #include "conditionalgaussian.h"
 #include <cmath>
@@ -25,7 +25,7 @@ namespace BFL
 {
   using namespace MatrixWrapper;
 
-  ConditionalGaussian::ConditionalGaussian(int dim, 
+  ConditionalGaussian::ConditionalGaussian(int dim,
 					   int num_conditional_arguments)
     : ConditionalPdf<ColumnVector,ColumnVector>(dim, num_conditional_arguments)
     , _diff(dim)
@@ -38,13 +38,19 @@ namespace BFL
   /// Destructor
   ConditionalGaussian::~ConditionalGaussian(){}
 
-  Probability 
+  //Clone function
+  ConditionalGaussian* ConditionalGaussian::Clone() const
+  {
+      return new ConditionalGaussian(*this);
+  }
+
+  Probability
   ConditionalGaussian::ProbabilityGet(const ColumnVector& input) const
   {
     // Update Mu
     _Mu = ExpectedValueGet();
     _diff = input - _Mu;
-    
+
     Probability temp = _diff.transpose() * (ColumnVector)(CovarianceGet().inverse() * _diff);
     Probability result = exp(-0.5 * temp) / sqrt(pow(M_PI*2,(double)DimensionGet()) * CovarianceGet().determinant());
     return result;
@@ -64,10 +70,10 @@ namespace BFL
     // Then we can use inversion sampling (Box-Muller method)
     // So for 1D, we use Box-Muller, else we use the cholesky method
     // These are both methods that don't require any arguments
-  
+
     // Update mu
     _Mu = ExpectedValueGet();
-  
+
     switch(method)
       {
       case DEFAULT: // Cholesky, see althere (bad implementation)
@@ -107,4 +113,4 @@ namespace BFL
       }
   }
 
-} // End namespace 
+} // End namespace
