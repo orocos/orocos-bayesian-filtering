@@ -9,6 +9,6 @@
 <url></url>
 
 <depend package="rtt" />
-<depend package="bfl_0.7" />
+<depend package="orocos_bfl" />
 </package>
 
