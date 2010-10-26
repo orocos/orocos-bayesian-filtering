@@ -1,0 +1,14 @@
+<package>
+<description brief="The Bayesian Filtering Library RTT typekit">
+
+
+</description>
+<author> Tinne De Laet</author>
+<license>LGPL</license>
+<review status="" notes=""/>
+<url></url>
+
+<depend package="rtt" />
+<depend package="bfl_0.7" />
+</package>
+
