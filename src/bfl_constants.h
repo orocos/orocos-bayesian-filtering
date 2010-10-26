@@ -69,6 +69,7 @@ namespace BFL
     friend istream & operator>> (istream & stream,Probability& prob);
 
     double getValue() const { return _prob;} ;
+    double& getValue() { return _prob;} ;
 
       operator double(){return _prob;};
       Probability operator *(Probability p)

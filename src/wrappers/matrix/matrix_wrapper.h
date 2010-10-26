@@ -47,6 +47,12 @@ public:
   virtual ~Matrix_Wrapper() {};
 
   /// Ask Number of Rows
+  virtual unsigned int size() const = 0;
+
+  /// Ask Number of Rows
+  virtual unsigned int capacity() const = 0;
+
+  /// Ask Number of Rows
   virtual unsigned int rows() const = 0;
 
   /// Ask Number of Columns
@@ -121,7 +127,6 @@ public:
   /// Get column from matrix
   virtual MyColumnVector columnCopy(unsigned int c) const = 0;
 
-
   /// resize matrix
   virtual void resize(unsigned int i, unsigned int j,
 		      bool copy=true, bool initialize=true) = 0;
@@ -166,6 +171,13 @@ public:
 
   /// Destructor
   virtual ~SymmetricMatrix_Wrapper() {};
+
+  /// Ask Number of Rows
+  virtual unsigned int size() const = 0;
+
+  /// Ask Number of Rows
+  virtual unsigned int capacity() const = 0;
+
 
   /// Ask Number of Rows
   virtual unsigned int rows() const = 0;

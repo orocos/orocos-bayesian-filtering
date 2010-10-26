@@ -50,11 +50,17 @@ public:
   /// resize
   virtual void resize(int num_rows) = 0;
 
+  /// assign
+  virtual void assign(int newsize,double value) = 0;
+
   /// Ask number of rows
   virtual unsigned int rows() const = 0;
 
   /// Ask numbers of columns (=1)
   virtual unsigned int columns() const = 0;
+
+  /// capacity
+  virtual unsigned int capacity() const = 0;
 
   /// join two vectors
   virtual MyColumnVector vectorAdd(const MyColumnVector& v2) const = 0;
@@ -122,8 +128,6 @@ public:
   /// Operators
   virtual MyColumnVector operator/ (double b) const = 0;
 
-
-
   /// Operators
   virtual MyMatrix operator* (const MyRowVector &a) const = 0;
 
@@ -150,11 +154,17 @@ public:
   /// resize
   virtual void resize(int num_cols) = 0;
 
+  /// assign
+  virtual void assign(int newsize,double value) = 0;
+
   /// Ask number of rows
   virtual unsigned int rows() const = 0;
 
   /// Ask numbers of columns (=1)
   virtual unsigned int columns() const = 0;
+
+  /// Ask numbers of capacity 
+  virtual unsigned int capacity() const = 0;
 
   /// join two vectors
   virtual MyRowVector vectorAdd(const MyRowVector& v2) const = 0;

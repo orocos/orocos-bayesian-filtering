@@ -77,9 +77,19 @@ void MyColumnVector::resize(int num_rows)
   op1.resize(num_rows);
 }
 
+// Assign
+void MyColumnVector::assign(int num_rows, double value)
+{
+  BoostColumnVector & op1 = (*this);
+  op1.resize(num_rows);
+  for (unsigned int i=0; i<num_rows; i++)
+    op1(i+1) = value;
+}
+
 // Number of Rows / Cols
 unsigned int MyColumnVector::rows() const { return this->size();}
 unsigned int MyColumnVector::columns() const { return 1;}
+unsigned int MyColumnVector::capacity() const { return this->size();}
 
 MyColumnVector
 MyColumnVector::vectorAdd(const MyColumnVector& v2) const
@@ -278,6 +288,7 @@ MyRowVector::RowVector(const ltiRowVector & a) : ltiRowVector(a){}
 // Number of Rows / Cols
 unsigned int MyRowVector::rows() const { return 1;}
 unsigned int MyRowVector::columns() const { return this->size();}
+unsigned int MyRowVector::capacity() const { return this->size();}
 
 const bool MyRowVector::operator==(const MyRowVector& a) const
 {
@@ -465,6 +476,14 @@ void MyRowVector::resize(int num_cols)
   op1.resize(num_cols);
 }
 
+// Assign
+void MyRowVector::assign(int num_columns, double value)
+{
+  ltiRowVector & op1 = (*this);
+  op1.resize(num_columns);
+  for (unsigned int i=0; i<num_columns; i++)
+    op1(i+1) = value;
+}
 
 
 MyRowVector

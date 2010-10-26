@@ -63,6 +63,8 @@ class Matrix : public BoostMatrix, public Matrix_Wrapper
   Matrix(int num_rows,const RowVector& v);
 
   
+  virtual unsigned int size() const;
+  virtual unsigned int capacity() const;
   virtual unsigned int rows() const;
   virtual unsigned int columns() const;
   virtual double& operator()(unsigned int,unsigned int);
@@ -122,6 +124,8 @@ class SymmetricMatrix : public BoostSymmetricMatrix, public SymmetricMatrix_Wrap
   // Destructor
   virtual ~SymmetricMatrix();
 
+  virtual unsigned int size() const;
+  virtual unsigned int capacity() const;
   virtual unsigned int rows() const;
   virtual unsigned int columns() const;
   virtual MySymmetricMatrix inverse() const;

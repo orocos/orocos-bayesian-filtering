@@ -51,6 +51,9 @@ MyRowVector MyMatrix::operator[](unsigned int i) const{
   return this->rowCopy(i);
 }
 
+// Size/Capacity
+unsigned int MyMatrix::size() const { return this->size1();}
+unsigned int MyMatrix::capacity() const { return this->size1();}
 
 // Number of Rows/Cols
 unsigned int MyMatrix::rows() const { return this->size1();}
@@ -350,6 +353,10 @@ MySymmetricMatrix::SymmetricMatrix(const BoostSymmetricMatrix & a) : BoostSymmet
 
 // Destructor
 MySymmetricMatrix::~SymmetricMatrix(){}
+
+// Size/Capacity
+unsigned int MySymmetricMatrix::size() const { return this->size1();}
+unsigned int MySymmetricMatrix::capacity() const { return this->size1();}
 
 // Ask Number of Rows and Columns
 unsigned int MySymmetricMatrix::rows() const { return this->size1();}

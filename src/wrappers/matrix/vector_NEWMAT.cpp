@@ -56,9 +56,19 @@ void MyColumnVector::resize(int num_rows)
   op1.ReSize(num_rows);
 }
 
+// Assign
+void MyColumnVector::assign(int num_rows, double value)
+{
+  NewMatColumnVector & op1 = (*this);
+  op1.resize(num_rows);
+  for (unsigned int i=0; i<num_rows; i++)
+    op1(i+1) = value;
+}
+
 // Number of Rows / Cols
 unsigned int MyColumnVector::rows() const { return this->Nrows();}
 unsigned int MyColumnVector::columns() const { return this->Ncols();}
+unsigned int MyColumnVector::capacity() const { return this->Nrows();}
 
 MyColumnVector
 MyColumnVector::vectorAdd(const MyColumnVector& v2) const
@@ -266,6 +276,7 @@ MyRowVector::RowVector(const NewMatRowVector & a) : NewMatRowVector(a){}
 // Number of Rows / Cols
 unsigned int MyRowVector::rows() const { return this->Nrows();}
 unsigned int MyRowVector::columns() const { return this->Ncols();}
+unsigned int MyRowVector::capacity() const { return this->Ncols();}
 
 // Operators
 MyRowVector & MyRowVector::operator+= (const MyRowVector& a)
@@ -450,6 +461,15 @@ void MyRowVector::resize(int num_cols)
 {
   NewMatRowVector & op1 = (*this);
   op1.ReSize(num_cols);
+}
+
+// Assign
+void MyRowVector::assign(int num_columns, double value)
+{
+  NewMatRowVector & op1 = (*this);
+  op1.resize(num_columns);
+  for (unsigned int i=0; i<num_columns; i++)
+    op1(i+1) = value;
 }
 
 
