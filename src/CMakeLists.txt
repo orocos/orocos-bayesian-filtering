@@ -1,0 +1,48 @@
+SET (ENV{GLOBAL_LIBRARY_SRCS} "")
+SET (ENV{GLOBAL_INCLUDE_DIRS} "")
+
+GLOBAL_ADD_INCLUDE( bfl/ bfl_constants.h bfl_err.h)
+
+ADD_SUBDIRECTORY( wrappers )
+ADD_SUBDIRECTORY( sample )
+ADD_SUBDIRECTORY( pdf )
+ADD_SUBDIRECTORY( model )
+ADD_SUBDIRECTORY( filter )
+ADD_SUBDIRECTORY( smoother )
+
+IF( OROCOS_PLUGIN )
+  ADD_SUBDIRECTORY( bindings/rtt )
+ENDIF( OROCOS_PLUGIN )
+
+# examples will be linked with orocos-bfl, so when building both static and shared, examples will link with shared
+IF (LIBRARY_TYPE STREQUAL "shared")
+  ADD_LIBRARY(orocos-bfl SHARED $ENV{GLOBAL_LIBRARY_SRCS})
+  SET_TARGET_PROPERTIES(orocos-bfl PROPERTIES OUTPUT_NAME orocos-bfl)
+  INSTALL_TARGETS( /lib orocos-bfl)       
+ELSE (LIBRARY_TYPE STREQUAL "shared")
+
+IF (LIBRARY_TYPE STREQUAL "static")
+  ADD_LIBRARY(orocos-bfl STATIC $ENV{GLOBAL_LIBRARY_SRCS})
+  SET_TARGET_PROPERTIES(orocos-bfl PROPERTIES OUTPUT_NAME orocos-bfl)
+  INSTALL_TARGETS( /lib orocos-bfl)       
+ELSE (LIBRARY_TYPE STREQUAL "static")
+
+IF (LIBRARY_TYPE STREQUAL "both")
+  ADD_LIBRARY(orocos-bfl SHARED $ENV{GLOBAL_LIBRARY_SRCS})
+  SET_TARGET_PROPERTIES(orocos-bfl PROPERTIES OUTPUT_NAME orocos-bfl)
+  SET_TARGET_PROPERTIES(orocos-bfl PROPERTIES CLEAN_DIRECT_OUTPUT 1)  
+  INSTALL_TARGETS( /lib orocos-bfl)       
+
+  ADD_LIBRARY(orocos-bfl-static STATIC $ENV{GLOBAL_LIBRARY_SRCS})
+  SET_TARGET_PROPERTIES(orocos-bfl-static PROPERTIES OUTPUT_NAME orocos-bfl)
+  SET_TARGET_PROPERTIES(orocos-bfl-static PROPERTIES CLEAN_DIRECT_OUTPUT 1)  
+  INSTALL_TARGETS( /lib orocos-bfl-static)       
+ELSE (LIBRARY_TYPE STREQUAL "both")
+
+  MESSAGE( FATAL_ERROR "Library type ${LIBRARY_TYPE} not supported. Choose shared, static or both")
+
+ENDIF (LIBRARY_TYPE STREQUAL "both")
+ENDIF (LIBRARY_TYPE STREQUAL "static")
+ENDIF (LIBRARY_TYPE STREQUAL "shared")
+
+INCLUDE_DIRECTORIES( $ENV{GLOBAL_INCLUDE_DIRS} )
