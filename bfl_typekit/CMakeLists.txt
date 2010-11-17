@@ -16,7 +16,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib/orocos/types)
 
-rosbuild_add_library(${PROJECT_NAME} src/bfl_typekit.cpp )
+rosbuild_add_library(${PROJECT_NAME} src/bfl_typekit.cpp src/bflTypekitConstructors.cpp src/bflTypekitProbability.cpp src/bflTypekitProbabilitys.cpp src/bflTypekitSample.cpp src/bflTypekitSamples.cpp src/bflTypekitWeightedSample.cpp src/bflTypekitWeightedSamples.cpp src/bflTypekitVector.cpp src/bflTypekitVectors.cpp src/bflTypekitMatrix.cpp src/bflTypekitMatrixs.cpp)
 ADD_DEFINITIONS(-DRTT_COMPONENT)
 
 #uncomment if you have defined messages

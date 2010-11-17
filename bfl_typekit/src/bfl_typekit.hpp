@@ -40,16 +40,13 @@
 namespace BFL{
 
 class bflTypekitPlugin: public RTT::types::TypekitPlugin {
-public:
-    virtual std::string getName();
-
-    virtual bool loadTypes();
-    virtual bool loadConstructors();
-    virtual bool loadOperators();
-};
-
-
-
+    public:
+        virtual std::string getName();
+    
+        virtual bool loadTypes();
+        virtual bool loadConstructors();
+        virtual bool loadOperators();
+    };
 }
 #endif
 
