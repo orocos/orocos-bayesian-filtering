@@ -73,6 +73,7 @@ namespace BFL
 
       virtual MatrixWrapper::ColumnVector ExpectedValueGet() const;
       virtual MatrixWrapper::SymmetricMatrix CovarianceGet() const;
+      virtual void DimensionSet(unsigned int dim);
 
       // For a Gaussian this should be possible
       /// Set the Expected Value
