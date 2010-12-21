@@ -212,4 +212,15 @@ namespace BFL
     assert(this->DimensionGet() == cov.rows());
   }
 
+  void
+  Gaussian::DimensionSet ( unsigned int dim )
+  {
+    Pdf<ColumnVector>::DimensionSet(dim);
+    _diff.resize(DimensionGet());
+    _tempColumn.resize(DimensionGet());
+    _samples.resize(DimensionGet());
+    _sampleValue.resize(DimensionGet());
+    _Low_triangle.resize(DimensionGet(),DimensionGet());
+  }
+
 } // End namespace BFL
