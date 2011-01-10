@@ -15,7 +15,6 @@ namespace BFL{
         
 
         bool decomposeTypeImpl(const Matrix& mat, PropertyBag& targetbag) const{
-            log(Debug)<<"Converting Matrix to PropertyBag"<<endlog();
             targetbag.setType("Matrix");
             unsigned int dimension = mat.rows();
 
@@ -86,7 +85,6 @@ namespace BFL{
         };
 
         bool decomposeTypeImpl(const SymmetricMatrix& mat, PropertyBag& targetbag) const{
-            log(Debug)<<"Converting SymmetricMatrix to PropertyBag"<<endlog();
             targetbag.setType("SymmetricMatrix");
             unsigned int dimension = mat.rows();
 
@@ -119,7 +117,7 @@ namespace BFL{
                     }
                     Property<RowVector > row_p(row_bag->getName(),row_bag->getDescription());
                     if(!(row_p.getTypeInfo()->composeType(row_bag->getDataSource(),row_p.getDataSource()))){
-                        log(Error)<<"Could not decompose row "<<i<<endlog();
+                        log(Error)<<"Could not compose row "<<i<<endlog();
                         return false;
                     }
                     if(row_p.ready()){
