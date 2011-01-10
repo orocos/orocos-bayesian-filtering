@@ -14,27 +14,22 @@ namespace BFL{
         };
         
 
-        base::DataSourceBase::shared_ptr convertType(base::DataSourceBase::shared_ptr source) const
-         {
-           log(Debug)<<"Converting Matrix to PropertyBag"<<endlog();
-           internal::DataSource<Matrix>::shared_ptr ds = internal::DataSource<Matrix>::narrow( source.get() );
-           PropertyBag targetbag;
-           targetbag.setType("Matrix");
-           unsigned int dimension = ds->get().rows(); //ds->get() returns matrix
+        bool decomposeTypeImpl(const Matrix& mat, PropertyBag& targetbag) const{
+            log(Debug)<<"Converting Matrix to PropertyBag"<<endlog();
+            targetbag.setType("Matrix");
+            unsigned int dimension = mat.rows();
 
-           for ( unsigned int i=1; i <= dimension ; i++)
-            {
+            for ( unsigned int i=1; i <= dimension ; i++){
                 std::stringstream out;
                 out << i;
                 Property<PropertyBag>* row_bag = new Property<PropertyBag>(out.str(), out.str() +"th row of matrix"); 
-                Property<RowVector> row(out.str(), out.str() +"th row of matrix",ds->get().rowCopy(i))  ;
+                Property<RowVector> row(out.str(), out.str() +"th row of matrix",mat.rowCopy(i))  ;
                 typeDecomposition( row.getDataSource(), row_bag->value());
-                targetbag.add(row_bag);
+                targetbag.add( row_bag ); // Put variables in the bag
             }
-           internal::ValueDataSource<PropertyBag>::shared_ptr targetbag_ptr = new internal::ValueDataSource<PropertyBag>(targetbag);
-           return targetbag_ptr;
-         }
 
+            return true;
+        };
 
         bool composeTypeImpl(const PropertyBag& bag, Matrix& result) const{
             if ( bag.getType() == "Matrix" ) {
@@ -90,26 +85,23 @@ namespace BFL{
         SymmetricMatrixTypeInfo():TemplateTypeInfo<SymmetricMatrix,true>("SymmetricMatrix"){
         };
 
-        base::DataSourceBase::shared_ptr convertType(base::DataSourceBase::shared_ptr source) const
-         {
-           log(Debug)<<"Converting SymmetricMatrix to PropertyBag"<<endlog();
-           internal::DataSource<SymmetricMatrix>::shared_ptr ds = internal::DataSource<SymmetricMatrix>::narrow( source.get() );
-           PropertyBag targetbag;
-           targetbag.setType("SymmetricMatrix");
-           unsigned int dimension = ds->get().rows(); //ds->get() returns matrix
+        bool decomposeTypeImpl(const SymmetricMatrix& mat, PropertyBag& targetbag) const{
+            log(Debug)<<"Converting SymmetricMatrix to PropertyBag"<<endlog();
+            targetbag.setType("SymmetricMatrix");
+            unsigned int dimension = mat.rows();
 
-           for ( unsigned int i=1; i <= dimension ; i++)
-            {
+            for ( unsigned int i=1; i <= dimension ; i++){
                 std::stringstream out;
                 out << i;
+                //targetbag.add( new Property<RowVector >(out.str(), out.str() +"th row of matrix",((Matrix)mat).rowCopy(i) )); // Put variables in the bag
                 Property<PropertyBag>* row_bag = new Property<PropertyBag>(out.str(), out.str() +"th row of matrix"); 
-                Property<RowVector> row(out.str(), out.str() +"th row of matrix",ds->get().rowCopy(i))  ;
+                Property<RowVector> row(out.str(), out.str() +"th row of matrix",((Matrix)mat).rowCopy(i))  ;
                 typeDecomposition( row.getDataSource(), row_bag->value());
-                targetbag.add(row_bag);
+                targetbag.add( row_bag ); // Put variables in the bag
             }
-           internal::ValueDataSource<PropertyBag>::shared_ptr targetbag_ptr = new internal::ValueDataSource<PropertyBag>(targetbag);
-           return targetbag_ptr;
-         }
+
+            return true;
+        };
 
         bool composeTypeImpl(const PropertyBag& bag, SymmetricMatrix& result) const{
             Matrix matrix;
