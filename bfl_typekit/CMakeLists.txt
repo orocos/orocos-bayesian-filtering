@@ -1,33 +1,40 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+#
+# The find_package macro for Orocos-RTT works best with
+# cmake >= 2.6.3
+#
+cmake_minimum_required(VERSION 2.6.3)
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-set(ROS_BUILD_TYPE Release)
+#
+# This creates a standard cmake project. You may extend this file with
+# any cmake macro you see fit.
+#
+# The CMake 'target' names are identical to the first argument of the
+# macro, except for orocos_typekit, where the target is fully
+# controlled by generated code of 'typegen'.
+#
+project(bfl_typekit)
 
-rosbuild_init()
+#
+# Do setup in case of ros package, If ROS_ROOT is set, it is
+# recommended to use RTT/OCL through the ros packages.
+#
+set (ROS_ROOT $ENV{ROS_ROOT} )
+if (ROS_ROOT)
+  include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+  rosbuild_init()
+  rosbuild_find_ros_package( rtt )
+  rosbuild_find_ros_package( ocl )
+  set( RTT_HINTS HINTS ${rtt_PACKAGE_PATH}/install )
+  set( OCL_HINTS HINTS ${ocl_PACKAGE_PATH}/install )
+endif()
 
-#set the default path for built executables to the "bin" directory
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-#set the default path for built libraries to the "lib" directory
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib/orocos/types)
+# Set the CMAKE_PREFIX_PATH in case you're not using Orocos through ROS
+# for helping these find commands find RTT.
+find_package(Orocos-RTT REQUIRED ${RTT_HINTS})
 
-rosbuild_add_library(${PROJECT_NAME} src/bfl_typekit.cpp src/bflTypekitConstructors.cpp src/bflTypekitProbability.cpp src/bflTypekitProbabilitys.cpp src/bflTypekitSample.cpp src/bflTypekitSamples.cpp src/bflTypekitWeightedSample.cpp src/bflTypekitWeightedSamples.cpp src/bflTypekitVector.cpp src/bflTypekitVectors.cpp src/bflTypekitMatrix.cpp src/bflTypekitMatrixs.cpp)
-ADD_DEFINITIONS(-DRTT_COMPONENT)
+# Defines the orocos_* cmake macros. See that file for additional
+# documentation.
+include(${OROCOS-RTT_USE_FILE_PATH}/UseOROCOS-RTT.cmake)
 
-#uncomment if you have defined messages
-#rosbuild_genmsg()
-#uncomment if you have defined services
-#rosbuild_gensrv()
+orocos_typekit(${PROJECT_NAME} src/bfl_typekit.cpp src/bflTypekitConstructors.cpp src/bflTypekitProbability.cpp src/bflTypekitProbabilitys.cpp src/bflTypekitSample.cpp src/bflTypekitSamples.cpp src/bflTypekitWeightedSample.cpp src/bflTypekitWeightedSamples.cpp src/bflTypekitVector.cpp src/bflTypekitVectors.cpp src/bflTypekitMatrix.cpp src/bflTypekitMatrixs.cpp)
 
-#common commands for building c++ executables and libraries
-#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
-#rosbuild_add_executable(example examples/example.cpp)
-#target_link_libraries(example ${PROJECT_NAME})
