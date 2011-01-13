@@ -51,8 +51,9 @@ namespace BFL{
         //RTT::types::Types()->type("RowVector")->addConstructor(newConstructor(&createRowVector1));
         //RTT::types::Types()->type("RowVector")->addConstructor(newConstructor(&createRowVector2));
 
-        //RTT::types::Types()->type("Matrix")->addConstructor(newConstructor(&createMatrix1));
-        //RTT::types::Types()->type("SymmetricMatrix")->addConstructor(newConstructor(&createSymmetricMatrix));
+        RTT::types::TypeInfoRepository::shared_ptr ti = RTT::types::TypeInfoRepository::Instance(); 
+        ti->type("Matrix")->addConstructor( RTT::types::newConstructor(&createMatrix1) );
+        ti->type("SymmetricMatrix")->addConstructor( RTT::types::newConstructor(&createSymmetricMatrix) );
 
         //RTT::types::Types()->type("SampleColumnVector")->addConstructor(newConstructor(&createSampleColumnVector));
         //RTT::types::Types()->type("WeightedSampleColumnVector")->addConstructor(newConstructor(&createWeightedSampleColumnVector));
