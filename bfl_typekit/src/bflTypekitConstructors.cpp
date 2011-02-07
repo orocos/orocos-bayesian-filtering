@@ -11,19 +11,9 @@ namespace BFL{
         return Probability(p);
     }
 
-    ColumnVector createColumnVector1(int rows)
-    {
-        return ColumnVector(rows);
-    }
-
     ColumnVector createColumnVector2(int rows, double value)
     {
         return ColumnVector(rows,value);
-    }
-
-    RowVector createRowVector1(int cols)
-    {
-        return RowVector(cols);
     }
 
     RowVector createRowVector2(int cols, double value)
@@ -36,6 +26,11 @@ namespace BFL{
         return Matrix(rows,cols);
     }
 
+    Matrix createMatrix2(int rows, RowVector row)
+    {
+        return Matrix(rows,row);
+    }
+
     SymmetricMatrix createSymmetricMatrix(int dimension )
     {
         return SymmetricMatrix(dimension);
@@ -43,24 +38,18 @@ namespace BFL{
 
     bool bflTypekitPlugin::loadConstructors()
     {
-        //RTT::types::Types()->type("Probability")->addConstructor(newConstructor(&createProbability));
-
-        //RTT::types::Types()->type("ColumnVector")->addConstructor(newConstructor(&createColumnVector1));
-        //RTT::types::Types()->type("ColumnVector")->addConstructor(newConstructor(&createColumnVector2));
-
-        //RTT::types::Types()->type("RowVector")->addConstructor(newConstructor(&createRowVector1));
-        //RTT::types::Types()->type("RowVector")->addConstructor(newConstructor(&createRowVector2));
-
         RTT::types::TypeInfoRepository::shared_ptr ti = RTT::types::TypeInfoRepository::Instance(); 
+        ti->type("Probability")->addConstructor( RTT::types::newConstructor(&createProbability) );
+        ti->type("ColumnVector")->addConstructor( RTT::types::newConstructor(&createColumnVector2) );
+        ti->type("RowVector")->addConstructor( RTT::types::newConstructor(&createRowVector2) );
+
         ti->type("Matrix")->addConstructor( RTT::types::newConstructor(&createMatrix1) );
+        ti->type("Matrix")->addConstructor( RTT::types::newConstructor(&createMatrix2) );
         ti->type("SymmetricMatrix")->addConstructor( RTT::types::newConstructor(&createSymmetricMatrix) );
 
         //RTT::types::Types()->type("SampleColumnVector")->addConstructor(newConstructor(&createSampleColumnVector));
         //RTT::types::Types()->type("WeightedSampleColumnVector")->addConstructor(newConstructor(&createWeightedSampleColumnVector));
-
-
         return true;
-
     }
 
 }

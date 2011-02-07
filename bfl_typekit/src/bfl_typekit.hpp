@@ -30,6 +30,9 @@
 #include <rtt/PropertyBag.hpp>
 #include <rtt/types/SequenceConstructor.hpp>
 #include <rtt/types/TemplateConstructor.hpp>
+#include <rtt/types/Operators.hpp>
+#include <rtt/types/OperatorTypes.hpp>
+#include <rtt/internal/GlobalService.hpp>
 
 #include <bfl/wrappers/matrix/vector_wrapper.h>
 #include <bfl/wrappers/matrix/matrix_wrapper.h>
