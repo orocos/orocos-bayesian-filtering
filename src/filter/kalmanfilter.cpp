@@ -126,6 +126,25 @@ namespace BFL
     */
   }
 
+  void KalmanFilter::CalculateNis(const ColumnVector& z, const ColumnVector& Z, const Matrix& H, const SymmetricMatrix& R){
+    /* The Normalised Innovation Squared (NIS) value
+    * 
+    *  innov^T * S^-1 * innov
+    */
+    // allocate measurement for z.rows() if needed
+    AllocateMeasModel(z.rows());
+
+    // Calculate Innovation Covariance
+    (_mapMeasUpdateVariables_it->second)._postHT =   (Matrix)(_post->CovarianceGet()) * H.transpose() ;
+    (_mapMeasUpdateVariables_it->second)._S_Matrix =  H * (_mapMeasUpdateVariables_it->second)._postHT;
+    (_mapMeasUpdateVariables_it->second)._S_Matrix += (Matrix)R;
+    
+    // Calculate Innovation
+    (_mapMeasUpdateVariables_it->second)._innov = z-Z;
+
+    _Nis = ((_mapMeasUpdateVariables_it->second)._innov.transpose()) * (((_mapMeasUpdateVariables_it->second)._S_Matrix.inverse()) * ((_mapMeasUpdateVariables_it->second)._innov));
+  }
+
   bool
   KalmanFilter::UpdateInternal(SystemModel<ColumnVector>* const sysmodel,
 			       const ColumnVector& u,
