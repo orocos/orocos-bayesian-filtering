@@ -99,6 +99,7 @@ protected:
   Matrix _Sigma_temp_par;
   Matrix _SMatrix;
   Matrix _K;
+  double _Nis;
   std::map<unsigned int, MeasUpdateVariables> _mapMeasUpdateVariables;
   std::map<unsigned int, MeasUpdateVariables>::iterator _mapMeasUpdateVariables_it;
 
@@ -159,6 +160,9 @@ protected:
 			      MeasurementModel<MatrixWrapper::ColumnVector,MatrixWrapper::ColumnVector>* const measmodel,
 			      const MatrixWrapper::ColumnVector& z,
 			      const MatrixWrapper::ColumnVector& s);
+
+  // Calculate Normalised Innovation Squared (NIS) value
+  void CalculateNis(const MatrixWrapper::ColumnVector& z, const MatrixWrapper::ColumnVector& Z, const MatrixWrapper::Matrix& H, const MatrixWrapper::SymmetricMatrix& R);
 
 }; // class
 

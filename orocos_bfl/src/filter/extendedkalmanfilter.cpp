@@ -97,6 +97,18 @@ ExtendedKalmanFilter::MeasUpdate(MeasurementModel<ColumnVector,ColumnVector>* co
   (_mapMeasUpdateVariablesExt_it->second)._R = ((AnalyticMeas*)measmodel)->CovarianceGet(s,_x);
 
   CalculateMeasUpdate(z, (_mapMeasUpdateVariablesExt_it->second)._Z, (_mapMeasUpdateVariablesExt_it->second)._H, (_mapMeasUpdateVariablesExt_it->second)._R);
-}
+}      
 
+  double ExtendedKalmanFilter::NisGet(MeasurementModel<ColumnVector,ColumnVector>* const measmodel, const ColumnVector& z)
+  { 
+      AllocateMeasModelExt(z.rows());
+      ColumnVector s;
+      _x = _post->ExpectedValueGet();
+      (_mapMeasUpdateVariablesExt_it->second)._Z = ((AnalyticMeas*)measmodel)->PredictionGet(s,_x);
+      (_mapMeasUpdateVariablesExt_it->second)._H = ((AnalyticMeas*)measmodel)->df_dxGet(s,_x);
+      (_mapMeasUpdateVariablesExt_it->second)._R = ((AnalyticMeas*)measmodel)->CovarianceGet(s,_x);
+      CalculateNis(z,(_mapMeasUpdateVariablesExt_it->second)._Z,(_mapMeasUpdateVariablesExt_it->second)._H,(_mapMeasUpdateVariablesExt_it->second)._R);
+      return _Nis;
+  }
+       
 } // end namespace BFL

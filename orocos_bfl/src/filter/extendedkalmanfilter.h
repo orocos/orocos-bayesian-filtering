@@ -66,6 +66,9 @@ public:
   */
   void AllocateMeasModelExt( const unsigned int& meas_dimensions);
 
+  // Get NIS value
+  double NisGet(MeasurementModel<MatrixWrapper::ColumnVector,MatrixWrapper::ColumnVector>* const measmodel, const MatrixWrapper::ColumnVector& z);
+
 private:
   struct MeasUpdateVariablesExt
   {
