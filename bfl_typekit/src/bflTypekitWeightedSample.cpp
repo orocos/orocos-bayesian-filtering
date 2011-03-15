@@ -74,10 +74,10 @@ namespace BFL{
 
     template <typename T>
     struct WeightedSampleTypeInfo
-        : public TemplateTypeInfo<WeightedSample<T>, true>
+        : public TemplateTypeInfo<WeightedSample<T>, false>
     {
         WeightedSampleTypeInfo<T>(std::string name)
-            : TemplateTypeInfo<WeightedSample<T>, true >(name)
+            : TemplateTypeInfo<WeightedSample<T>, false >(name)
         {
         };
 

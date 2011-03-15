@@ -1,4 +1,5 @@
 #include "bfl_typekit.hpp"
+#include <bfl/bfl_constants.h>
 
 #ifndef __PROB_STREAM__
 #define __PROB_STREAM__
@@ -34,9 +35,9 @@ namespace BFL{
         a & make_nvp("Probability", prob.getValue() );
     }
 
-    struct ProbabilityTypeInfo : public StructTypeInfo<Probability,true>
+    struct ProbabilityTypeInfo : public StructTypeInfo<Probability,false>
     {
-        ProbabilityTypeInfo():StructTypeInfo<Probability,true>("Probability")
+        ProbabilityTypeInfo():StructTypeInfo<Probability,false>("Probability")
         {
         };
     };

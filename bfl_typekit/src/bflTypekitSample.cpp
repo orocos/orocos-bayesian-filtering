@@ -61,10 +61,10 @@ namespace BFL{
 
     template <typename T>
     struct SampleTypeInfo
-        : public TemplateTypeInfo<Sample<T>, true>
+        : public TemplateTypeInfo<Sample<T>, false>
     {
         SampleTypeInfo<T>(std::string name)
-            : TemplateTypeInfo<Sample<T>, true >(name)
+            : TemplateTypeInfo<Sample<T>, false >(name)
         {
         };
 
