@@ -1,0 +1,12 @@
+<stack>
+  <description brief="orocos_bayesian_filtering">
+
+    The stack separates the <a href="http://www.orocos.org/bfl">Bayesian Filtering Library (BFL)</a> from the Orocos Real-Time Toolkit (RTT), part of the <a href="http://www.orocos.org/wiki/orocos/toolchain">Orocos Toolchain</a>, definitions.
+</description>
+  <author>Maintained by Tinne De Laet</author>
+  <license>LGPL</license>  
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/orocos_bayesian_filtering</url>
+  <depend stack="ros" />
+
+</stack>
