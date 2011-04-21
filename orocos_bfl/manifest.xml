@@ -17,7 +17,7 @@
 <review status="3rdparty doc reviewed" notes="reviewed by kwc"/>
 <url>http://www.orocos.org/bfl</url>
 <export>
-  <cpp cflags="-I${prefix}/bfl-boost/include" lflags="-Wl,-rpath,${prefix}/bfl-boost/lib  -L${prefix}/bfl-boost/lib -lorocos-bfl"/>
+  <cpp cflags="-I${prefix}/install/include" lflags="-Wl,-rpath,${prefix}/lib  -L${prefix}/install/lib -lorocos-bfl"/>
   <doxymaker external="http://orocos.org/bfl" />
 </export>
 
