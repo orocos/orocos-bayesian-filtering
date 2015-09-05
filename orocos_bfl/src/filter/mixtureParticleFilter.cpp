@@ -102,15 +102,15 @@ MixtureParticleFilter<SV,MV>::MixtureParticleFilter(Mixture<SV> * prior,
   */
   bool ret = (dynamic_cast<MCPdf<SV> *>(this->_post))->ListOfSamplesSet(prior->ListOfSamplesGet());
   assert(ret);
-  for(int i =0 ; i < prior.NumComponentsGet() ; i++)
+  for(int i =0 ; i < prior->NumComponentsGet() ; i++)
   {
     bool ret = (dynamic_cast<MCPdf<SV> *>(this->_post->ComponentGet(i)))->ListOfSamplesSet(prior->ComponentGet(i)->ListOfSamplesGet());
   }
 
   // Initialise vector of lists of samples
-  for(int i =0 ; i < prior.NumComponentsGet() ; i++)
+  for(int i =0 ; i < prior->NumComponentsGet() ; i++)
   {
-    _old_samplesVec[i] = (prior.ComponentGet(i)->ListOfSamplesGet());
+    _old_samplesVec[i] = (prior->ComponentGet(i)->ListOfSamplesGet());
   }
   _new_samplesVec = _old_samplesVec;
 
