@@ -68,7 +68,7 @@ namespace BFL
 
   //Clone function
   Gaussian* Gaussian::Clone() const
-  {     
+  {
       return new Gaussian(*this);
   }
 
@@ -95,7 +95,7 @@ namespace BFL
   // only once when drawing multiple samples at once!
   // See method below for more info regarding the algorithms
   bool
-  Gaussian::SampleFrom (vector<Sample<ColumnVector> >& list_samples, const int num_samples, int method, void * args) const
+  Gaussian::SampleFrom (vector<Sample<ColumnVector> >& list_samples, const unsigned int num_samples, int method, void * args) const
   {
     list_samples.resize(num_samples); // will break real-timeness if list_samples.size()!=num_samples
     vector<Sample<ColumnVector> >::iterator rit = list_samples.begin();

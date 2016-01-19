@@ -75,7 +75,7 @@ namespace BFL
   }
 
   bool
-  Uniform::SampleFrom (vector<Sample<ColumnVector> >& list_samples, const int num_samples, int method, void * args) const
+  Uniform::SampleFrom (vector<Sample<ColumnVector> >& list_samples, const unsigned int num_samples, int method, void * args) const
   {
     // Perform memory allocation
     list_samples.resize(num_samples); // will break real-timeness if list_samples.size()!=num_samples

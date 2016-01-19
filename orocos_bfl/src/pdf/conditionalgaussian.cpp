@@ -57,7 +57,7 @@ namespace BFL
   }
 
   bool
-  ConditionalGaussian::SampleFrom (vector<Sample<ColumnVector> >& samples, const int num_samples, int method, void * args) const
+  ConditionalGaussian::SampleFrom (vector<Sample<ColumnVector> >& samples, const unsigned int num_samples, int method, void * args) const
   {
     return Pdf<ColumnVector>::SampleFrom(samples, num_samples, method, args);
   }

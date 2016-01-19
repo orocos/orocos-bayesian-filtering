@@ -177,7 +177,7 @@ namespace BFL
 
   bool
   DiscreteConditionalPdf::SampleFrom(vector<Sample<int> >& list_samples,
-				     int num_samples, int method,
+				     unsigned int num_samples, int method,
 				     void * args) const
   {
     list_samples.resize(num_samples); // will break real-timeness if list_samples.size()!=num_samples

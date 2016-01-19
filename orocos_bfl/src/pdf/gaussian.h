@@ -66,7 +66,7 @@ namespace BFL
       // Redefinition of pure virtuals
       virtual Probability ProbabilityGet(const MatrixWrapper::ColumnVector& input) const;
       bool SampleFrom (vector<Sample<MatrixWrapper::ColumnVector> >& list_samples,
-		       const int num_samples,
+		       const unsigned int num_samples,
 		       int method=DEFAULT,
 		       void * args=NULL) const;
       virtual bool SampleFrom (Sample<MatrixWrapper::ColumnVector>& one_sample, int method=DEFAULT, void * args=NULL) const;
