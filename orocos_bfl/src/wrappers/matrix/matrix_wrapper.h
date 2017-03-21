@@ -291,6 +291,7 @@ public:
 #include "matrix_NEWMAT.h"
 #include "matrix_LTI.h"
 #include "matrix_BOOST.h"
+#include "matrix_EIGEN.h"
 
 
 #endif // __MATRIX_WRAPPER__
