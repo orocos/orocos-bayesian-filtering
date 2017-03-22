@@ -1,0 +1,20 @@
+sudo: required
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libboost-dev
+
+language: cpp
+
+before_script:
+  - cd orocos_bfl
+  - mkdir build-linux-boost-boost
+  - cd build-linux-boost-boost
+  - cmake ..
+
+script:
+  - cd orocos_bfl
+  - make
+  - make check
+  - make install
+  
