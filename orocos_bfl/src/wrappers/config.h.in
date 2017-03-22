@@ -4,6 +4,7 @@
 #cmakedefine __MATRIXWRAPPER_NEWMAT__
 #cmakedefine __MATRIXWRAPPER_LTI__
 #cmakedefine __MATRIXWRAPPER_BOOST__
+#cmakedefine __MATRIXWRAPPER_EIGEN__
 
 #cmakedefine __RNGWRAPPER_BOOST__
 #cmakedefine __RNGWRAPPER_LTI__
