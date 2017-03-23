@@ -13,8 +13,7 @@ before_script:
   - cmake ..
 
 script:
-  - cd orocos_bfl
   - make
   - make check
-  - make install
+
   
