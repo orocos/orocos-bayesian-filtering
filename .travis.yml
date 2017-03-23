@@ -13,7 +13,7 @@ before_script:
   - cmake ..
 
 script:
-  - make
-  - make check
+  - make && make check
+  
 
   
