@@ -16,7 +16,7 @@
 //
 
 #ifndef MODEL_TEST_HPP
-#define MODEl_TEST_HPP
+#define MODEL_TEST_HPP
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <model/discretesystemmodel.h>
