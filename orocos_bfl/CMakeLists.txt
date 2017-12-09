@@ -49,7 +49,7 @@ MESSAGE( "Build type set to '${CMAKE_BUILD_TYPE}'" )
 # --------------------------------
 INCLUDE (${CMAKE_ROOT}/Modules/CMakeDetermineCXXCompiler.cmake)
 INCLUDE( ${PROJ_SOURCE_DIR}/config/DependentOption.cmake )
-
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # Shared or static library
 # ------------------------
