@@ -539,10 +539,12 @@ MatrixwrapperTest::testMatrixwrapperValue()
   Matrix Im_test = Rm * Rm_inv;
   CPPUNIT_ASSERT_EQUAL(approxEqual(Im_test, Im, epsilon),true);
 
+  // SymmetricMatrix Rs(c);
   Matrix Rs(c,c);
   Rs(1,1) = 3;   Rs(1,2) = 5;    Rs(1,3) = 3;
   Rs(2,1) = 5;   Rs(2,2) = 2;    Rs(2,3) = 7;
   Rs(3,1) = 3;   Rs(3,2) = 7;    Rs(3,3) = 0;
+  // SymmetricMatrix Rs_inv = Rs.inverse();
   Matrix Rs_inv = Rs.inverse();
   Matrix Is(c,c); Is = 0;
   for (unsigned int i=0; i<c; i++)
@@ -550,9 +552,16 @@ MatrixwrapperTest::testMatrixwrapperValue()
   Matrix Is_test = Rs * Rs_inv;
   CPPUNIT_ASSERT_EQUAL(approxEqual(Is_test, Is, epsilon),true);
 
+  // Issue #30
+  SymmetricMatrix MI30(c);
+  Rs(1,1) = 3; Rs(1,2) = 2; Rs(1,3) = 0;
+  Rs(2,1) = 2; Rs(2,2) = 2; Rs(2,3) = 0;
+  Rs(3,1) = 0; Rs(3,2) = 0; Rs(3,3) = 0.5;
+  
   // test determinant
   CPPUNIT_ASSERT_EQUAL(approxEqual(Rm.determinant(), 105, epsilon),true);
   CPPUNIT_ASSERT_EQUAL(approxEqual(Rs.determinant(), 45, epsilon),true);
+  CPPUNIT_ASSERT_EQUAL(approxEqual(MI30.determinant(), 1, epsilon),true); // Issue #30
 
   // test cholesky
   SymmetricMatrix Ps(c);
