@@ -380,7 +380,7 @@ MySymmetricMatrix MySymmetricMatrix::inverse() const
   unsigned int r = this->rows();
   assert(r == this->columns());
   const BoostMatrix& A = (*this);
-  BoostSymmetricMatrix Ai(r,r);
+  BoostMatrix Ai(r,r);
   switch (r) 
   {
      case 1:
@@ -399,7 +399,7 @@ MySymmetricMatrix MySymmetricMatrix::inverse() const
      }
      default:
      {
-       BoostSymmetricMatrix LU(r,r);
+       BoostMatrix LU(r,r);
        boost::numeric::ublas::permutation_matrix<> ndx(r);
        noalias(LU) = A;
        int res = lu_factorize(LU,ndx);
@@ -409,7 +409,8 @@ MySymmetricMatrix MySymmetricMatrix::inverse() const
        break;
      }
   }
-  return Ai;
+
+  return MySymmetricMatrix(Ai);
 }
 
 double MySymmetricMatrix::determinant() const
@@ -429,7 +430,7 @@ double MySymmetricMatrix::determinant() const
      }
      default:
      {
-        BoostSymmetricMatrix LU(r,r);
+        BoostMatrix LU(r,r);
         boost::numeric::ublas::permutation_matrix<> ndx(r);
         noalias(LU) = A;
         int res = lu_factorize(LU,ndx);
