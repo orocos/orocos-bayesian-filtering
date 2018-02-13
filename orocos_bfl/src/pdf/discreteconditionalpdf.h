@@ -103,8 +103,8 @@ namespace BFL
 
       // Redefine all pure virtuals!
       Probability ProbabilityGet(const int& input) const;
-      virtual bool SampleFrom (Sample<int>& one_sample, int method, void * args) const;
-      virtual bool SampleFrom (vector<Sample<int> >& list_samples, unsigned int num_samples, int method, void * args) const;
+      virtual bool SampleFrom (Sample<int>& one_sample, const SampleMthd method, void * args) const;
+      virtual bool SampleFrom (vector<Sample<int> >& list_samples, unsigned int num_samples, const SampleMthd method, void * args) const;
 
       /// Set the probability (Typical for discrete Pdf's)
       void ProbabilitySet(const double& prob, const int& input, const std::vector<int>& condargs) const;

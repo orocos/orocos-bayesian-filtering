@@ -35,11 +35,6 @@ using namespace std;
 using namespace BFL;
 using namespace MatrixWrapper;
 
-#define DEFAULT 0 // Default sampling method, must be valid for every PDF!!
-#define BOXMULLER 1
-#define CHOLESKY 2
-#define RIPLEY 3 // For efficient sampling from discrete/mcpdfs
-
 class PdfTest : public CppUnit::TestFixture
 {
   CPPUNIT_TEST_SUITE( PdfTest );

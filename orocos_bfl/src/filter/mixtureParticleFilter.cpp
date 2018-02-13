@@ -144,7 +144,7 @@ MixtureParticleFilter<SV,MV>::MixtureParticleFilter(const MixtureParticleFilter<
   : Filter<SV,MV>(filter)
   , _created_post(true)
 {
-  // Clone the Mixture posterior of filter 
+  // Clone the Mixture posterior of filter
   this->_post = filter.PostGet().Clone();
   this->_newMixtureWeights.resize(this->_post->NumComponentsGet());
   this->_sumWeights.resize(this->_post->NumComponentsGet());
@@ -231,7 +231,7 @@ MixtureParticleFilter<SV,MV>::ProposalStepInternalOne(int component, SystemModel
 	    }
 	}
       // Bug, make sampling method a parameter!
-      _proposal->SampleFrom(_sample, DEFAULT,NULL);
+      _proposal->SampleFrom(_sample, SampleMthd::DEFAULT,NULL);
       _ns_it->ValueSet(_sample.ValueGet());
       _ns_it->WeightSet(_os_it->WeightGet());
       _ns_it++;
@@ -282,8 +282,8 @@ MixtureParticleFilter<SV,MV>::UpdateWeightsInternalOne(int component,SystemModel
   {
         cerr<< "MixtureParticleFilter::UpdateWeightsInternalOne called with invalid component number " << endl;
         return false;
-  } 
-  _sumWeights[component] = 0.0; 
+  }
+  _sumWeights[component] = 0.0;
   Probability weightfactor = 1;
   // Update the weights
   // Same remarks as for the system update!
@@ -343,7 +343,7 @@ MixtureParticleFilter<SV,MV>::UpdateWeightsInternalOne(int component,SystemModel
       double new_weight = _ns_it->WeightGet() * weightfactor;
       _ns_it->WeightSet(new_weight);
       // add the new weight to the _sumWeights of this component
-      _sumWeights[component] = _sumWeights[component] + new_weight; 
+      _sumWeights[component] = _sumWeights[component] + new_weight;
 
       _os_it++;
     }
@@ -471,7 +471,7 @@ MixtureParticleFilter<SV,MV>::ResampleOne(int component)
     {
     case MULTINOMIAL_RS:
       {
-	(dynamic_cast<MCPdf<SV> *>(dynamic_cast<Mixture<SV> *>(this->_post)->ComponentGet(component)))->SampleFrom(_new_samples_unweightedVec[component], NumSamples,RIPLEY,NULL);
+	(dynamic_cast<MCPdf<SV> *>(dynamic_cast<Mixture<SV> *>(this->_post)->ComponentGet(component)))->SampleFrom(_new_samples_unweightedVec[component], NumSamples,SampleMthd::RIPLEY,NULL);
 	break;
       }
     case SYSTEMATIC_RS:{break;}

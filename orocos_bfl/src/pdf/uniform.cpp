@@ -75,14 +75,14 @@ namespace BFL
   }
 
   bool
-  Uniform::SampleFrom (vector<Sample<ColumnVector> >& list_samples, const unsigned int num_samples, int method, void * args) const
+  Uniform::SampleFrom (vector<Sample<ColumnVector> >& list_samples, const unsigned int num_samples, const SampleMthd method, void * args) const
   {
     // Perform memory allocation
     list_samples.resize(num_samples); // will break real-timeness if list_samples.size()!=num_samples
     vector<Sample<ColumnVector> >::iterator rit = list_samples.begin();
     switch(method)
       {
-         case DEFAULT:
+          case SampleMthd::DEFAULT:
          {
         	  while (rit != list_samples.end())
         	   {
@@ -98,11 +98,11 @@ namespace BFL
   }
 
   bool
-  Uniform::SampleFrom (Sample<ColumnVector>& one_sample, int method, void * args) const
+  Uniform::SampleFrom (Sample<ColumnVector>& one_sample, const SampleMthd method, void * args) const
   {
     switch(method)
     {
-      case DEFAULT:
+        case SampleMthd::DEFAULT:
       {
          for (unsigned int j=1; j < DimensionGet()+1; j++) _samples(j) = runif(_Lower(j) , _Higher(j) );
 	     one_sample.ValueSet(_samples);

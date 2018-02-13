@@ -95,8 +95,8 @@ namespace BFL
       virtual MCPdf<T>* Clone() const;
 
       // implemented virtual functions
-      bool SampleFrom (Sample<T>& one_sample, int method = DEFAULT, void * args = NULL) const;
-      bool SampleFrom (vector<Sample<T> >& list_samples, const unsigned int num_samples, int method = DEFAULT,
+      bool SampleFrom (Sample<T>& one_sample, const SampleMthd method = SampleMthd::DEFAULT, void * args = NULL) const;
+      bool SampleFrom (vector<Sample<T> >& list_samples, const unsigned int num_samples, const SampleMthd method = SampleMthd::DEFAULT,
 		       void * args = NULL) const;
       T ExpectedValueGet() const;
       MatrixWrapper::SymmetricMatrix CovarianceGet() const;
@@ -227,17 +227,17 @@ namespace BFL
   template <typename T> bool
     MCPdf<T>::SampleFrom (vector<Sample<T> >& list_samples,
 			  const unsigned int numsamples,
-			  int method,
+			  const SampleMthd method,
 			  void * args) const
     {
       list_samples.resize(numsamples);
       switch(method)
 	{
-	case DEFAULT: // O(N log(N) efficiency)
+    case SampleMthd::DEFAULT: // O(N log(N) efficiency)
 	  {
 	    return Pdf<T>::SampleFrom(list_samples, numsamples,method,args);
 	  }
-	case RIPLEY: // Only possible here ( O(N) efficiency )
+    case SampleMthd::RIPLEY: // Only possible here ( O(N) efficiency )
 	  /* See
 	     @Book{		  ripley87,
 	     author	= {Ripley, Brian D.},
@@ -292,11 +292,11 @@ namespace BFL
     }
 
   template <typename T> bool
-    MCPdf<T>::SampleFrom(Sample<T>& one_sample, int method, void * args) const
+    MCPdf<T>::SampleFrom(Sample<T>& one_sample, const SampleMthd method, void * args) const
     {
       switch(method)
 	{
-	case DEFAULT:
+    case SampleMthd::DEFAULT:
 	  {
 	    // Sample from univariate uniform rng between 0 and 1;
 	    double unif_sample; unif_sample = runif();

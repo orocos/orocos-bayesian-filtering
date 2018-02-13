@@ -38,7 +38,7 @@ namespace BFL
       virtual ~NonlinearSystemPdf();
 
       // implement this virtual function for system model of a particle filter
-      virtual bool SampleFrom (Sample<MatrixWrapper::ColumnVector>& one_sample, int method=DEFAULT, void * args=NULL) const;
+      virtual bool SampleFrom (Sample<MatrixWrapper::ColumnVector>& one_sample, const SampleMthd method=SampleMthd::DEFAULT, void * args=NULL) const;
 
     private:
       Gaussian _additiveNoise;

@@ -26,7 +26,7 @@
  *   Foundation, Inc., 59 Temple Place,                                    *
  *   Suite 330, Boston, MA  02111-1307  USA                                *
  *                                                                         *
- ***************************************************************************/ 
+ ***************************************************************************/
 #ifndef MIXTURE_H
 #define MIXTURE_H
 
@@ -41,7 +41,7 @@ namespace BFL
 {
   /// Class representing a mixture of PDFs, the mixture can contain different
   //kind of pdfs but they should all share the same state space i.e. they all
-  //have to be of the same template type Pdf<T> 
+  //have to be of the same template type Pdf<T>
   /** This class is an instantation from the template class Pdf, with
       added methods to get a set the individual components and mixture weights
   */
@@ -51,10 +51,10 @@ namespace BFL
       /// The number of components
       unsigned int _numComponents;
 
-      /// Pointer to the vector of mixture weights, the sum of the elements = 1 
+      /// Pointer to the vector of mixture weights, the sum of the elements = 1
       vector<Probability> *_componentWeights;
 
-      /// Pointer to the vector of component pdfs 
+      /// Pointer to the vector of component pdfs
       vector<Pdf<T>* > *_componentPdfs;
 
       /// Normalize the component weigths (eg. after setting a component weight)
@@ -101,10 +101,10 @@ namespace BFL
 
       bool SampleFrom (vector<Sample<T> >& list_samples,
 		       const unsigned int num_samples,
-		       int method = DEFAULT, 
+		       const SampleMthd method = SampleMthd::DEFAULT,
 		       void * args = NULL) const;
 
-      bool SampleFrom (Sample<T>& one_sample, int method = DEFAULT, void * args = NULL) const;
+      bool SampleFrom (Sample<T>& one_sample, const SampleMthd method = SampleMthd::DEFAULT, void * args = NULL) const;
 
       T ExpectedValueGet() const;
 
@@ -114,26 +114,26 @@ namespace BFL
       vector<Probability> WeightsGet() const;
 
       /// Get the component weight of component "componentNumber"
-      /**  @param componentNumber number of the component 
+      /**  @param componentNumber number of the component
          (must be >=0 and <_numComponents)
       */
       Probability WeightGet(unsigned int componentNumber) const;
 
       /// Set all component weights
-      /**  @weights values vector<Probability> containing the new component weights . 
+      /**  @weights values vector<Probability> containing the new component weights .
            The sum of the probabilities of this list is not required to be one
-           since the normalization is automatically carried out. 
+           since the normalization is automatically carried out.
            The size of weights should be equal to the number of components
       */
       bool WeightsSet(vector<Probability> & weights);
 
       /// Function to change/set the weigth of a single component
       /** Changes the component weights such that AFTER normalization the
-          weight of the component "componentNumber" is equal to the weight w 
+          weight of the component "componentNumber" is equal to the weight w
            @param componentNumber number of the component of which the weight will be set
            (must be >=0 and <_numComponents)
            @param w Probability to which the weight of component
-           "componentNumber" 
+           "componentNumber"
             will be set (must be <= 1)
       */
 
@@ -166,7 +166,7 @@ namespace BFL
       vector<Pdf<T>* > ComponentsGet() const;
 
       /// Get the pointer to the component pdf of component "componentNumber"
-      /**  @param componentNumber number of the component 
+      /**  @param componentNumber number of the component
          (must be >=0 and <_numComponents)
       */
       Pdf<T>*  ComponentGet(unsigned int componentNumber) const;
@@ -222,7 +222,7 @@ Mixture<T>::Mixture(const U &componentVector): Pdf<T>(componentVector[0]->Dimens
 #endif // __CONSTRUCTOR__
 }
 
-template<typename T > 
+template<typename T >
 Mixture<T>::Mixture(const Mixture & my_mixture):Pdf<T>(my_mixture.DimensionGet() )
         ,_numComponents(my_mixture.NumComponentsGet())
   {
@@ -273,7 +273,7 @@ template<typename T>
 template<typename T>
   Probability Mixture<T>::ProbabilityGet(const T& state) const
   {
-    TestNotInit(); 
+    TestNotInit();
     Probability prob(0.0);
     for (int i=0; i<NumComponentsGet();i++)
     {
@@ -285,16 +285,16 @@ template<typename T>
 template<typename T>
   bool Mixture<T>::SampleFrom (vector<Sample<T> >& list_samples,
 			   const unsigned int num_samples,
-			   int method,
+			   const SampleMthd method,
 			   void * args) const
   {
-    TestNotInit(); 
+    TestNotInit();
     switch(method)
     {
-      case DEFAULT: // O(N log(N) efficiency)
+      case SampleMthd::DEFAULT: // O(N log(N) efficiency)
 	  return Pdf<T>::SampleFrom(list_samples, num_samples,method,args);
 
-      case RIPLEY: // See mcpdf.cpp for more explanation
+      case SampleMthd::RIPLEY: // See mcpdf.cpp for more explanation
 	  {
 	    list_samples.resize(num_samples);
 	    // GENERATE N ORDERED IID UNIFORM SAMPLES
@@ -336,12 +336,12 @@ template<typename T>
     }
   }
 template<typename T>
-  bool Mixture<T>::SampleFrom (Sample<T>& one_sample, int method, void * args) const
+  bool Mixture<T>::SampleFrom (Sample<T>& one_sample, const SampleMthd method, void * args) const
   {
-    TestNotInit(); 
+    TestNotInit();
     switch(method)
       {
-      case DEFAULT:
+      case SampleMthd::DEFAULT:
 	{
 	  // Sample from univariate uniform rng between 0 and 1;
 	  double unif_sample; unif_sample = runif();
@@ -367,8 +367,8 @@ template<typename T>
 template<typename T>
   T Mixture<T>::ExpectedValueGet() const
   {
-    cerr << "Mixture ExpectedValueGet: not implemented for the template parameters you use." 
-	 << endl << "Use template specialization as shown in mixture.cpp " << endl; 
+    cerr << "Mixture ExpectedValueGet: not implemented for the template parameters you use."
+	 << endl << "Use template specialization as shown in mixture.cpp " << endl;
     assert(0);
     T expectedValue;
     return expectedValue;
@@ -377,9 +377,9 @@ template<typename T>
 template <typename T>
   MatrixWrapper::SymmetricMatrix Mixture<T>::CovarianceGet (  ) const
   {
-    TestNotInit(); 
+    TestNotInit();
     cerr << "Mixture CovarianceGet: not implemented since so far I don't believe its usefull"
-     << endl << "If you decide to implement is: Use template specialization as shown in mcpdf.cpp " << endl; 
+     << endl << "If you decide to implement is: Use template specialization as shown in mcpdf.cpp " << endl;
 
     assert(0);
     MatrixWrapper::SymmetricMatrix result;
@@ -389,14 +389,14 @@ template <typename T>
 template<typename T>
   vector<Probability> Mixture<T>::WeightsGet() const
   {
-    TestNotInit(); 
+    TestNotInit();
     return *_componentWeights;
    }
 
 template<typename T>
   Probability Mixture<T>::WeightGet(unsigned int componentNumber) const
   {
-    TestNotInit(); 
+    TestNotInit();
     assert((int)componentNumber >= 0 && componentNumber < NumComponentsGet());
     return (*_componentWeights)[componentNumber];
    }
@@ -404,7 +404,7 @@ template<typename T>
 template<typename T>
   bool Mixture<T>::WeightsSet(vector<Probability> & weights)
   {
-    TestNotInit(); 
+    TestNotInit();
     assert(weights.size() == NumComponentsGet());
     *_componentWeights = weights;
     //normalize the probabilities and update the cumulative sum
@@ -414,10 +414,10 @@ template<typename T>
 template<typename T>
   bool Mixture<T>::WeightSet(unsigned int componentNumber, Probability weight)
   {
-    TestNotInit(); 
+    TestNotInit();
     assert((int)componentNumber >= 0 && componentNumber < NumComponentsGet());
     assert((double)weight<=1.0);
-    
+
     if (NumComponentsGet() == 1)
     {
         (*_componentWeights)[0] = weight;
@@ -449,7 +449,7 @@ template<typename T>
 template<typename T>
   int Mixture<T>::MostProbableComponentGet() const
   {
-    TestNotInit(); 
+    TestNotInit();
     int index_mostProbable= -1;
     Probability prob_mostProbable= 0.0;
     for (int component = 0 ; component < NumComponentsGet() ; component++)
@@ -464,7 +464,7 @@ template<typename T>
   }
 
 template<typename T>
-  bool Mixture<T>::AddComponent(Pdf<T>& pdf) 
+  bool Mixture<T>::AddComponent(Pdf<T>& pdf)
   {
     if (NumComponentsGet()==0)
         return AddComponent(pdf, Probability(1.0));
@@ -484,7 +484,7 @@ template<typename T>
   }
 
 template<typename T>
-  bool Mixture<T>::AddComponent(Pdf<T>& pdf, Probability w) 
+  bool Mixture<T>::AddComponent(Pdf<T>& pdf, Probability w)
   {
     if (NumComponentsGet()==0 && w!=1.0)
         return AddComponent(pdf, Probability(1.0));
@@ -504,14 +504,14 @@ template<typename T>
   }
 
 template<typename T>
-  bool Mixture<T>::DeleteComponent(unsigned int componentNumber) 
+  bool Mixture<T>::DeleteComponent(unsigned int componentNumber)
   {
     //assert length of vectors
     assert(NumComponentsGet()==(*_componentPdfs).size());
     assert(NumComponentsGet()==(*_componentWeights).size());
     assert(NumComponentsGet()+1==_cumWeights.size());
 
-    TestNotInit(); 
+    TestNotInit();
     assert((int)componentNumber >= 0 && componentNumber < NumComponentsGet());
     _numComponents--;
     Pdf<T>* pointer = (*_componentPdfs)[componentNumber];

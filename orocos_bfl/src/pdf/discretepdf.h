@@ -81,9 +81,9 @@ namespace BFL
 
       bool SampleFrom (vector<Sample<int> >& list_samples,
 		       const unsigned int num_samples,
-		       int method = DEFAULT,
+		       const SampleMthd method = SampleMthd::DEFAULT,
 		       void * args = NULL) const;
-      bool SampleFrom (Sample<int>& one_sample, int method = DEFAULT, void * args = NULL) const;
+      bool SampleFrom (Sample<int>& one_sample, const SampleMthd method = SampleMthd::DEFAULT, void * args = NULL) const;
 
       /// Get all probabilities
       vector<Probability> ProbabilitiesGet() const;

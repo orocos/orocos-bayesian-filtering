@@ -183,7 +183,7 @@ ParticleFilter<SV,MV>::ProposalStepInternal(SystemModel<SV> * const sysmodel,
 	    }
 	}
       // Bug, make sampling method a parameter!
-      _proposal->SampleFrom(_sample, DEFAULT,NULL);
+      _proposal->SampleFrom(_sample, SampleMthd::DEFAULT,NULL);
       _ns_it->ValueSet(_sample.ValueGet());
       _ns_it->WeightSet(_os_it->WeightGet());
       _ns_it++;
@@ -359,7 +359,7 @@ ParticleFilter<SV,MV>::Resample()
     {
     case MULTINOMIAL_RS:
       {
-	(dynamic_cast<MCPdf<SV> *>(this->_post))->SampleFrom(_new_samples_unweighted, NumSamples,RIPLEY,NULL);
+	(dynamic_cast<MCPdf<SV> *>(this->_post))->SampleFrom(_new_samples_unweighted, NumSamples,SampleMthd::RIPLEY,NULL);
 	break;
       }
     case SYSTEMATIC_RS:{break;}

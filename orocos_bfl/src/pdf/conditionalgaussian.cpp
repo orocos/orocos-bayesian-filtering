@@ -57,13 +57,13 @@ namespace BFL
   }
 
   bool
-  ConditionalGaussian::SampleFrom (vector<Sample<ColumnVector> >& samples, const unsigned int num_samples, int method, void * args) const
+  ConditionalGaussian::SampleFrom (vector<Sample<ColumnVector> >& samples, const unsigned int num_samples, const SampleMthd method, void * args) const
   {
     return Pdf<ColumnVector>::SampleFrom(samples, num_samples, method, args);
   }
 
   bool
-  ConditionalGaussian::SampleFrom (Sample<ColumnVector>& sample, int method, void * args) const
+  ConditionalGaussian::SampleFrom (Sample<ColumnVector>& sample, const SampleMthd method, void * args) const
   {
     // Sampling from a Gaussian is simple if DIMENSION = 1 or 2 (and the
     // 2 variables are independant!)
@@ -76,7 +76,7 @@ namespace BFL
 
     switch(method)
       {
-      case DEFAULT: // Cholesky, see althere (bad implementation)
+      case SampleMthd::DEFAULT: // Cholesky, see althere (bad implementation)
 	{
 	  bool result = CovarianceGet().cholesky_semidefinite(_Low_triangle);
 	  for (unsigned int j=1; j < DimensionGet()+1; j++){_samples(j) = rnorm(0,1);}
@@ -84,12 +84,12 @@ namespace BFL
 	  sample.ValueSet(_SampleValue);
 	  return result;
 	}
-      case BOXMULLER: /// @todo Implement box-muller here
+      case SampleMthd::BOXMULLER: /// @todo Implement box-muller here
 	{
 	  cerr << "Box-Muller not implemented yet!" << endl;
 	  return false;
 	}
-      case CHOLESKY: // Cholesky Sampling
+      case SampleMthd::CHOLESKY: // Cholesky Sampling
 	{
 	  bool result = CovarianceGet().cholesky_semidefinite(_Low_triangle);
 	  /* Sample Gaussian._dimension samples from univariate
@@ -105,7 +105,7 @@ namespace BFL
 	  return result;
 	}
       default:
-	cerr << "Conditional Gaussian: Sampling method " << method
+	cerr << "Conditional Gaussian: Sampling method " << static_cast<int>(method)
 	     << "not implemented yet!" << endl;
 	return false;
       }

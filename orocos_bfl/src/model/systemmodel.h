@@ -114,7 +114,7 @@ namespace BFL
 	  @note Maybe the return value would better be a Sample<T> instead
 	  of a T
       */
-      T Simulate (const T& x, const T& u, int sampling_method = DEFAULT, void * sampling_args = NULL);
+      T Simulate (const T& x, const T& u, const SampleMthd sampling_method = SampleMthd::DEFAULT, void * sampling_args = NULL);
       /// Simulate the system (no input system)
       /** @param x current state of the system
 	  @return State where we arrive by simulating the system model for
@@ -128,7 +128,7 @@ namespace BFL
 	  extra parameters (eg mcmc sampling)
       */
 
-      T Simulate (const T& x, int sampling_method = DEFAULT, void * sampling_args = NULL);
+      T Simulate (const T& x, const SampleMthd sampling_method = SampleMthd::DEFAULT, void * sampling_args = NULL);
 
       /// Get the probability of arriving in a next state
       /** @param x_k the next state (at time k)

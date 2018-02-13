@@ -43,11 +43,8 @@ namespace BFL
 {
   using namespace std;
 
-  // Defines for different sampling methods
-#define DEFAULT 0 // Default sampling method, must be valid for every PDF!!
-#define BOXMULLER 1
-#define CHOLESKY 2
-#define RIPLEY 3 // For efficient sampling from discrete/mcpdfs
+  // Enum for different sampling methods
+  enum class SampleMthd { DEFAULT, BOXMULLER, CHOLESKY, RIPLEY };
 
   /// Class PDF: Virtual Base class representing Probability Density Functions
   template <typename T> class Pdf
@@ -70,43 +67,43 @@ namespace BFL
       /// Draw multiple samples from the Pdf (overloaded)
       /** @param list_samples list of samples that will contain result of sampling
           @param num_samples Number of Samples to be drawn (iid)
-	  @param method Sampling method to be used.  Each sampling method
-	  is currently represented by a #define statement, eg.
-	  #define BOXMULLER 1
-	  @param args Pointer to a struct representing extra sample
-	  arguments.
-	  "Sample Arguments" can be anything (the number of steps a
-	  gibbs-iterator should take, the interval width in MCMC, ... (or
-	  nothing), so it is hard to give a meaning to what exactly
-	  Sample Arguments should represent...
-	  @todo replace the C-call "void * args" by a more object-oriented
-	  structure: Perhaps something like
-	  virtual Sample * Sample (const int num_samples,class Sampler)
-	  @bug Sometimes the compiler doesn't know which method to choose!
+      @param method Sampling method to be used.  Each sampling method
+      is currently represented by an enum eg.
+      SampleMthd::BOXMULLER
+      @param args Pointer to a struct representing extra sample
+      arguments.
+      "Sample Arguments" can be anything (the number of steps a
+      gibbs-iterator should take, the interval width in MCMC, ... (or
+      nothing), so it is hard to give a meaning to what exactly
+      Sample Arguments should represent...
+      @todo replace the C-call "void * args" by a more object-oriented
+      structure: Perhaps something like
+      virtual Sample * Sample (const int num_samples,class Sampler)
+      @bug Sometimes the compiler doesn't know which method to choose!
       */
       virtual bool SampleFrom (vector<Sample<T> >& list_samples,
-			       const unsigned int num_samples,
-			       int method = DEFAULT,
-			       void * args = NULL) const;
+                   const unsigned int num_samples,
+                   const SampleMthd method = SampleMthd::DEFAULT,
+                   void * args = NULL) const;
 
       /// Draw 1 sample from the Pdf:
       /** There's no need to create a list for only 1 sample!
-	  @param one_sample sample that will contain result of sampling
-	  @param method Sampling method to be used.  Each sampling method
-	  is currently represented by a #define statement, eg.
-	  #define BOXMULLER 1
-	  @param args Pointer to a struct representing extra sample
-	  arguments
-	  @see SampleFrom()
-	  @bug Sometimes the compiler doesn't know which method to choose!
+      @param one_sample sample that will contain result of sampling
+      @param method Sampling method to be used.  Each sampling method
+      is currently represented by an enum, eg.
+      SampleMthd::BOXMULLER
+      @param args Pointer to a struct representing extra sample
+      arguments
+      @see SampleFrom()
+      @bug Sometimes the compiler doesn't know which method to choose!
       */
       virtual bool  SampleFrom (Sample<T>& one_sample,
-				int method = DEFAULT,
-				void * args = NULL) const;
+                const SampleMthd method = SampleMthd::DEFAULT,
+                void * args = NULL) const;
 
       /// Get the probability of a certain argument
       /** @param input T argument of the Pdf
-	  @return the probability value of the argument
+      @return the probability value of the argument
       */
       virtual Probability ProbabilityGet(const T& input) const;
 
@@ -122,21 +119,21 @@ namespace BFL
 
       /// Get the expected value E[x] of the pdf
       /** Get low order statistic (Expected Value) of this AnalyticPdf
-	  @return The Expected Value of the Pdf (a ColumnVector with
-	  DIMENSION rows)
-	  @note No set functions here!  This can be useful for analytic
-	  functions, but not for sample based representations!
-	  @note For certain discrete Pdfs, this function has no
-	  meaning, what is the average between yes and no?
+      @return The Expected Value of the Pdf (a ColumnVector with
+      DIMENSION rows)
+      @note No set functions here!  This can be useful for analytic
+      functions, but not for sample based representations!
+      @note For certain discrete Pdfs, this function has no
+      meaning, what is the average between yes and no?
       */
       virtual T ExpectedValueGet() const;
 
       /// Get the Covariance Matrix E[(x - E[x])^2] of the Analytic pdf
       /** Get first order statistic (Covariance) of this AnalyticPdf
-	  @return The Covariance of the Pdf (a SymmetricMatrix of dim
-	  DIMENSION)
-	  @todo extend this more general to n-th order statistic
-	  @bug Discrete pdfs should not be able to use this!
+      @return The Covariance of the Pdf (a SymmetricMatrix of dim
+      DIMENSION)
+      @todo extend this more general to n-th order statistic
+      @bug Discrete pdfs should not be able to use this!
       */
       virtual MatrixWrapper::SymmetricMatrix CovarianceGet() const;
 
@@ -180,9 +177,9 @@ Pdf<T>::DimensionSet ( unsigned int dim )
 
 template<typename T> bool
 Pdf<T>::SampleFrom (vector<Sample<T> >& list_samples,
-		    const unsigned int num_samples,
-		    int method,
-		    void * args) const
+            const unsigned int num_samples,
+            const SampleMthd method,
+            void * args) const
 {
   list_samples.resize(num_samples);
   typename vector<Sample<T> >::iterator sample_it;
@@ -195,8 +192,8 @@ Pdf<T>::SampleFrom (vector<Sample<T> >& list_samples,
 
 template<typename T> bool
 Pdf<T>::SampleFrom (Sample<T>& one_sample,
-		    int method,
-		    void * args) const
+            const SampleMthd method,
+            void * args) const
 {
   cerr << "Error Pdf<T>: The SampleFrom function was called, but you didn't implement it!\n";
   exit(-BFL_ERRMISUSE);

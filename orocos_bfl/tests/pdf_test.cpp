@@ -68,14 +68,14 @@ PdfTest::testGaussian()
   first_gaussian.ExpectedValueSet(_mu);
   first_gaussian.CovarianceSet(_sigma);
   Sample<ColumnVector> test_sample ;
-  CPPUNIT_ASSERT_EQUAL( true, first_gaussian.SampleFrom(test_sample,DEFAULT,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, first_gaussian.SampleFrom(test_sample,SampleMthd::DEFAULT,NULL));
 
   Gaussian a_gaussian(_mu,_sigma);
 
   /* Sampling */
   // one sample
   Sample<ColumnVector> a_sample ;
-    CPPUNIT_ASSERT_EQUAL( true, a_gaussian.SampleFrom(a_sample,DEFAULT,NULL));
+    CPPUNIT_ASSERT_EQUAL( true, a_gaussian.SampleFrom(a_sample,SampleMthd::DEFAULT,NULL));
   // 4 sigma test : REMARK: this test WILL occasionaly fail with probability
   // erf(4/sqrt(2)) for each sample
   for(int j = 1 ; j <= DIMENSION; j++)
@@ -84,8 +84,8 @@ PdfTest::testGaussian()
     CPPUNIT_ASSERT( (a_sample.ValueGet())(j) < _mu(j) + 4.0 * sqrt(_sigma(j,j) ) );
   }
   // Box-Muller is not implemented yet
-  CPPUNIT_ASSERT_EQUAL( false, a_gaussian.SampleFrom(a_sample,BOXMULLER,NULL));
-  CPPUNIT_ASSERT_EQUAL( true, a_gaussian.SampleFrom(a_sample,CHOLESKY,NULL));
+  CPPUNIT_ASSERT_EQUAL( false, a_gaussian.SampleFrom(a_sample,SampleMthd::BOXMULLER,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, a_gaussian.SampleFrom(a_sample,SampleMthd::CHOLESKY,NULL));
   // 4 sigma test : REMARK: this test WILL occasionaly fail with probability
   // erf(4/sqrt(2)) for each sample
   for(int j = 1 ; j <= DIMENSION; j++)
@@ -96,7 +96,7 @@ PdfTest::testGaussian()
 
   // list of samples
   vector<Sample<ColumnVector> > los(NUM_SAMPLES);
-  CPPUNIT_ASSERT_EQUAL( true, a_gaussian.SampleFrom(los,NUM_SAMPLES,DEFAULT,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, a_gaussian.SampleFrom(los,NUM_SAMPLES,SampleMthd::DEFAULT,NULL));
   // 4 sigma test : REMARK: this test WILL occasionaly fail with probability
   // erf(4/sqrt(2)) for each sample
   ColumnVector sample_mean(DIMENSION);
@@ -121,8 +121,8 @@ PdfTest::testGaussian()
     CPPUNIT_ASSERT( sample_mean(j) >= _mu(j) - 3.0 * 1/sqrt(NUM_SAMPLES) * sqrt(_sigma(j,j)) );
   }
   // Box-Muller is not implemented yet
-  CPPUNIT_ASSERT_EQUAL( false, a_gaussian.SampleFrom(los,NUM_SAMPLES,BOXMULLER,NULL));
-  CPPUNIT_ASSERT_EQUAL( true, a_gaussian.SampleFrom(los,NUM_SAMPLES,CHOLESKY,NULL));
+  CPPUNIT_ASSERT_EQUAL( false, a_gaussian.SampleFrom(los,NUM_SAMPLES,SampleMthd::BOXMULLER,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, a_gaussian.SampleFrom(los,NUM_SAMPLES,SampleMthd::CHOLESKY,NULL));
   // 4 sigma test : REMARK: this test WILL occasionaly fail with probability
   // erf(4/sqrt(2)) for each sample
   sample_mean = 0.0;
@@ -180,7 +180,7 @@ PdfTest::testUniform()
 
   /* Sampling */
   vector<Sample<ColumnVector> > los(NUM_SAMPLES);
-  CPPUNIT_ASSERT_EQUAL( true, a_uniform.SampleFrom(los,NUM_SAMPLES,DEFAULT,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, a_uniform.SampleFrom(los,NUM_SAMPLES,SampleMthd::DEFAULT,NULL));
   // test if samples are located in the area
   vector<Sample<ColumnVector > >::iterator los_it;
   for (los_it = los.begin(); los_it!=los.end(); los_it++)
@@ -193,11 +193,11 @@ PdfTest::testUniform()
        }
    }
   // Box-Muller is not implemented yet
-  CPPUNIT_ASSERT_EQUAL( false, a_uniform.SampleFrom(los,NUM_SAMPLES,BOXMULLER,NULL));
+  CPPUNIT_ASSERT_EQUAL( false, a_uniform.SampleFrom(los,NUM_SAMPLES,SampleMthd::BOXMULLER,NULL));
   Sample<ColumnVector> a_sample ;
-  CPPUNIT_ASSERT_EQUAL( true, a_uniform.SampleFrom(a_sample,DEFAULT,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, a_uniform.SampleFrom(a_sample,SampleMthd::DEFAULT,NULL));
   // Box-Muller is not implemented yet
-  CPPUNIT_ASSERT_EQUAL( false, a_uniform.SampleFrom(a_sample,BOXMULLER,NULL));
+  CPPUNIT_ASSERT_EQUAL( false, a_uniform.SampleFrom(a_sample,SampleMthd::BOXMULLER,NULL));
 
   /* Getting the probability */
   double area = 1;
@@ -342,7 +342,7 @@ PdfTest::testDiscretePdf()
   // check most probable state
   CPPUNIT_ASSERT_EQUAL( 2, d_discretepdf.MostProbableStateGet());
 
-  CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(los,NUM_SAMPLES,DEFAULT,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(los,NUM_SAMPLES,SampleMthd::DEFAULT,NULL));
   // test if samples are distributed according to probabilities
   // remark that this test occasionally fails
   vector<unsigned int> num_samples(NUM_DS,0);
@@ -357,7 +357,7 @@ PdfTest::testDiscretePdf()
   }
 
   // Ripley
-  CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(los,NUM_SAMPLES,RIPLEY,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(los,NUM_SAMPLES,SampleMthd::RIPLEY,NULL));
   // test if samples are distributed according to probabilities
   // remark that this test occasionally fails
   vector<unsigned int> num_samples2(NUM_DS,0);
@@ -381,7 +381,7 @@ PdfTest::testDiscretePdf()
   // check most probable state
   CPPUNIT_ASSERT_EQUAL( 2, d_discretepdf.MostProbableStateGet());
 
-  CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(los,NUM_SAMPLES,DEFAULT,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(los,NUM_SAMPLES,SampleMthd::DEFAULT,NULL));
   // test if samples are distributed according to probabilities
   // remark that this test occasionally fails
   vector<unsigned int> num_samples3(NUM_DS,0);
@@ -396,7 +396,7 @@ PdfTest::testDiscretePdf()
   }
 
   // Ripley
-  CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(los,NUM_SAMPLES,RIPLEY,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(los,NUM_SAMPLES,SampleMthd::RIPLEY,NULL));
   // test if samples are distributed according to probabilities
   // remark that this test occasionally fails
   vector<unsigned int> num_samples4(NUM_DS,0);
@@ -411,9 +411,9 @@ PdfTest::testDiscretePdf()
   }
 
   Sample<int> a_sample ;
-  CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(a_sample,DEFAULT,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, d_discretepdf.SampleFrom(a_sample,SampleMthd::DEFAULT,NULL));
   // Ripley not implemented for one sample
-  CPPUNIT_ASSERT_EQUAL( false, d_discretepdf.SampleFrom(a_sample,RIPLEY,NULL));
+  CPPUNIT_ASSERT_EQUAL( false, d_discretepdf.SampleFrom(a_sample,SampleMthd::RIPLEY,NULL));
 
   /* Clone */
   DiscretePdf* clone = NULL;
@@ -484,15 +484,15 @@ PdfTest::testLinearAnalyticConditionalGaussian()
 
   /* Sampling */
   vector<Sample<ColumnVector> > los(NUM_SAMPLES);
-  CPPUNIT_ASSERT_EQUAL( true, a_condgaussian.SampleFrom(los,NUM_SAMPLES,DEFAULT,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, a_condgaussian.SampleFrom(los,NUM_SAMPLES,SampleMthd::DEFAULT,NULL));
   // Box-Muller is not implemented yet
-  CPPUNIT_ASSERT_EQUAL( false, a_condgaussian.SampleFrom(los,NUM_SAMPLES,BOXMULLER,NULL));
-  CPPUNIT_ASSERT_EQUAL( true, a_condgaussian.SampleFrom(los,NUM_SAMPLES,CHOLESKY,NULL));
+  CPPUNIT_ASSERT_EQUAL( false, a_condgaussian.SampleFrom(los,NUM_SAMPLES,SampleMthd::BOXMULLER,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, a_condgaussian.SampleFrom(los,NUM_SAMPLES,SampleMthd::CHOLESKY,NULL));
   Sample<ColumnVector> a_sample ;
-  CPPUNIT_ASSERT_EQUAL( true, a_condgaussian.SampleFrom(a_sample,DEFAULT,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, a_condgaussian.SampleFrom(a_sample,SampleMthd::DEFAULT,NULL));
   // Box-Muller is not implemented yet
-  CPPUNIT_ASSERT_EQUAL( false, a_condgaussian.SampleFrom(a_sample,BOXMULLER,NULL));
-  CPPUNIT_ASSERT_EQUAL( true, a_condgaussian.SampleFrom(a_sample,CHOLESKY,NULL));
+  CPPUNIT_ASSERT_EQUAL( false, a_condgaussian.SampleFrom(a_sample,SampleMthd::BOXMULLER,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, a_condgaussian.SampleFrom(a_sample,SampleMthd::CHOLESKY,NULL));
 
   /* Test dfGet */
   for (unsigned int i=0; i < NUM_COND_ARGS; i++)
@@ -602,9 +602,9 @@ PdfTest::testDiscreteConditionalPdf()
 
   /* Sampling */
   vector<Sample<int> > los(NUM_SAMPLES);
-  CPPUNIT_ASSERT_EQUAL( true, a_discretecondpdf.SampleFrom(los,NUM_SAMPLES,DEFAULT,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, a_discretecondpdf.SampleFrom(los,NUM_SAMPLES,SampleMthd::DEFAULT,NULL));
   Sample<int> a_sample ;
-  CPPUNIT_ASSERT_EQUAL( true, a_discretecondpdf.SampleFrom(a_sample,DEFAULT,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, a_discretecondpdf.SampleFrom(a_sample,SampleMthd::DEFAULT,NULL));
 
   /* Copy */
   DiscreteConditionalPdf b_discretecondpdf(a_discretecondpdf);
@@ -650,7 +650,7 @@ PdfTest::testMcpdf()
 
   vector<Sample<ColumnVector> > exact_samples(NUM_SAMPLES);
   vector<Sample<ColumnVector> >::iterator it;
-  gaussian.SampleFrom(exact_samples, NUM_SAMPLES,CHOLESKY,NULL);
+  gaussian.SampleFrom(exact_samples, NUM_SAMPLES,SampleMthd::CHOLESKY,NULL);
 
   /* Getting and setting the list of samples (non-weighted)*/
   a_mcpdf.ListOfSamplesSet(exact_samples);
@@ -687,8 +687,8 @@ PdfTest::testMcpdf()
 
   /* Sampling */
   vector<Sample<ColumnVector> > samples_test(NUM_SAMPLES);
-  CPPUNIT_ASSERT_EQUAL( true, a_mcpdf.SampleFrom(samples_test,NUM_SAMPLES,RIPLEY,NULL));
-  CPPUNIT_ASSERT_EQUAL( true, a_mcpdf.SampleFrom(samples_test,NUM_SAMPLES,DEFAULT,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, a_mcpdf.SampleFrom(samples_test,NUM_SAMPLES,SampleMthd::RIPLEY,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, a_mcpdf.SampleFrom(samples_test,NUM_SAMPLES,SampleMthd::DEFAULT,NULL));
 
   /* Expected Value*/
   vector<WeightedSample<ColumnVector> > los = a_mcpdf.ListOfSamplesGet();
@@ -791,7 +791,7 @@ PdfTest::testMcpdf()
 
   /* Sampling */
   vector<Sample<unsigned int> > samples_test_uint(NUM_SAMPLES);
-  CPPUNIT_ASSERT_EQUAL( true, a_mcpdf_uint.SampleFrom(samples_test_uint,NUM_SAMPLES,DEFAULT,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, a_mcpdf_uint.SampleFrom(samples_test_uint,NUM_SAMPLES,SampleMthd::DEFAULT,NULL));
 
   /* Expected Value*/
   vector<WeightedSample<unsigned int> > los_uint = a_mcpdf_uint.ListOfSamplesGet();
@@ -914,7 +914,7 @@ PdfTest::testMixture()
 
 
   // sampling with one component test
-  CPPUNIT_ASSERT_EQUAL( true, mixture.SampleFrom(sample,DEFAULT,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, mixture.SampleFrom(sample,SampleMthd::DEFAULT,NULL));
   // 4 sigma test : REMARK: this test WILL occasionaly fail with probability
   // erf(4/sqrt(2)) for each sample
   for(int j = 1 ; j <= DIMENSION; j++)
@@ -923,11 +923,11 @@ PdfTest::testMixture()
     CPPUNIT_ASSERT( (sample.ValueGet())(j) < _mu(j) + 4.0 * sqrt(_sigma(j,j) ) );
   }
   // Box-Muller and Choleskyis not implemented yet
-  CPPUNIT_ASSERT_EQUAL( false, mixture.SampleFrom(sample,BOXMULLER,NULL));
-  CPPUNIT_ASSERT_EQUAL( false, mixture.SampleFrom(sample,CHOLESKY,NULL));
+  CPPUNIT_ASSERT_EQUAL( false, mixture.SampleFrom(sample,SampleMthd::BOXMULLER,NULL));
+  CPPUNIT_ASSERT_EQUAL( false, mixture.SampleFrom(sample,SampleMthd::CHOLESKY,NULL));
 
   // list of samples
-  CPPUNIT_ASSERT_EQUAL( true, mixture.SampleFrom(los,NUM_SAMPLES,DEFAULT,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, mixture.SampleFrom(los,NUM_SAMPLES,SampleMthd::DEFAULT,NULL));
   // 4 sigma test : REMARK: this test WILL occasionaly fail with probability
   // erf(4/sqrt(2)) for each sample
   ColumnVector sample_mean(DIMENSION);
@@ -952,9 +952,9 @@ PdfTest::testMixture()
     CPPUNIT_ASSERT( sample_mean(j) >= _mu(j) - 3.0 * 1/sqrt(NUM_SAMPLES) * sqrt(_sigma(j,j)) );
   }
   // Box-Muller and cholesky is not implemented 
-  CPPUNIT_ASSERT_EQUAL( false, mixture.SampleFrom(los,NUM_SAMPLES,BOXMULLER,NULL));
-  CPPUNIT_ASSERT_EQUAL( false, mixture.SampleFrom(los,NUM_SAMPLES,CHOLESKY,NULL));
-  CPPUNIT_ASSERT_EQUAL( true, mixture.SampleFrom(los,NUM_SAMPLES,RIPLEY,NULL));
+  CPPUNIT_ASSERT_EQUAL( false, mixture.SampleFrom(los,NUM_SAMPLES,SampleMthd::BOXMULLER,NULL));
+  CPPUNIT_ASSERT_EQUAL( false, mixture.SampleFrom(los,NUM_SAMPLES,SampleMthd::CHOLESKY,NULL));
+  CPPUNIT_ASSERT_EQUAL( true, mixture.SampleFrom(los,NUM_SAMPLES,SampleMthd::RIPLEY,NULL));
   // 4 sigma test : REMARK: this test WILL occasionaly fail with probability
   // erf(4/sqrt(2)) for each sample
   sample_mean = 0.0;

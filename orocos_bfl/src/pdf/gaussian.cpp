@@ -84,7 +84,7 @@ namespace BFL
     _diff = input;
     _diff -= _Mu;
     _Sigma_inverse.multiply(_diff,_tempColumn);
-    //_tempColumn = _Sigma_inverse * _diff; 
+    //_tempColumn = _Sigma_inverse * _diff;
     Probability temp = _diff.transpose() * _tempColumn;
     //Probability temp = _diff.transpose() * (_Sigma_inverse * _diff);
     Probability result = exp(-0.5 * temp) * _sqrt_pow;
@@ -95,14 +95,14 @@ namespace BFL
   // only once when drawing multiple samples at once!
   // See method below for more info regarding the algorithms
   bool
-  Gaussian::SampleFrom (vector<Sample<ColumnVector> >& list_samples, const unsigned int num_samples, int method, void * args) const
+  Gaussian::SampleFrom (vector<Sample<ColumnVector> >& list_samples, const unsigned int num_samples, const SampleMthd method, void * args) const
   {
     list_samples.resize(num_samples); // will break real-timeness if list_samples.size()!=num_samples
     vector<Sample<ColumnVector> >::iterator rit = list_samples.begin();
     switch(method)
       {
-      case DEFAULT: // Cholesky Sampling
-      case CHOLESKY:
+      case SampleMthd::DEFAULT: // Cholesky Sampling
+      case SampleMthd::CHOLESKY:
 	{
 	  bool result = _Sigma.cholesky_semidefinite(_Low_triangle);
 	  while (rit != list_samples.end())
@@ -115,7 +115,7 @@ namespace BFL
 	    }
 	  return result;
 	}
-      case BOXMULLER: // Implement box-muller here
+      case SampleMthd::BOXMULLER: // Implement box-muller here
 	// Only for univariate distributions.
 	return false;
       default:
@@ -125,7 +125,7 @@ namespace BFL
 
 
   bool
-  Gaussian::SampleFrom (Sample<ColumnVector>& one_sample, int method, void * args) const
+  Gaussian::SampleFrom (Sample<ColumnVector>& one_sample, const SampleMthd method, void * args) const
   {
     /*  Exact i.i.d. samples from a Gaussian can be drawn in several
 	ways:
@@ -139,8 +139,8 @@ namespace BFL
     */
     switch(method)
       {
-      case DEFAULT: // Cholesky Sampling, see eg.
-      case CHOLESKY: // Cholesky Sampling, see eg.
+      case SampleMthd::DEFAULT: // Cholesky Sampling, see eg.
+      case SampleMthd::CHOLESKY: // Cholesky Sampling, see eg.
 	/*
 	  @Book{		  ripley87,
 	  author	= {Ripley, Brian D.},
@@ -166,7 +166,7 @@ namespace BFL
 	  one_sample.ValueSet(_sampleValue);
 	  return result;
 	}
-      case BOXMULLER: // Implement box-muller here
+      case SampleMthd::BOXMULLER: // Implement box-muller here
 	// Only for univariate distributions.
 	return false;
       default:

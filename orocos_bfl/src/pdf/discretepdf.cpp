@@ -127,15 +127,15 @@ namespace BFL
   bool
   DiscretePdf::SampleFrom (vector<Sample<int> >& list_samples,
 			   const unsigned int num_samples,
-			   int method,
+			   const SampleMthd method,
 			   void * args) const
   {
     switch(method)
     {
-      case DEFAULT: // O(N log(N) efficiency)
+      case SampleMthd::DEFAULT: // O(N log(N) efficiency)
 	  return Pdf<int>::SampleFrom(list_samples, num_samples,method,args);
 
-      case RIPLEY: // See mcpdf.cpp for more explanation
+      case SampleMthd::RIPLEY: // See mcpdf.cpp for more explanation
 	  {
 	    list_samples.resize(num_samples);
 	    // GENERATE N ORDERED IID UNIFORM SAMPLES
@@ -178,11 +178,11 @@ namespace BFL
 
 
 
-  bool DiscretePdf::SampleFrom (Sample<int>& one_sample, int method, void * args) const
+  bool DiscretePdf::SampleFrom (Sample<int>& one_sample, const SampleMthd method, void * args) const
   {
     switch(method)
       {
-      case DEFAULT:
+      case SampleMthd::DEFAULT:
 	{
 	  // Sample from univariate uniform rng between 0 and 1;
 	  double unif_sample; unif_sample = runif();

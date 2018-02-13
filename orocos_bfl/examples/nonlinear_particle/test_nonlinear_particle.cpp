@@ -151,7 +151,7 @@ int main(int argc, char** argv)
   // Discrete prior for Particle filter (using the continuous Gaussian prior)
   vector<Sample<ColumnVector> > prior_samples(NUM_SAMPLES);
   MCPdf<ColumnVector> prior_discr(NUM_SAMPLES,STATE_SIZE);
-  prior_cont.SampleFrom(prior_samples,NUM_SAMPLES,CHOLESKY,NULL);
+  prior_cont.SampleFrom(prior_samples,NUM_SAMPLES,SampleMthd::CHOLESKY,NULL);
   prior_discr.ListOfSamplesSet(prior_samples);
 
   /******************************

@@ -120,7 +120,7 @@ MeasurementModel<MeasVar,StateVar>::MeasurementPdfSet(ConditionalPdf<MeasVar,Sta
 template<typename MeasVar, typename StateVar> MeasVar
 MeasurementModel<MeasVar,StateVar>::Simulate (const StateVar& x,
 					      const StateVar& s,
-					      int sampling_method,
+					      const SampleMthd sampling_method,
 					      void * sampling_args)
 {
   assert(_systemWithoutSensorParams == false);
@@ -135,7 +135,7 @@ MeasurementModel<MeasVar,StateVar>::Simulate (const StateVar& x,
 
 template<typename MeasVar, typename StateVar> MeasVar
 MeasurementModel<MeasVar,StateVar>::Simulate(const StateVar& x,
-					     int sampling_method,
+					     const SampleMthd sampling_method,
 					     void * sampling_args)
 {
   assert(_systemWithoutSensorParams == true);

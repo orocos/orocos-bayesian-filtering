@@ -36,7 +36,7 @@ namespace BFL
   NonlinearSystemPdf::~NonlinearSystemPdf(){}
 
 
-  bool NonlinearSystemPdf::SampleFrom (Sample<ColumnVector>& one_sample, int method, void * args) const
+  bool NonlinearSystemPdf::SampleFrom (Sample<ColumnVector>& one_sample, const SampleMthd method, void * args) const
   {
     ColumnVector state = ConditionalArgumentGet(0);
     ColumnVector vel   = ConditionalArgumentGet(1);

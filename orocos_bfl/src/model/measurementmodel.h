@@ -100,7 +100,7 @@ namespace BFL
 	@note Maybe the return value would better be a Sample<StateVar> instead
 	of a StateVar
     */
-    MeasVar Simulate (const StateVar& x, const StateVar& s, int sampling_method = DEFAULT, void * sampling_args = NULL);
+    MeasVar Simulate (const StateVar& x, const StateVar& s, const SampleMthd sampling_method = SampleMthd::DEFAULT, void * sampling_args = NULL);
 
     /// Simulate the system (no input system)
     /** @param x current state of the system
@@ -113,7 +113,7 @@ namespace BFL
 	@param sampling_args Sometimes a sampling method can have some
 	extra parameters (eg mcmc sampling)
     */
-    MeasVar Simulate (const StateVar& x, int sampling_method = DEFAULT, void * sampling_args = NULL);
+    MeasVar Simulate (const StateVar& x, const SampleMthd sampling_method = SampleMthd::DEFAULT, void * sampling_args = NULL);
 
     /// Get the probability of a certain measurement
     /** given a certain state and input

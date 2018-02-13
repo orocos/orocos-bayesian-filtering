@@ -154,7 +154,7 @@ namespace BFL
 	      }
 	  }
 	// Bug, make sampling method a parameter!
-	_proposal->SampleFrom(_sample, DEFAULT,NULL);
+	_proposal->SampleFrom(_sample, SampleMthd::DEFAULT,NULL);
 
 	_ns_it->ValueSet(_sample.ValueGet());
 	_ns_it->WeightSet(_os_it->WeightGet());

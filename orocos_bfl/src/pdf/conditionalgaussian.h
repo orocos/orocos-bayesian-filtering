@@ -58,9 +58,9 @@ namespace BFL
 
       // implemented virtuals!
       virtual Probability ProbabilityGet(const MatrixWrapper::ColumnVector& input) const;
-      virtual bool SampleFrom (Sample<MatrixWrapper::ColumnVector>& sample, int method=DEFAULT, void * args=NULL) const;
+      virtual bool SampleFrom (Sample<MatrixWrapper::ColumnVector>& sample, const SampleMthd method=SampleMthd::DEFAULT, void * args=NULL) const;
       virtual bool SampleFrom (std::vector<Sample<MatrixWrapper::ColumnVector> >& samples, const unsigned int num_samples,
-			       int method=DEFAULT, void * args=NULL) const;
+			       const SampleMthd method=SampleMthd::DEFAULT, void * args=NULL) const;
 
     protected:
       // variables to avoid allocation on the heap during sampling

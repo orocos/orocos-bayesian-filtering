@@ -132,7 +132,7 @@ namespace BFL
     _probability_p[index] = prob;
   }
 
-  bool DiscreteConditionalPdf::SampleFrom(Sample<int>& one_sample, int method, void * args) const
+  bool DiscreteConditionalPdf::SampleFrom(Sample<int>& one_sample, const SampleMthd method, void * args) const
   {
     // Get the elements of which to sample from
     int startindex = IndexGet(0,ConditionalArgumentsGet());
@@ -177,7 +177,7 @@ namespace BFL
 
   bool
   DiscreteConditionalPdf::SampleFrom(vector<Sample<int> >& list_samples,
-				     unsigned int num_samples, int method,
+				     unsigned int num_samples, const SampleMthd method,
 				     void * args) const
   {
     list_samples.resize(num_samples); // will break real-timeness if list_samples.size()!=num_samples

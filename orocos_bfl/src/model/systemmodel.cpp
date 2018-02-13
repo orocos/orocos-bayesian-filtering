@@ -122,7 +122,7 @@ SystemModel<T>::SystemPdfSet(ConditionalPdf<T,T>* pdf)
 
 // Simulate from the system model
 template<typename T> T
-SystemModel<T>::Simulate (const T& x, const T& u, int sampling_method,
+SystemModel<T>::Simulate (const T& x, const T& u, const SampleMthd sampling_method,
 		          void * sampling_args)
 {
   assert(_systemWithoutInputs == false);
@@ -135,7 +135,7 @@ SystemModel<T>::Simulate (const T& x, const T& u, int sampling_method,
 }
 
 template<typename T> T
-SystemModel<T>::Simulate (const T& x, int sampling_method,
+SystemModel<T>::Simulate (const T& x, const SampleMthd sampling_method,
 			  void * sampling_args)
 {
   assert(_systemWithoutInputs == true);
