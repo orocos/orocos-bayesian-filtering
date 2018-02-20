@@ -94,6 +94,7 @@ ModelTest::testDiscreteSystemModel()
   for (state_kMinusOne = 0 ; state_kMinusOne < NUM_DS ;  state_kMinusOne++)
     {
        cond_args[0] = state_kMinusOne;
+       a_discretecondpdf.ConditionalArgumentsSet(cond_args);
        for (state_k = 0 ; state_k < NUM_DS ;  state_k++)
          {
             CPPUNIT_ASSERT_EQUAL( (double)a_discretecondpdf.ProbabilityGet(state_k),(double)a_discreteSysModel.ProbabilityGet(state_k,state_kMinusOne));
@@ -151,10 +152,11 @@ ModelTest::testDiscreteSystemModel()
   /* ProbabilityGet without inputs*/
   for (state_kMinusOne = 0 ; state_kMinusOne < NUM_DS ;  state_kMinusOne++)
     {
-       cond_args[0] = state_kMinusOne;
+       cond_args_new[0] = state_kMinusOne;
        for (input = 0 ; input < size_input ;  input++)
          {
             cond_args_new[1] = input;
+	    c_discretecondpdf.ConditionalArgumentsSet(cond_args_new);
             for (state_k = 0 ; state_k < NUM_DS ;  state_k++)
               {
                  CPPUNIT_ASSERT_EQUAL( (double)c_discretecondpdf.ProbabilityGet(state_k),(double)c_discreteSysModel.ProbabilityGet(state_k,state_kMinusOne,input));
