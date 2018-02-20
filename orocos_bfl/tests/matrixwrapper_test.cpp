@@ -539,10 +539,12 @@ MatrixwrapperTest::testMatrixwrapperValue()
   Matrix Im_test = Rm * Rm_inv;
   CPPUNIT_ASSERT_EQUAL(approxEqual(Im_test, Im, epsilon),true);
 
+  // SymmetricMatrix Rs(c);
   Matrix Rs(c,c);
   Rs(1,1) = 3;   Rs(1,2) = 5;    Rs(1,3) = 3;
   Rs(2,1) = 5;   Rs(2,2) = 2;    Rs(2,3) = 7;
   Rs(3,1) = 3;   Rs(3,2) = 7;    Rs(3,3) = 0;
+  // SymmetricMatrix Rs_inv = Rs.inverse();
   Matrix Rs_inv = Rs.inverse();
   Matrix Is(c,c); Is = 0;
   for (unsigned int i=0; i<c; i++)
@@ -550,9 +552,27 @@ MatrixwrapperTest::testMatrixwrapperValue()
   Matrix Is_test = Rs * Rs_inv;
   CPPUNIT_ASSERT_EQUAL(approxEqual(Is_test, Is, epsilon),true);
 
+  // Issue #35
+  SymmetricMatrix MI35(c);
+  MI35(1,1) = 3; MI35(1,2) = 2; MI35(1,3) = 0;
+  MI35(2,1) = 2; MI35(2,2) = 2; MI35(2,3) = 0;
+  MI35(3,1) = 0; MI35(3,2) = 0; MI35(3,3) = 0.5;
+  
   // test determinant
   CPPUNIT_ASSERT_EQUAL(approxEqual(Rm.determinant(), 105, epsilon),true);
   CPPUNIT_ASSERT_EQUAL(approxEqual(Rs.determinant(), 45, epsilon),true);
+  CPPUNIT_ASSERT_EQUAL(approxEqual(MI35.determinant(), 1, epsilon),true); // Issue #35
+
+  // test symmetric inverse
+  SymmetricMatrix MI35_inv = MI35.inverse();
+
+  SymmetricMatrix MI35_inv_test(c);
+  MI35_inv_test(1,1) = 1.;  MI35_inv_test(1,2) = -1.; MI35_inv_test(1,3) = 0.;
+  MI35_inv_test(2,1) = -1.; MI35_inv_test(2,2) = 1.5; MI35_inv_test(2,3) = 0.;
+  MI35_inv_test(3,1) = 0.;  MI35_inv_test(3,2) = 0.;  MI35_inv_test(3,3) = 2.;
+
+  CPPUNIT_ASSERT_EQUAL(approxEqual(MI35_inv_test, MI35_inv, epsilon), true);
+ 
 
   // test cholesky
   SymmetricMatrix Ps(c);
