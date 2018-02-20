@@ -25,7 +25,7 @@
 namespace BFL
 {
 
-  /// Abstract Class representing all _FULLY_ Discrete Conditional PDF's
+  /// Class representing all _FULLY_ Discrete Conditional PDF's
   /** This class inherits only from ConditionalPdf (not from
       DiscretePdf, avoiding a circular  class structure
 
