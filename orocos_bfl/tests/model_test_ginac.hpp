@@ -16,7 +16,7 @@
 //
 
 #ifndef MODEL_TEST_GINAC_HPP
-#define MODEl_TEST_GINAC_HPP
+#define MODEL_TEST_GINAC_HPP
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <model/nonlinearanalyticsystemmodel_gaussianuncertainty_ginac.h>
