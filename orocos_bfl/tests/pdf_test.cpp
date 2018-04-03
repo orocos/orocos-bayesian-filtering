@@ -1132,7 +1132,7 @@ PdfTest::testMixture()
   {
     prob = prob + vecW[j-1] * componentVec[j-1]->ProbabilityGet(cv1) ;
   }
-  CPPUNIT_ASSERT_EQUAL((double)prob,(double)mixtureVec.ProbabilityGet(cv1)) ;
+  CPPUNIT_ASSERT_EQUAL(approxEqual((double)prob,(double)mixtureVec.ProbabilityGet(cv1), epsilon), true) ;
   //ExpectedValueGet
   expectedMix = mixtureVec.ExpectedValueGet() ;
   expectedComp = 0.0; 
