@@ -16,13 +16,15 @@ ENDIF( OROCOS_PLUGIN )
 
 # examples will be linked with orocos-bfl, so when building both static and shared, examples will link with shared
 IF (LIBRARY_TYPE STREQUAL "shared")
+# See issue #45
+  include(GNUInstallDirs)
   ADD_LIBRARY(orocos-bfl SHARED $ENV{GLOBAL_LIBRARY_SRCS})
-  SET_TARGET_PROPERTIES(orocos-bfl PROPERTIES OUTPUT_NAME orocos-bfl)
+#   SET_TARGET_PROPERTIES(orocos-bfl PROPERTIES OUTPUT_NAME orocos-bfl)
   IF (GINAC_SUPPORT)
     TARGET_LINK_LIBRARIES(orocos-bfl "${GINAC_LIBS}")
   ENDIF (GINAC_SUPPORT)
   SET_TARGET_PROPERTIES(orocos-bfl PROPERTIES SOVERSION "${VERSION_MAJOR}.${VERSION_MINOR}")
-  INSTALL_TARGETS( /lib${LIB_SUFFIX} orocos-bfl)
+  INSTALL(TARGETS orocos-bfl LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT library)
 ELSE (LIBRARY_TYPE STREQUAL "shared")
 
 IF (LIBRARY_TYPE STREQUAL "static")

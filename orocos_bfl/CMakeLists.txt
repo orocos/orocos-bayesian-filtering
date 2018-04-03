@@ -113,8 +113,10 @@ ADD_SUBDIRECTORY( examples )
 # .pc file
 # --------
 CONFIGURE_FILE( orocos-bfl.pc.in orocos-bfl.pc @ONLY)
-INSTALL_FILES( /lib${LIB_SUFFIX}/pkgconfig FILES orocos-bfl.pc)
-
+# Issue #45
+# INSTALL_FILES( /lib${LIB_SUFFIX}/pkgconfig FILES orocos-bfl.pc)
+include(GNUInstallDirs)
+INSTALL_FILES( "/${CMAKE_INSTALL_LIBDIR}/pkgconfig" FILES orocos-bfl.pc)
 
 # Building Doxygen documents
 # --------------------------
