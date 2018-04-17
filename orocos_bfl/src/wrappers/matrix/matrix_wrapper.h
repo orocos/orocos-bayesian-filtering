@@ -289,7 +289,6 @@ public:
 
 // include
 #include "matrix_NEWMAT.h"
-#include "matrix_LTI.h"
 #include "matrix_BOOST.h"
 #include "matrix_EIGEN.h"
 
