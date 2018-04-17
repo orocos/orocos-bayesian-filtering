@@ -12,12 +12,6 @@ IF (NOT __MATRIXWRAPPER_NEWMAT__)
 ENDIF (NOT __MATRIXWRAPPER_NEWMAT__)
 SET(__MATRIXWRAPPER_NEWMAT__ OFF)
 
-IF (NOT __MATRIXWRAPPER_LTI__)
-  SET(__MATRIXWRAPPER_LTI__ OFF CACHE BOOL "define for lti")
-  MARK_AS_ADVANCED(__MATRIXWRAPPER_LTI__)
-ENDIF (NOT __MATRIXWRAPPER_LTI__)
-SET(__MATRIXWRAPPER_LTI__ OFF)
-
 IF (NOT __MATRIXWRAPPER_BOOST__)
   SET(__MATRIXWRAPPER_BOOST__ OFF CACHE BOOL "define for boost")
   MARK_AS_ADVANCED(__MATRIXWRAPPER_BOOST__)
@@ -33,7 +27,7 @@ SET(__MATRIXWRAPPER_EIGEN__ OFF)
 # install path
 # ------------
 IF(NOT MATRIX_LIB)
-  SET( MATRIX_LIB boost CACHE STRING "Which matrix library to use: lti, newmat, boost or eigen")
+  SET( MATRIX_LIB boost CACHE STRING "Which matrix library to use: newmat, boost or eigen")
 ENDIF(NOT MATRIX_LIB)
 MESSAGE("Searching for matrix lib ${MATRIX_LIB}")
 
@@ -54,22 +48,6 @@ IF (MATRIX_LIB STREQUAL "newmat")
     MESSAGE( FATAL_ERROR "Looking for Newmat - not found")
   ENDIF ( NEWMAT AND NEWMAT_FOUND )
 ELSE (MATRIX_LIB STREQUAL "newmat")
-
-
-IF (MATRIX_LIB STREQUAL "lti")
-  FIND_LIBRARY(LTI ltir )
-  FIND_PATH(LTI_FOUND ltilib/ltiMatrix.h )
-  IF ( LTI AND LTI_FOUND )
-    MESSAGE("-- Looking for Lti - found")
-    SET( MATRIX_INCLUDE "${LTI_FOUND}")
-    SET( MATRIX_LIBS "${LTI}")
-    MESSAGE( "-- Lti includes ${MATRIX_INCLUDE}")
-    MESSAGE( "-- Lti libs     ${MATRIX_LIBS}")
-    SET(__MATRIXWRAPPER_LTI__ ON)
-  ELSE ( LTI AND LTI_FOUND )
-    MESSAGE(FATAL_ERROR "Looking for Lti in - not found")
-  ENDIF ( LTI AND LTI_FOUND )
-ELSE (MATRIX_LIB STREQUAL "lti")
 
 
 IF (MATRIX_LIB STREQUAL "boost")
@@ -109,5 +87,4 @@ MESSAGE( FATAL_ERROR "No valid matrix lib specified. Please choose lti, newmat, 
 
 ENDIF (MATRIX_LIB STREQUAL "eigen")
 ENDIF (MATRIX_LIB STREQUAL "boost")
-ENDIF (MATRIX_LIB STREQUAL "lti")
 ENDIF (MATRIX_LIB STREQUAL "newmat")

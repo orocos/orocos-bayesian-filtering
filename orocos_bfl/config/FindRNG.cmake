@@ -11,12 +11,6 @@ IF (NOT __RNGWRAPPER_BOOST__)
 ENDIF (NOT __RNGWRAPPER_BOOST__)
 SET(__RNGWRAPPER_BOOST__ OFF)
 
-IF (NOT __RNGWRAPPER_LTI__)
-  SET(__RNGWRAPPER_LTI__ OFF CACHE BOOL "define for lti")
-  MARK_AS_ADVANCED(__RNGWRAPPER_LTI__)
-ENDIF (NOT __RNGWRAPPER_LTI__)
-SET(__RNGWRAPPER_LTI__ OFF)
-
 IF (NOT __RNGWRAPPER_SCYTHE__)
   SET(__RNGWRAPPER_SCYTHE__ OFF CACHE BOOL "define for scythe")
   MARK_AS_ADVANCED(__RNGWRAPPER_SCYTHE__)
@@ -27,27 +21,9 @@ SET(__RNGWRAPPER_SCYTHE__ OFF)
 # install path
 # ------------
 IF(NOT RNG_LIB)
-  SET( RNG_LIB boost CACHE STRING "Which rng library to use: lti, boost or scythe")
+  SET( RNG_LIB boost CACHE STRING "Which rng library to use: boost or scythe")
 ENDIF(NOT RNG_LIB)
 MESSAGE("Searching for rng lib ${RNG_LIB}")
-
-
-# find libs
-# ---------
-IF (RNG_LIB STREQUAL "lti")
-  FIND_LIBRARY(LTI ltir )
-  FIND_PATH(LTI_FOUND ltilib/ltiMatrix.h )
-  IF ( LTI AND LTI_FOUND )
-    MESSAGE("-- Looking for Lti - found")
-    SET( RNG_INCLUDE "${LTI_FOUND}")
-    SET( RNG_LIBS "${LTI}") 
-    MESSAGE( "-- Lti includes ${RNG_INCLUDE}")
-    MESSAGE( "-- Lti libs     ${RNG_LIBS}")
-    SET(__RNGWRAPPER_LTI__ ON)	
-  ELSE ( LTI AND LTI_FOUND )
-    MESSAGE(FATAL_ERROR "Looking for Lti - not found")
-  ENDIF ( LTI AND LTI_FOUND )
-ELSE (RNG_LIB STREQUAL "lti")
 
 
 IF (RNG_LIB STREQUAL "boost")
@@ -79,8 +55,7 @@ IF (RNG_LIB STREQUAL "scythe")
   ENDIF ( SCYTHE_FOUND )
 ELSE (RNG_LIB STREQUAL "scythe")
  
-MESSAGE( FATAL_ERROR "No valid rng lib specified. Please choose lti, boost or scythe")
+MESSAGE( FATAL_ERROR "No valid rng lib specified. Please choose boost or scythe")
  
 ENDIF (RNG_LIB STREQUAL "scythe")
 ENDIF (RNG_LIB STREQUAL "boost")
-ENDIF (RNG_LIB STREQUAL "lti")

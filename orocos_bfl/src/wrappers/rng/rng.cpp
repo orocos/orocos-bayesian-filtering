@@ -87,33 +87,4 @@ double BFL::runif(const double &min, const double& max)
 
 
 
-#ifdef __RNGWRAPPER_LTI__  // LTILIB
-
-#include <ltilib/ltiUniformDist.h>
-#include <ltilib/ltiGaussDist.h>
-
-// Sample from univariate normal distribution with mu and sigma
-double BFL::rnorm(const double & mu, const double & sigma)
-{
-  lti::gaussianDistribution g(mu,sigma);
-  return g.draw();
-}
-
-// FIXME: Check quality of RNG!!
-// Create uniform distribution between 0 and 1
-static lti::uniformDistribution unif;
-
-// Sample from uniform distribution
-double BFL::runif()
-{
-  return unif.draw();
-}
-
-// Sample from uniform distribution
-double BFL::runif(const double &min, const double& max)
-{
-  lti::uniformDistribution u(min,max);
-  return u.draw();
-}
-#endif // __RNGWRAPPER_LTI__
 
