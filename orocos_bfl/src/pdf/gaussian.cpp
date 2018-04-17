@@ -154,8 +154,6 @@ namespace BFL
 	{
       bool result = _Sigma.cholesky_semidefinite(_Low_triangle);
 
-	  /* For now we keep it simple, and use the scythe library
-	     (although wrapped) with the uRNG that it uses itself only */
 	  /* Sample Gaussian._dimension samples from univariate
 	     gaussian This could be done using several available
 	     libraries, combined with different uniform RNG.  Both the

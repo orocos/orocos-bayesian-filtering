@@ -56,35 +56,4 @@ double BFL::runif(const double &min, const double& max)
 
 
 
-#ifdef __RNGWRAPPER_SCYTHE__  // SCYTHE RANDOM LIBRARY
-
-#include <scythestat/rng.h>
-#include <scythestat/rng/mersenne.h>
-#include <scythestat/distributions.h>
-
-
-static scythe::mersenne bfl_mersenne;
-
-// Sample from univariate normal distribution with mu and sigma
-double BFL::rnorm(const double & mu, const double & sigma)
-{
-  return (bfl_mersenne.rnorm(mu,sigma));
-}
-
-// Sample from uniform distribution
-double BFL::runif()
-{
-  return (bfl_mersenne.runif());
-}
-
-double BFL::runif(const double &min, const double& max)
-{
-  return (bfl_mersenne.runif()*(max-min)+min);
-}
-#endif // __RNGWRAPPER_SCYTHE__
-
-
-
-
-
 

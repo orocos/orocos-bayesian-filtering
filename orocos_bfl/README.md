@@ -26,7 +26,6 @@ It's most important features are:
   * boost <http://www.boost.org/> Matrix and RNG (default)
   * eigen <http://eigen.tuxfamily.org/> Matrix Library
   * NEWMAT <http://www.robertnz.net/nm_intro.htm> Matrix Library
-  * Scythe <http://scythe.berkeley.edu> RNG library
 * "Bayesian unifying Design".  This allows to incorporate any Bayesian
   filtering algorithm! Currently the following filter schemes are
   implemented:
