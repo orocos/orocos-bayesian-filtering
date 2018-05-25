@@ -451,11 +451,16 @@ Complete_FilterTest::testComplete_FilterValue_Discr()
       filter.Update(&sys_model,&meas_model,measurement);
     } // estimation loop
 
+  // FIXME: This test needs more explanation...
   DiscretePdf *  posterior = filter.PostGet();
   for (int state=0; state< num_states; state++)
   {
-    //cout << state << ": " << posterior->ProbabilityGet(state) << endl;
-    if (state== (int)(mobile_robot.GetState()(2)) ) CPPUNIT_ASSERT(posterior->ProbabilityGet(state) >0.9);
-    else CPPUNIT_ASSERT(posterior->ProbabilityGet(state) <0.1);
+    // std::cout << "state = " << state << " : " << "posterior->ProbabilityGet(state) = " << posterior->ProbabilityGet(state) << std::endl;
+    if (state == (int)(round(mobile_robot.GetState()(2))) ){ // Y position  What does this comparison mean???
+      CPPUNIT_ASSERT(posterior->ProbabilityGet(state) >0.9);
+    }
+    else {
+      CPPUNIT_ASSERT(posterior->ProbabilityGet(state) <0.1);
+    }
   }
 }
