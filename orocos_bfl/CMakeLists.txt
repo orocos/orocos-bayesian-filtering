@@ -112,11 +112,15 @@ ADD_SUBDIRECTORY( examples )
 
 # .pc file
 # --------
-CONFIGURE_FILE( orocos-bfl.pc.in orocos-bfl.pc @ONLY)
-# Issue #45
-# INSTALL_FILES( /lib${LIB_SUFFIX}/pkgconfig FILES orocos-bfl.pc)
-include(GNUInstallDirs)
-INSTALL_FILES( "/${CMAKE_INSTALL_LIBDIR}/pkgconfig" FILES orocos-bfl.pc)
+INCLUDE (${PROJ_SOURCE_DIR}/config/FindPkgConfig.cmake)
+IF ( CMAKE_PKGCONFIG_EXECUTABLE ) # Issue #22
+  MESSAGE( "Found pkgconfig executable" )
+  CONFIGURE_FILE( orocos-bfl.pc.in orocos-bfl.pc @ONLY)
+  # Issue #45
+  # INSTALL_FILES( /lib${LIB_SUFFIX}/pkgconfig FILES orocos-bfl.pc)
+  include(GNUInstallDirs)
+  INSTALL_FILES( "/${CMAKE_INSTALL_LIBDIR}/pkgconfig" FILES orocos-bfl.pc)
+ENDIF ( CMAKE_PKGCONFIG_EXECUTABLE )
 
 # Building Doxygen documents
 # --------------------------
