@@ -685,9 +685,9 @@ MatrixwrapperTest::testMatrixwrapperValue()
   SymmetricMatrix SM2_inv = SM2.inverse();
   CPPUNIT_ASSERT_EQUAL(approxEqual(Matrix(SM2_inv * SM2), I2,epsilon),true);
   // Determinant for 1x1 Matrix
-  CPPUNIT_ASSERT_EQUAL(SM1.determinant(), SM1(1,1));
+  CPPUNIT_ASSERT_EQUAL(approxEqual(SM1.determinant(), SM1(1,1), epsilon), true);
   // Determinant for 2x2 Matrix
-  CPPUNIT_ASSERT_EQUAL(SM2.determinant(), SM2(1,1)*SM2(2,2)-SM2(1,2)*SM2(2,1));
+  CPPUNIT_ASSERT_EQUAL(approxEqual(SM2.determinant(), SM2(1,1)*SM2(2,2)-SM2(1,2)*SM2(2,1), epsilon), true);
 
   Matrix M3(3,3);
   M3(1,1)=1;
