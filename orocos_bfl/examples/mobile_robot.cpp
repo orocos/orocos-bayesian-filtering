@@ -91,14 +91,14 @@ namespace BFL
     }
 
 
-    ColumnVector
+    const ColumnVector
     MobileRobot::Measure()
     {
       return _meas_model->Simulate(_state);
     }
 
 
-    ColumnVector
+    const ColumnVector
     MobileRobot::GetState()
     {
       return _state;

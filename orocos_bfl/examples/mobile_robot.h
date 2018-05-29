@@ -52,8 +52,8 @@ namespace BFL{
       ~MobileRobot();
 
       void Move(MatrixWrapper::ColumnVector inputs);
-      MatrixWrapper::ColumnVector Measure();
-      MatrixWrapper::ColumnVector GetState(); //method only for simulation purposes
+      const MatrixWrapper::ColumnVector Measure();
+      const MatrixWrapper::ColumnVector GetState(); //method only for simulation purposes
 
     private:
       Gaussian* _system_Uncertainty;
