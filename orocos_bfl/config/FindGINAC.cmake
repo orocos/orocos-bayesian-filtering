@@ -4,7 +4,7 @@
 # GINAC location and name of library
 # GINAC_FOUND, path to ginac header files
 
-OPTION( GINAC_SUPPORT "Turn me off to disable Ginac support" OFF )
+OPTION( GINAC_SUPPORT "Turn me on to enable Ginac support" OFF )
 
 IF (GINAC_SUPPORT)
 
