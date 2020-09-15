@@ -2,15 +2,15 @@ sudo: required
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y libboost-dev libcppunit-dev
+  - sudo apt-get install -y libboost-dev libcppunit-dev libginac-dev
 
 language: cpp
 
 before_script:
   - cd orocos_bfl
-  - mkdir build-linux-boost-boost
-  - cd build-linux-boost-boost
-  - cmake ..
+  - mkdir build-linux-boost-boost-ginac
+  - cd build-linux-boost-boost-ginac
+  - cmake -DGINAC_SUPPORT:BOOL=true ..
 
 script:
   - make && make check
